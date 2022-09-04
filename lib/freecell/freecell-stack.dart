@@ -8,17 +8,17 @@ import 'deck-style.dart';
 
 /// This widget will array the passed in children in a vertical line.
 /// The children will overlap, leaving just enough visible just enough to show each rank and suit.
-class FreecellStack extends StatelessWidget {
+class FreecellColumn extends StatelessWidget {
   final List<PlayingCard> children;
   final DeckStyle deckStyle;
 
-  const FreecellStack({required this.deckStyle, required this.children, super.key});
+  const FreecellColumn({required this.deckStyle, required this.children, super.key});
 
   @override
   Widget build(Object context) {
     return ColumnSuper(
-      innerDistance: deckStyle.cardHeight! * -.8,
-      children: [for (var c in children) FreecellCardView(deckStyle: deckStyle, card: c)],
+      innerDistance: 0 * -.8,
+      children: [for (var c in children) FreecellCardView(card: c)],
     );
   }
 }
