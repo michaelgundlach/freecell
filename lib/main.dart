@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/freecell/freecell-card-view.dart';
 import 'package:playing_cards/playing_cards.dart';
 
 import 'freecell/deck-style.dart';
-import 'freecell/freecell-stack.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -33,7 +31,6 @@ class GameModel extends ChangeNotifier {
     }
 
     cascades = [for (int i = 0; i < 8; i++) someCards(i < 4 ? 7 : 6)];
-    print(cascades.map((stack) => stack.map((p) => '${p.suit} ${p.value}').toList().join(' ')).toList().join('|||'));
     acePiles = [[], [], [], []];
     numFreeSpaces = 4;
     freeSpaces = List.generate(numFreeSpaces, (i) => null);
@@ -63,12 +60,10 @@ class GameModel extends ChangeNotifier {
   }
 
   void highlight(PlayingCard card) {
-    print("Highlighted $card");
     highlighted = card;
   }
 
   void cancelHighlight() {
-    print("Cancelled highlight");
     highlighted = null;
   }
 
@@ -113,10 +108,6 @@ final gameModelProvider = ChangeNotifierProvider<GameModel>((ref) {
   return GameModel();
 });
 
-class FreecellConstants {
-  static const padding = 10.0;
-}
-
 class GameBoard extends StatelessWidget {
   const GameBoard({super.key});
 
@@ -125,20 +116,17 @@ class GameBoard extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          flex: 70,
+          flex: 80,
           child: Container(
             color: Colors.green,
-            padding: const EdgeInsets.all(FreecellConstants.padding),
             child: Row(
               children: [
                 for (int i = 0; i < 8; i++)
                   Expanded(
                     child: Container(
-                      margin: EdgeInsets.only(right: 15),
                       child: Consumer(
                         builder: (_, ref, __) => Cascade(
                           children: ref.watch(gameModelProvider).cascades[i],
-                          cardExposure: .12,
                         ),
                       ),
                     ),
@@ -148,13 +136,13 @@ class GameBoard extends StatelessWidget {
           ),
         ),
         Expanded(
-          flex: 30,
+          flex: 20,
           child: Container(
             color: Colors.red,
-            padding: const EdgeInsets.all(FreecellConstants.padding),
             child: Row(children: const [
-              Expanded(child: Foundations()),
-              Expanded(child: FreeSpaces()),
+              Foundations(),
+              Expanded(child: Spacer()),
+              FreeSpaces(),
             ]),
           ),
         )
@@ -231,22 +219,6 @@ class Glow extends StatelessWidget {
       child: child,
     );
   }
-
-  //@override
-  Widget obuild(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return OverflowBox(
-        maxWidth: constraints.maxWidth + 40,
-        maxHeight: constraints.maxHeight + 40,
-        child: Stack(
-          children: [
-            // Opacity(opacity: .7, child: SizedBox.expand(child: Container(color: Colors.yellow[300]))),
-            ConstrainedBox(constraints: constraints, child: child),
-          ],
-        ),
-      );
-    });
-  }
 }
 
 class BlankSpot extends StatelessWidget {
@@ -256,48 +228,46 @@ class BlankSpot extends StatelessWidget {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: playingCardAspectRatio,
-      child: Container(padding: EdgeInsets.all(8), child: Container(color: Colors.green)),
+      child: Container(padding: const EdgeInsets.all(5), child: Container(color: Colors.green)),
     );
   }
 }
 
 class Cascade extends ConsumerWidget {
-  const Cascade({required this.children, this.cardExposure = 0.0, Key? key}) : super(key: key);
+  const Cascade({required this.children, Key? key}) : super(key: key);
 
   final List<PlayingCard> children;
-  final double cardExposure;
+  final double cardExposure = .22;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var maxCards = 7; // how many will we make room for, given our allowed size?
+    var maxCards = 15; // how many will we make room for, given our allowed size?
     var extraSpace = (maxCards - 1) * cardExposure;
     var totalSpace = 1 + extraSpace;
     var cascadeAspectRatio = playingCardAspectRatio / totalSpace;
     return LayoutBuilder(builder: (context, constraints) {
       return AspectRatio(
         aspectRatio: cascadeAspectRatio,
-        child: Stack(
-          children: <Widget>[Align(alignment: Alignment(0, -1), child: BlankSpot())] +
-              List.generate(children.length, (i) {
-                bool uncovered = (i == children.length - 1);
-                return Align(
-                  alignment: Alignment(0, -1 + i / (maxCards - 1) * 2),
-                  child: FreecellInteractTarget(
-                    canHighlight: () => uncovered,
-                    getCard: () => children[i],
-                    canReceive: (card) => cascadesWell(children[i], card),
-                    receive: (card) => ref.read(gameModelProvider).placeHighlightedCard(on: children[i]),
-                    child: FreecellCardView(card: children[i], covered: !uncovered),
-                  ),
-                );
-              }),
-        ),
+        child: Stack(children: [
+          const Align(alignment: Alignment(0, -1), child: BlankSpot()),
+          for (var i = 0; i < children.length; i++)
+            Align(
+              alignment: Alignment(0, -1 + i / (maxCards - 1) * 2),
+              child: FreecellInteractTarget(
+                canHighlight: () => i == children.length - 1,
+                getCard: () => children[i],
+                canReceive: (card) => cascadesWell(children[i], card),
+                receive: (card) => ref.read(gameModelProvider).placeHighlightedCard(on: children[i]),
+                child: FreecellCardView(card: children[i], covered: i != children.length - 1),
+              ),
+            )
+        ]),
       );
     });
   }
 
   bool cascadesWell(PlayingCard parent, PlayingCard child) {
-    if (parent.value.index != child.value.index + 1) {
+    if (GameModel.value(parent) != GameModel.value(child) + 1) {
       return false;
     }
     const black = [Suit.clubs, Suit.spades];
@@ -314,14 +284,12 @@ class FreeSpaces extends ConsumerWidget {
     return Row(
         children: List.generate(model.numFreeSpaces, (i) {
       var space = model.freeSpaces[i];
-      return Expanded(
-        child: FreecellInteractTarget(
-          canHighlight: () => space != null,
-          getCard: () => space,
-          canReceive: (card) => space == null,
-          receive: (card) => model.moveToFreeSpace(i, card),
-          child: space == null ? BlankSpot() : FreecellCardView(card: space),
-        ),
+      return FreecellInteractTarget(
+        canHighlight: () => space != null,
+        getCard: () => space,
+        canReceive: (card) => space == null,
+        receive: (card) => model.moveToFreeSpace(i, card),
+        child: space == null ? const BlankSpot() : FreecellCardView(card: space),
       );
     }).toList());
   }
@@ -337,14 +305,12 @@ class Foundations extends ConsumerWidget {
     var model = ref.watch(gameModelProvider);
     return Row(
       children: model.acePiles.map((pile) {
-        return Expanded(
-          child: FreecellInteractTarget(
-            canHighlight: () => false,
-            getCard: () => null,
-            canReceive: (card) => canReceive(pile, card),
-            receive: (card) => model.placeHighlightedOnFoundation(pile),
-            child: pile.isNotEmpty ? FreecellCardView(card: pile.last) : BlankSpot(),
-          ),
+        return FreecellInteractTarget(
+          canHighlight: () => false,
+          getCard: () => null,
+          canReceive: (card) => canReceive(pile, card),
+          receive: (card) => model.placeHighlightedOnFoundation(pile),
+          child: pile.isNotEmpty ? FreecellCardView(card: pile.last) : const BlankSpot(),
         );
       }).toList(),
     );
@@ -365,51 +331,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.green,
       ),
-      home: GameBoard(), // const MyHomePage(title: 'Freecell!!!!!'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    final deck = standardFiftyTwoCardDeck()..shuffle();
-    var i = 0;
-    FreecellColumn stack(int n) {
-      i = i + n;
-      return FreecellColumn(deckStyle: DeckStyle(), children: deck.sublist(i - n, i));
-    }
-
-    p() {
-      setState(() {
-        print("hi");
-      });
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: ConstrainedBox(
-        constraints: const BoxConstraints.tightFor(width: double.infinity, height: double.infinity),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [for (var i = 0; i < 8; i++) stack(i >= 4 ? 6 : 7)],
-        ),
-      ),
+      home: Container(
+          padding: const EdgeInsets.all(20),
+          color: Colors.green,
+          child: const GameBoard()), // const MyHomePage(title: 'Freecell!!!!!'),
     );
   }
 }
