@@ -108,7 +108,6 @@ class GameBoard extends StatelessWidget {
                   Expanded(
                     child: Container(
                       margin: EdgeInsets.only(right: 15),
-                      color: Colors.yellow,
                       child: Consumer(
                         builder: (_, ref, __) => Cascade(
                           children: ref.watch(gameModelProvider).cascades[i],
@@ -137,12 +136,20 @@ class GameBoard extends StatelessWidget {
   }
 }
 
-class CardInteractTarget extends ConsumerWidget {
-  final bool Function(PlayingCard) canReceive;
+class FreecellInteractTarget extends ConsumerWidget {
   final bool Function() canHighlight;
+  final PlayingCard? Function() getCard;
+  final bool Function(PlayingCard) canReceive;
+  final void Function(PlayingCard) receive;
   final FreecellCardView child;
 
-  const CardInteractTarget({required this.canHighlight, required this.canReceive, required this.child, super.key});
+  const FreecellInteractTarget(
+      {required this.canHighlight,
+      required this.getCard,
+      required this.canReceive,
+      required this.receive,
+      required this.child,
+      super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -152,19 +159,26 @@ class CardInteractTarget extends ConsumerWidget {
       onTap: () {
         var model = ref.read(gameModelProvider);
         PlayingCard? highlighted = model.highlighted;
+
+        // Nobody highlighted: highlight us if we are allowed to be highlighted.
         if (highlighted == null) {
           if (canHighlight()) {
-            model.highlight(child.card);
+            model.highlight(getCard()!);
           }
-        } else if (model.highlighted == child.card) {
+        }
+        // Somebody highlighted: if it's us, cancel highlight
+        else if (highlighted == getCard()) {
           model.cancelHighlight();
-        } else if (canReceive(highlighted)) {
-          model.placeHighlightedCard(on: child.card);
-        } else {
+        }
+        // Somebody highlighted and we can receive them
+        else if (canReceive(highlighted)) {
+          receive(highlighted);
+        }
+        // Somebody highlighted and we can't receive them: cancel highlight
+        else {
           model.cancelHighlight();
         }
       },
-      // TODO temp child: highlighted == child.card ? Glow(child: child) : child,
       child: highlighted == child.card ? Glow(child: child) : child,
     );
   }
@@ -180,7 +194,7 @@ class Glow extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.red.withAlpha(128),
+            color: Colors.yellow.withAlpha(200),
             blurRadius: 3.0,
             spreadRadius: 3.0,
           )
@@ -237,9 +251,11 @@ class Cascade extends ConsumerWidget {
                 bool uncovered = (i == children.length - 1);
                 return Align(
                   alignment: Alignment(0, -1 + i / (maxCards - 1) * 2),
-                  child: CardInteractTarget(
+                  child: FreecellInteractTarget(
                     canHighlight: () => uncovered,
+                    getCard: () => children[i],
                     canReceive: (card) => cascadesWell(children[i], card),
+                    receive: (card) => ref.read(gameModelProvider).placeHighlightedCard(on: children[i]),
                     child: FreecellCardView(card: children[i], covered: !uncovered),
                   ),
                 );
