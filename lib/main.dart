@@ -35,18 +35,50 @@ class GameModel extends ChangeNotifier {
     cascades = [for (int i = 0; i < 8; i++) someCards(i < 4 ? 7 : 6)];
     print(cascades.map((stack) => stack.map((p) => '${p.suit} ${p.value}').toList().join(' ')).toList().join('|||'));
     acePiles = [[], [], [], []];
-    numFreeSpots = 4;
-    freeSpots = List.generate(numFreeSpots, (i) => null);
+    numFreeSpaces = 4;
+    freeSpaces = List.generate(numFreeSpaces, (i) => null);
   }
 
   late final List<List<PlayingCard>> cascades;
   late final List<List<PlayingCard>> acePiles;
-  late final List<PlayingCard?> freeSpots;
-  late int numFreeSpots;
+  late final List<PlayingCard?> freeSpaces;
+  late int numFreeSpaces;
+  PlayingCard? _highlighted;
+  PlayingCard? get highlighted {
+    return _highlighted;
+  }
 
-  reduceSpots() {
-    numFreeSpots--;
+  set highlighted(PlayingCard? val) {
+    _highlighted = val;
     notifyListeners();
+  }
+
+  reduceSpaces() {
+    numFreeSpaces--;
+    notifyListeners();
+  }
+
+  void highlight(PlayingCard card) {
+    print("Highlighted $card");
+    highlighted = card;
+  }
+
+  void cancelHighlight() {
+    print("Cancelled highlight");
+    highlighted = null;
+  }
+
+  void placeHighlightedCard({required PlayingCard on}) {
+    List<PlayingCard>? fromCascade = null, toCascade = null;
+    for (var cascade in cascades) {
+      if (cascade.last == on) {
+        toCascade = cascade;
+      } else if (cascade.last == highlighted) {
+        fromCascade = cascade;
+      }
+    }
+    toCascade!.add(fromCascade!.removeLast());
+    highlighted = null;
   }
 }
 
@@ -77,7 +109,12 @@ class GameBoard extends StatelessWidget {
                     child: Container(
                       margin: EdgeInsets.only(right: 15),
                       color: Colors.yellow,
-                      child: Consumer(builder: (_, ref, __) => Cascade(ref.watch(gameModelProvider).cascades[i])),
+                      child: Consumer(
+                        builder: (_, ref, __) => Cascade(
+                          children: ref.watch(gameModelProvider).cascades[i],
+                          cardExposure: .22,
+                        ),
+                      ),
                     ),
                   ),
               ],
@@ -89,7 +126,7 @@ class GameBoard extends StatelessWidget {
           child: Container(
             color: Colors.red,
             padding: const EdgeInsets.all(FreecellConstants.padding),
-            child: Row(children: [
+            child: Row(children: const [
               Expanded(child: Foundations()),
               Expanded(child: FreeSpaces()),
             ]),
@@ -100,15 +137,94 @@ class GameBoard extends StatelessWidget {
   }
 }
 
+class CardInteractTarget extends ConsumerWidget {
+  final bool Function(PlayingCard) canReceive;
+  final bool Function() canHighlight;
+  final FreecellCardView child;
+
+  const CardInteractTarget({required this.canHighlight, required this.canReceive, required this.child, super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var highlighted = ref.watch(gameModelProvider.select((gm) => gm.highlighted));
+
+    return GestureDetector(
+      onTap: () {
+        var model = ref.read(gameModelProvider);
+        PlayingCard? highlighted = model.highlighted;
+        if (highlighted == null) {
+          if (canHighlight()) {
+            model.highlight(child.card);
+          }
+        } else if (model.highlighted == child.card) {
+          model.cancelHighlight();
+        } else if (canReceive(highlighted)) {
+          model.placeHighlightedCard(on: child.card);
+        } else {
+          model.cancelHighlight();
+        }
+      },
+      // TODO temp child: highlighted == child.card ? Glow(child: child) : child,
+      child: highlighted == child.card ? Glow(child: child) : child,
+    );
+  }
+}
+
+class Glow extends StatelessWidget {
+  const Glow({required this.child, super.key});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.red.withAlpha(128),
+            blurRadius: 3.0,
+            spreadRadius: 3.0,
+          )
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  //@override
+  Widget obuild(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      return OverflowBox(
+        maxWidth: constraints.maxWidth + 40,
+        maxHeight: constraints.maxHeight + 40,
+        child: Stack(
+          children: [
+            // Opacity(opacity: .7, child: SizedBox.expand(child: Container(color: Colors.yellow[300]))),
+            ConstrainedBox(constraints: constraints, child: child),
+          ],
+        ),
+      );
+    });
+  }
+}
+
+class BlankSpot extends StatelessWidget {
+  const BlankSpot({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const AspectRatio(aspectRatio: playingCardAspectRatio, child: Placeholder());
+  }
+}
+
 class Cascade extends ConsumerWidget {
-  const Cascade(this.children, {Key? key}) : super(key: key);
+  const Cascade({required this.children, this.cardExposure = 0.0, Key? key}) : super(key: key);
 
   final List<PlayingCard> children;
+  final double cardExposure;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var maxCards = 7; // how many will we make room for, given our allowed size?
-    var cardExposure = .22; // % of card uncovered by descendant
     var extraSpace = (maxCards - 1) * cardExposure;
     var totalSpace = 1 + extraSpace;
     var cascadeAspectRatio = playingCardAspectRatio / totalSpace;
@@ -116,15 +232,29 @@ class Cascade extends ConsumerWidget {
       return AspectRatio(
         aspectRatio: cascadeAspectRatio,
         child: Stack(
-          children: List.generate(children.length, (i) {
-            return Align(
-              alignment: Alignment(0, -1 + i / (maxCards - 1) * 2),
-              child: FreecellCardView(card: children[i], covered: i < children.length - 1),
-            );
-          }),
+          children: <Widget>[Align(alignment: Alignment(0, -1), child: BlankSpot())] +
+              List.generate(children.length, (i) {
+                bool uncovered = (i == children.length - 1);
+                return Align(
+                  alignment: Alignment(0, -1 + i / (maxCards - 1) * 2),
+                  child: CardInteractTarget(
+                    canHighlight: () => uncovered,
+                    canReceive: (card) => cascadesWell(children[i], card),
+                    child: FreecellCardView(card: children[i], covered: !uncovered),
+                  ),
+                );
+              }),
         ),
       );
     });
+  }
+
+  bool cascadesWell(PlayingCard parent, PlayingCard child) {
+    if (parent.value.index != child.value.index + 1) {
+      return false;
+    }
+    const black = [Suit.clubs, Suit.spades];
+    return (black.contains(parent.suit) != black.contains(child.suit));
   }
 }
 
@@ -133,20 +263,14 @@ class FreeSpaces extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var slots = ref.watch(gameModelProvider.select((gm) => gm.numFreeSpots));
+    var slots = ref.watch(gameModelProvider.select((gm) => gm.numFreeSpaces));
     return Row(
       children: List.generate(slots, (index) {
         // Temp to prove I can send data to the model and back!
         return Expanded(
           child: GestureDetector(
-            onTap: () => ref.read(gameModelProvider).reduceSpots(),
-            child: Consumer(
-              builder: (context, ref, _) => Container(
-                margin: EdgeInsets.all(FreecellConstants.padding),
-                height: double.infinity,
-                color: Colors.yellow,
-              ),
-            ),
+            onTap: () => ref.read(gameModelProvider).reduceSpaces(),
+            child: BlankSpot(),
           ),
         );
       }),
@@ -154,14 +278,15 @@ class FreeSpaces extends ConsumerWidget {
   }
 }
 
-class Foundations extends StatelessWidget {
+class Foundations extends ConsumerWidget {
   const Foundations({
     Key? key,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Container();
+  Widget build(BuildContext context, WidgetRef ref) {
+    var model = ref.watch(gameModelProvider);
+    return Row(children: model.acePiles.map((pile) => Expanded(child: Cascade(children: pile))).toList());
   }
 }
 

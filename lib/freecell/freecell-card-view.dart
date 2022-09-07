@@ -5,40 +5,26 @@ import 'package:playing_cards/playing_cards.dart';
 import '../main.dart';
 import 'deck-style.dart';
 
-class FreecellCardView extends ConsumerStatefulWidget {
+class FreecellCardView extends ConsumerWidget {
   const FreecellCardView({required this.card, this.covered = false, super.key});
   final PlayingCard card;
   final bool covered;
 
   @override
-  ConsumerState<FreecellCardView> createState() => _FreecellCardViewState();
-}
-
-class _FreecellCardViewState extends ConsumerState<FreecellCardView> {
-  bool highlighted = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var deckStyle = ref.watch(deckStyleProvider);
 
-    return GestureDetector(
-      onTap: () => setState(() => highlighted = !highlighted),
-      behavior: HitTestBehavior.translucent,
-      child: PlayingCardView(
-        card: widget.card,
-        elevation: deckStyle.elevation,
-        shape: deckStyle.shape,
-        style: PlayingCardViewStyle(suitStyles: makeStyles()),
-      ),
+    return PlayingCardView(
+      card: card,
+      elevation: deckStyle.elevation,
+      shape: deckStyle.shape,
+      style: PlayingCardViewStyle(suitStyles: makeStyles()),
     );
   }
 
   makeStyles() {
     makeStyle(suit) {
-      Color color = Colors.yellow;
-      if (!highlighted) {
-        color = (suit == Suit.clubs || suit == Suit.spades) ? Colors.black : Colors.red;
-      }
+      var color = (suit == Suit.clubs || suit == Suit.spades) ? Colors.black : Colors.red;
       return SuitStyle(
         style: TextStyle(
           fontWeight: FontWeight.normal,
@@ -61,9 +47,10 @@ class _FreecellCardViewState extends ConsumerState<FreecellCardView> {
   }
 
   Widget Function(BuildContext)? makeCardBuilder(Suit suit, CardValue value) {
-    if (widget.covered)
+    if (covered) {
       return (_) => Center(child: Container(width: 10, color: Colors.blue));
-    else
+    } else {
       return null;
+    }
   }
 }
