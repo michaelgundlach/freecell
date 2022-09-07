@@ -48,6 +48,10 @@ class GameModel extends ChangeNotifier {
     return _highlighted;
   }
 
+  static int value(PlayingCard card) {
+    return (card.value == CardValue.ace ? 1 : card.value.index + 2); // enum is out of order)
+  }
+
   set highlighted(PlayingCard? val) {
     _highlighted = val;
     notifyListeners();
@@ -68,17 +72,40 @@ class GameModel extends ChangeNotifier {
     highlighted = null;
   }
 
+  PlayingCard _popHighlighted() {
+    for (var cascade in cascades) {
+      if (cascade.last == highlighted) {
+        return cascade.removeLast();
+      }
+    }
+    if (freeSpaces.contains(highlighted)) {
+      var i = freeSpaces.indexOf(highlighted);
+      var result = freeSpaces.removeAt(i);
+      freeSpaces.insert(i, null);
+      return result!;
+    }
+    throw Exception("No highlighted");
+  }
+
   void placeHighlightedCard({required PlayingCard on}) {
-    List<PlayingCard>? fromCascade = null, toCascade = null;
+    List<PlayingCard>? toCascade;
     for (var cascade in cascades) {
       if (cascade.last == on) {
         toCascade = cascade;
-      } else if (cascade.last == highlighted) {
-        fromCascade = cascade;
       }
     }
-    toCascade!.add(fromCascade!.removeLast());
+    toCascade!.add(_popHighlighted());
     highlighted = null;
+  }
+
+  void placeHighlightedOnFoundation(List<PlayingCard> pile) {
+    pile.add(_popHighlighted());
+    notifyListeners();
+  }
+
+  void moveToFreeSpace(int i, PlayingCard card) {
+    freeSpaces[i] = _popHighlighted();
+    notifyListeners();
   }
 }
 
@@ -111,7 +138,7 @@ class GameBoard extends StatelessWidget {
                       child: Consumer(
                         builder: (_, ref, __) => Cascade(
                           children: ref.watch(gameModelProvider).cascades[i],
-                          cardExposure: .22,
+                          cardExposure: .12,
                         ),
                       ),
                     ),
@@ -141,7 +168,7 @@ class FreecellInteractTarget extends ConsumerWidget {
   final PlayingCard? Function() getCard;
   final bool Function(PlayingCard) canReceive;
   final void Function(PlayingCard) receive;
-  final FreecellCardView child;
+  final Widget child;
 
   const FreecellInteractTarget(
       {required this.canHighlight,
@@ -173,13 +200,14 @@ class FreecellInteractTarget extends ConsumerWidget {
         // Somebody highlighted and we can receive them
         else if (canReceive(highlighted)) {
           receive(highlighted);
+          model.cancelHighlight();
         }
         // Somebody highlighted and we can't receive them: cancel highlight
         else {
           model.cancelHighlight();
         }
       },
-      child: highlighted == child.card ? Glow(child: child) : child,
+      child: highlighted != null && highlighted == getCard() ? Glow(child: child) : child,
     );
   }
 }
@@ -226,7 +254,10 @@ class BlankSpot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const AspectRatio(aspectRatio: playingCardAspectRatio, child: Placeholder());
+    return AspectRatio(
+      aspectRatio: playingCardAspectRatio,
+      child: Container(padding: EdgeInsets.all(8), child: Container(color: Colors.green)),
+    );
   }
 }
 
@@ -279,18 +310,20 @@ class FreeSpaces extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var slots = ref.watch(gameModelProvider.select((gm) => gm.numFreeSpaces));
+    var model = ref.watch(gameModelProvider);
     return Row(
-      children: List.generate(slots, (index) {
-        // Temp to prove I can send data to the model and back!
-        return Expanded(
-          child: GestureDetector(
-            onTap: () => ref.read(gameModelProvider).reduceSpaces(),
-            child: BlankSpot(),
-          ),
-        );
-      }),
-    );
+        children: List.generate(model.numFreeSpaces, (i) {
+      var space = model.freeSpaces[i];
+      return Expanded(
+        child: FreecellInteractTarget(
+          canHighlight: () => space != null,
+          getCard: () => space,
+          canReceive: (card) => space == null,
+          receive: (card) => model.moveToFreeSpace(i, card),
+          child: space == null ? BlankSpot() : FreecellCardView(card: space),
+        ),
+      );
+    }).toList());
   }
 }
 
@@ -302,7 +335,24 @@ class Foundations extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var model = ref.watch(gameModelProvider);
-    return Row(children: model.acePiles.map((pile) => Expanded(child: Cascade(children: pile))).toList());
+    return Row(
+      children: model.acePiles.map((pile) {
+        return Expanded(
+          child: FreecellInteractTarget(
+            canHighlight: () => false,
+            getCard: () => null,
+            canReceive: (card) => canReceive(pile, card),
+            receive: (card) => model.placeHighlightedOnFoundation(pile),
+            child: pile.isNotEmpty ? FreecellCardView(card: pile.last) : BlankSpot(),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  bool canReceive(List<PlayingCard> pile, PlayingCard card) {
+    if (pile.isEmpty) return card.value == CardValue.ace;
+    return pile.last.suit == card.suit && GameModel.value(pile.last) == GameModel.value(card) - 1;
   }
 }
 
