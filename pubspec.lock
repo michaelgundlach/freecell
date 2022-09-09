@@ -126,11 +126,9 @@ packages:
   playing_cards:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: "50258bce3d0b6aa120b904fa07aad658947f599b"
-      url: "https://github.com/michaelgundlach/playing_cards"
-    source: git
+      path: "/Users/family/code/playing_cards"
+      relative: false
+    source: path
     version: "0.3.1+9"
   riverpod:
     dependency: transitive

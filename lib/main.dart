@@ -19,10 +19,10 @@ final deckStyleProvider = Provider<DeckStyle>((ref) {
   );
 });
 // Sucky non-exporting playing_cards package
-const playingCardAspectRatio = 64 / 89;
+// const playingCardAspectRatio = 64 / 89;
 
-class GameModel extends ChangeNotifier {
-  GameModel() {
+class GameState extends ChangeNotifier {
+  GameState() {
     var deck = standardFiftyTwoCardDeck()..shuffle();
     someCards(count) {
       var result = deck.sublist(0, count);
@@ -46,7 +46,9 @@ class GameModel extends ChangeNotifier {
   }
 
   static int value(PlayingCard card) {
-    return (card.value == CardValue.ace ? 1 : card.value.index + 2); // enum is out of order)
+    return (card.value == CardValue.ace
+        ? 1
+        : card.value.index + 2); // enum is out of order)
   }
 
   set highlighted(PlayingCard? val) {
@@ -69,7 +71,7 @@ class GameModel extends ChangeNotifier {
 
   PlayingCard _popHighlighted() {
     for (var cascade in cascades) {
-      if (cascade.last == highlighted) {
+      if (cascade.isNotEmpty && cascade.last == highlighted) {
         return cascade.removeLast();
       }
     }
@@ -85,7 +87,7 @@ class GameModel extends ChangeNotifier {
   void placeHighlightedCard({required PlayingCard on}) {
     List<PlayingCard>? toCascade;
     for (var cascade in cascades) {
-      if (cascade.last == on) {
+      if (cascade.isNotEmpty && cascade.last == on) {
         toCascade = cascade;
       }
     }
@@ -102,10 +104,15 @@ class GameModel extends ChangeNotifier {
     freeSpaces[i] = _popHighlighted();
     notifyListeners();
   }
+
+  placeNewCascade(PlayingCard card, List<PlayingCard> children) {
+    children.add(_popHighlighted());
+    notifyListeners();
+  }
 }
 
-final gameModelProvider = ChangeNotifierProvider<GameModel>((ref) {
-  return GameModel();
+final gameModelProvider = ChangeNotifierProvider<GameState>((ref) {
+  return GameState();
 });
 
 class GameBoard extends StatelessWidget {
@@ -123,11 +130,9 @@ class GameBoard extends StatelessWidget {
               children: [
                 for (int i = 0; i < 8; i++)
                   Expanded(
-                    child: Container(
-                      child: Consumer(
-                        builder: (_, ref, __) => Cascade(
-                          children: ref.watch(gameModelProvider).cascades[i],
-                        ),
+                    child: Consumer(
+                      builder: (_, ref, __) => Cascade(
+                        children: ref.watch(gameModelProvider).cascades[i],
                       ),
                     ),
                   ),
@@ -141,7 +146,7 @@ class GameBoard extends StatelessWidget {
             color: Colors.red,
             child: Row(children: const [
               Foundations(),
-              Expanded(child: Spacer()),
+              Spacer(),
               FreeSpaces(),
             ]),
           ),
@@ -168,7 +173,8 @@ class FreecellInteractTarget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var highlighted = ref.watch(gameModelProvider.select((gm) => gm.highlighted));
+    var highlighted =
+        ref.watch(gameModelProvider.select((gm) => gm.highlighted));
 
     return GestureDetector(
       onTap: () {
@@ -195,7 +201,9 @@ class FreecellInteractTarget extends ConsumerWidget {
           model.cancelHighlight();
         }
       },
-      child: highlighted != null && highlighted == getCard() ? Glow(child: child) : child,
+      child: highlighted != null && highlighted == getCard()
+          ? Glow(child: child)
+          : child,
     );
   }
 }
@@ -228,7 +236,9 @@ class BlankSpot extends StatelessWidget {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: playingCardAspectRatio,
-      child: Container(padding: const EdgeInsets.all(5), child: Container(color: Colors.green)),
+      child: Container(
+          padding: const EdgeInsets.all(5),
+          child: Container(color: Colors.green)),
     );
   }
 }
@@ -241,7 +251,8 @@ class Cascade extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var maxCards = 15; // how many will we make room for, given our allowed size?
+    var maxCards =
+        15; // how many will we make room for, given our allowed size?
     var extraSpace = (maxCards - 1) * cardExposure;
     var totalSpace = 1 + extraSpace;
     var cascadeAspectRatio = playingCardAspectRatio / totalSpace;
@@ -249,7 +260,17 @@ class Cascade extends ConsumerWidget {
       return AspectRatio(
         aspectRatio: cascadeAspectRatio,
         child: Stack(children: [
-          const Align(alignment: Alignment(0, -1), child: BlankSpot()),
+          Align(
+            alignment: const Alignment(0, -1),
+            child: FreecellInteractTarget(
+              canHighlight: () => false,
+              getCard: () => null,
+              canReceive: (card) => true,
+              receive: (card) =>
+                  ref.read(gameModelProvider).placeNewCascade(card, children),
+              child: const BlankSpot(),
+            ),
+          ),
           for (var i = 0; i < children.length; i++)
             Align(
               alignment: Alignment(0, -1 + i / (maxCards - 1) * 2),
@@ -257,8 +278,11 @@ class Cascade extends ConsumerWidget {
                 canHighlight: () => i == children.length - 1,
                 getCard: () => children[i],
                 canReceive: (card) => cascadesWell(children[i], card),
-                receive: (card) => ref.read(gameModelProvider).placeHighlightedCard(on: children[i]),
-                child: FreecellCardView(card: children[i], covered: i != children.length - 1),
+                receive: (card) => ref
+                    .read(gameModelProvider)
+                    .placeHighlightedCard(on: children[i]),
+                child: FreecellCardView(
+                    card: children[i], covered: i != children.length - 1),
               ),
             )
         ]),
@@ -267,7 +291,7 @@ class Cascade extends ConsumerWidget {
   }
 
   bool cascadesWell(PlayingCard parent, PlayingCard child) {
-    if (GameModel.value(parent) != GameModel.value(child) + 1) {
+    if (GameState.value(parent) != GameState.value(child) + 1) {
       return false;
     }
     const black = [Suit.clubs, Suit.spades];
@@ -289,7 +313,8 @@ class FreeSpaces extends ConsumerWidget {
         getCard: () => space,
         canReceive: (card) => space == null,
         receive: (card) => model.moveToFreeSpace(i, card),
-        child: space == null ? const BlankSpot() : FreecellCardView(card: space),
+        child:
+            space == null ? const BlankSpot() : FreecellCardView(card: space),
       );
     }).toList());
   }
@@ -310,7 +335,9 @@ class Foundations extends ConsumerWidget {
           getCard: () => null,
           canReceive: (card) => canReceive(pile, card),
           receive: (card) => model.placeHighlightedOnFoundation(pile),
-          child: pile.isNotEmpty ? FreecellCardView(card: pile.last) : const BlankSpot(),
+          child: pile.isNotEmpty
+              ? FreecellCardView(card: pile.last)
+              : const BlankSpot(),
         );
       }).toList(),
     );
@@ -318,7 +345,8 @@ class Foundations extends ConsumerWidget {
 
   bool canReceive(List<PlayingCard> pile, PlayingCard card) {
     if (pile.isEmpty) return card.value == CardValue.ace;
-    return pile.last.suit == card.suit && GameModel.value(pile.last) == GameModel.value(card) - 1;
+    return pile.last.suit == card.suit &&
+        GameState.value(pile.last) == GameState.value(card) - 1;
   }
 }
 
@@ -336,7 +364,7 @@ class MyApp extends StatelessWidget {
       home: Container(
           padding: const EdgeInsets.all(20),
           color: Colors.green,
-          child: const GameBoard()), // const MyHomePage(title: 'Freecell!!!!!'),
+          child: const GameBoard()),
     );
   }
 }

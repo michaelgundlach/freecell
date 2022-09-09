@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 
 import '../main.dart';
-import 'deck-style.dart';
 
 class FreecellCardView extends ConsumerWidget {
   const FreecellCardView({required this.card, this.covered = false, super.key});
@@ -18,16 +17,21 @@ class FreecellCardView extends ConsumerWidget {
       card: card,
       elevation: deckStyle.elevation,
       shape: deckStyle.shape,
-      style: PlayingCardViewStyle(suitStyles: makeStyles()),
+      style: PlayingCardViewStyle(
+        suitStyles: makeStyles(),
+        suitBesideLabel: true,
+      ),
     );
   }
 
   makeStyles() {
     makeStyle(suit) {
-      var color = (suit == Suit.clubs || suit == Suit.spades) ? Colors.black : Colors.red;
+      var color = (suit == Suit.clubs || suit == Suit.spades)
+          ? Colors.black
+          : Colors.red;
       return SuitStyle(
         style: TextStyle(
-          fontWeight: FontWeight.normal,
+          fontWeight: FontWeight.bold,
           color: color,
         ),
         cardContentBuilders: cardContentBuilders(suit),
