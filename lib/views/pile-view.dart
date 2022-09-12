@@ -38,7 +38,7 @@ class PileView extends StatelessWidget {
         child: result,
       );
     }
-    return entry.isTheBase ? Align(child: result) : positioner(i, result);
+    return entry.isTheBase ? Align(alignment: Alignment.topCenter, child: result) : positioner(i, result);
   }
 }
 

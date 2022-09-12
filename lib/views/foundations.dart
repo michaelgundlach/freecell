@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/views/pile-view.dart';
+import 'package:playing_cards/playing_cards.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 import '../main.dart';
@@ -45,7 +46,9 @@ class _FoundationsState extends ConsumerState<Foundations> {
                 entries: pile,
                 canHighlight: (PileEntry entry) => false,
                 canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
-                baseBuilder: () => Container(width: 150, color: Colors.blue, child: Text("A")),
+                baseBuilder: () => Container(
+                    color: Colors.blue,
+                    child: const AspectRatio(aspectRatio: playingCardAspectRatio, child: Center(child: Text("A")))),
                 positioner: (int j, Widget child) {
                   return Align(
                       child: Transform(alignment: FractionalOffset.center, transform: _slop(i, j), child: child));

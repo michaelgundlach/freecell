@@ -49,14 +49,14 @@ class GameBoard extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          flex: 80,
+          flex: 75,
           child: Container(
             color: Colors.green,
             child: Row(children: [for (var i = 0; i < 8; i++) Expanded(child: Cascade(cascadeNum: i))]),
           ),
         ),
         Expanded(
-          flex: 20,
+          flex: 25,
           child: Container(
             color: Colors.red,
             child: Row(children: [
