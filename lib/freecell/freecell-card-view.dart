@@ -26,9 +26,7 @@ class FreecellCardView extends ConsumerWidget {
 
   makeStyles() {
     makeStyle(suit) {
-      var color = (suit == Suit.clubs || suit == Suit.spades)
-          ? Colors.black
-          : Colors.red;
+      var color = (suit == Suit.clubs || suit == Suit.spades) ? Colors.black : Colors.red;
       return SuitStyle(
         style: TextStyle(
           fontWeight: FontWeight.bold,
@@ -52,7 +50,7 @@ class FreecellCardView extends ConsumerWidget {
 
   Widget Function(BuildContext)? makeCardBuilder(Suit suit, CardValue value) {
     if (covered) {
-      return (_) => Center(child: Container(width: 10, color: Colors.blue));
+      return (_) => Container();
     } else {
       return null;
     }

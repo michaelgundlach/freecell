@@ -43,6 +43,8 @@ dependencies:
 #      ref: bigger_font
   assorted_layout_widgets: ^7.0.0
   flutter_riverpod: ^1.0.4
+  collection: ^1.16.0
+  vector_math: ^2.1.2
 
 dev_dependencies:
   flutter_test:
