@@ -17,20 +17,22 @@ class Foundations extends ConsumerStatefulWidget {
 }
 
 class _FoundationsState extends ConsumerState<Foundations> {
-  final r = Random();
-  final List<List<double>> rotations = List.generate(4, (_) => [0]);
+  final int maxTiltDegrees = 5;
+  final int maxTranslatePixels = 10; // in any direction
+  final rnd = Random();
+  final List<List<Matrix4>> slops = List.generate(4, (_) => [Matrix4.identity()]);
 
-  double _rotation(i, j) {
-    j = j - 1; // We only ask starting with entry #1
-    int maxTiltDegrees = 4;
-    while (rotations[i].length <= j) {
-      double rot;
-      do {
-        rot = (r.nextDouble() - .5) * maxTiltDegrees;
-      } while (rotations[i].isNotEmpty && (rotations[i].last - rot).abs() < .9);
-      rotations[i].add(rot);
+  Matrix4 _slop(i, j) {
+    j = j - 1; // We only ask starting with entry #1, which we store at [0]
+    while (slops[i].length <= j) {
+      Matrix4 slop = Matrix4.identity();
+      double tilt = maxTiltDegrees * (rnd.nextDouble() - .5);
+      slop.rotateZ(radians(tilt));
+      List<double> slide = List.generate(2, (_) => maxTranslatePixels * (rnd.nextDouble() - .5));
+      slop.translate(slide[0], slide[1]);
+      slops[i].add(slop);
     }
-    return rotations[i][j];
+    return slops[i][j];
   }
 
   @override
@@ -46,10 +48,7 @@ class _FoundationsState extends ConsumerState<Foundations> {
                 baseBuilder: () => Container(width: 150, color: Colors.blue, child: Text("A")),
                 positioner: (int j, Widget child) {
                   return Align(
-                      child: Transform(
-                          alignment: FractionalOffset.center,
-                          transform: Matrix4.rotationZ(radians(_rotation(i, j))),
-                          child: child));
+                      child: Transform(alignment: FractionalOffset.center, transform: _slop(i, j), child: child));
                 },
               ))
           .toList(),
