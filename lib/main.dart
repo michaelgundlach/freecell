@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/views/cascade.dart';
 import 'package:playing_cards/playing_cards.dart';
@@ -8,7 +9,12 @@ import 'model/game-state.dart';
 import 'views/foundations.dart';
 import 'views/free-spaces.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Don't show Android UI overlays
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  // Force to landscape mode
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -36,7 +42,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: Container(padding: const EdgeInsets.all(20), color: Colors.green, child: const GameBoard()),
+      home: WillPopScope(
+        // Ignore back button, preventing it from closing (and destroying) the app
+        onWillPop: () async => false,
+        child: Container(padding: const EdgeInsets.all(20), color: Colors.green, child: const GameBoard()),
+      ),
     );
   }
 }
@@ -59,7 +69,7 @@ class GameBoard extends StatelessWidget {
           flex: 25,
           child: Container(
             color: Colors.red,
-            child: Row(children: [
+            child: Row(children: const [
               Foundations(),
               Spacer(),
               FreeSpaces(),
