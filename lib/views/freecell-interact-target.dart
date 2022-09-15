@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../main.dart';
 import '../model/game-state.dart';
+import '../util/sound.dart';
 
 class FreecellInteractTarget extends ConsumerWidget {
   final bool Function() canHighlight;
@@ -17,7 +18,7 @@ class FreecellInteractTarget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var highlighted = ref.watch(gameStateProvider.select((gs) => gs.highlighted));
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         var model = ref.read(gameStateProvider);
         PileEntry? highlighted = model.highlighted;
 
@@ -25,6 +26,7 @@ class FreecellInteractTarget extends ConsumerWidget {
         if (highlighted == null) {
           if (canHighlight()) {
             model.highlighted = entry;
+            await Sound.play(Sounds.highlighted);
           }
         }
         // Somebody highlighted: if it's us, cancel highlight
@@ -34,10 +36,12 @@ class FreecellInteractTarget extends ConsumerWidget {
         // Somebody highlighted and we can receive them
         else if (canReceive(highlighted)) {
           model.moveHighlightedOnto(entry);
+          await Sound.play(Sounds.played);
         }
         // Somebody highlighted and we can't receive them: cancel highlight
         else {
           model.highlighted = null;
+          await Sound.play(Sounds.failed);
         }
       },
       child: highlighted == entry ? Glow(child: child) : child,
