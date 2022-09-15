@@ -30,9 +30,15 @@ class FreeSpaces extends ConsumerWidget {
                         aspectRatio: playingCardAspectRatio,
                         child: Center(
                           child: Transform(
-                              transform: Matrix4.rotationZ(-.5),
-                              alignment: FractionalOffset.center,
-                              child: Text("FREE", style: Theme.of(context).textTheme.headline4)),
+                            transform: Matrix4.rotationZ(-.5),
+                            alignment: FractionalOffset.center,
+                            child: FractionallySizedBox(
+                                widthFactor: .7,
+                                heightFactor: .7,
+                                child: FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: Text("FREE", style: Theme.of(context).textTheme.headline4))),
+                          ),
                         ),
                       ),
                     ),
