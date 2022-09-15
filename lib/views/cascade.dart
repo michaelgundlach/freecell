@@ -44,8 +44,7 @@ class Cascade extends ConsumerWidget {
         final cardHeight = constraints.maxWidth / playingCardAspectRatio;
         final cardsShown = max(1, 1 + (entries.length - 2) * Cascades.cardExposure);
         final pileHeight = cardHeight * cardsShown;
-        return Container(
-          color: Colors.yellow,
+        return SizedBox(
           height: pileHeight,
           child: PileView(
             entries: entries,
@@ -53,7 +52,10 @@ class Cascade extends ConsumerWidget {
             canReceive: (highlighted, entry) => entry.canCascade(highlighted),
             baseBuilder: () => AspectRatio(
                 aspectRatio: playingCardAspectRatio,
-                child: Container(width: constraints.maxWidth, color: Colors.blue[200])),
+                child: Container(
+                  decoration: BoxDecoration(color: Colors.blue[200], borderRadius: BorderRadius.circular(5)),
+                  width: constraints.maxWidth,
+                )),
             positioner: (i, child) {
               return Positioned(top: Cascades.cardExposure * cardHeight * (i - 1), left: 0, right: 0, child: child);
             },
