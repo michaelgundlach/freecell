@@ -80,7 +80,7 @@ class GameBoard extends ConsumerWidget {
               Container(
                 child: Row(children: [
                   Expanded(flex: 40, child: Foundations()),
-                  Spacer(flex: 100 - 40 - (10 * gameState.numFreeCells)),
+                  if (gameState.numFreeCells < 6) Spacer(flex: 100 - 40 - (10 * gameState.numFreeCells)),
                   Expanded(
                     flex: 10 * gameState.numFreeCells,
                     child: Align(
