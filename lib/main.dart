@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/views/cascade.dart';
+import 'package:freecell/views/constrained-aspect-ratio.dart';
 import 'package:playing_cards/playing_cards.dart';
 
 import 'freecell/deck-style.dart';
@@ -51,32 +52,38 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class GameBoard extends StatelessWidget {
+class GameBoard extends ConsumerWidget {
   const GameBoard({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 75,
-          child: Container(
-            color: Colors.green,
-            child: Row(children: [for (var i = 0; i < 8; i++) Expanded(child: Cascade(cascadeNum: i))]),
-          ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gameState = ref.watch(gameStateProvider);
+    final maxCascade = gameState.cascades.reduce((a, b) => a.length > b.length ? a : b).length + 2;
+    final boardAspectRatio = playingCardAspectRatio * 10 / (2 + (maxCascade - 1) * Cascades.cardExposure);
+    return Align(
+      alignment: Alignment.topLeft,
+      child: ConstrainedAspectRatio(
+        maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller
+        child: Column(
+          children: [
+            Expanded(child: Cascades()),
+            Container(
+              color: Colors.red,
+              child: Row(children: [
+                Expanded(flex: 40, child: Foundations()),
+                Spacer(flex: 100 - 40 - (10 * gameState.numFreeCells)),
+                Expanded(
+                  flex: 10 * gameState.numFreeCells,
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: FreeSpaces(),
+                  ),
+                ),
+              ]),
+            ),
+          ],
         ),
-        Expanded(
-          flex: 25,
-          child: Container(
-            color: Colors.red,
-            child: Row(children: const [
-              Foundations(),
-              Spacer(),
-              FreeSpaces(),
-            ]),
-          ),
-        )
-      ],
+      ),
     );
   }
 }

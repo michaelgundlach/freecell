@@ -43,6 +43,14 @@ class PileView extends StatelessWidget {
 }
 
 /*
+
+GameMat sets aspect ratio to 10 cards by (whatever is needed for maxCards + 2)
+ - but then gets taller if possible to fill container
+ - so we need to write our own LayoutBuilder-based ConstrainedAspectRatio
+
+ Top row of game mat is top aligned, so the stacks stay at the top of the screen
+
+
                       child: PileView(
                         width: full width? no, only wide enough that you can stack all the cards well given the offset
                           function.  

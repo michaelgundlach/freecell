@@ -11,20 +11,27 @@ class FreeSpaces extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var model = ref.watch(gameStateProvider);
-    return Row(
-      children: model.freeCells
-          .map((pile) => PileView(
-                // TODO right
-                entries: pile,
-                canHighlight: (PileEntry entry) => !entry.isTheBase,
-                canReceive: (PileEntry highlighted, PileEntry entry) => entry.isTheBase,
-                baseBuilder: () => Container(
-                    color: Colors.blue,
-                    child: AspectRatio(aspectRatio: playingCardAspectRatio, child: Center(child: Text("F!")))),
-                positioner: (int i, Widget child) => Align(child: child),
-              ))
-          .toList(),
-    );
+    var gameState = ref.watch(gameStateProvider);
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+      final cardWidth = constraints.maxWidth / gameState.numFreeCells;
+      final cardHeight = cardWidth / playingCardAspectRatio;
+      return Container(
+        height: cardHeight,
+        child: Row(
+          children: gameState.freeCells
+              .map((pile) => PileView(
+                    // TODO right
+                    entries: pile,
+                    canHighlight: (PileEntry entry) => !entry.isTheBase,
+                    canReceive: (PileEntry highlighted, PileEntry entry) => entry.isTheBase,
+                    baseBuilder: () => Container(
+                        color: Colors.blue,
+                        child: AspectRatio(aspectRatio: playingCardAspectRatio, child: Center(child: Text("F!")))),
+                    positioner: (int i, Widget child) => Align(child: child),
+                  ))
+              .toList(),
+        ),
+      );
+    });
   }
 }

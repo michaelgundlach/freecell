@@ -38,23 +38,30 @@ class _FoundationsState extends ConsumerState<Foundations> {
 
   @override
   Widget build(BuildContext context) {
-    var model = ref.watch(gameStateProvider);
-    return Row(
-      children: model.foundations
-          .mapIndexed((i, pile) => PileView(
-                // TODO right
-                entries: pile,
-                canHighlight: (PileEntry entry) => false,
-                canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
-                baseBuilder: () => Container(
-                    color: Colors.blue,
-                    child: const AspectRatio(aspectRatio: playingCardAspectRatio, child: Center(child: Text("A")))),
-                positioner: (int j, Widget child) {
-                  return Align(
-                      child: Transform(alignment: FractionalOffset.center, transform: _slop(i, j), child: child));
-                },
-              ))
-          .toList(),
-    );
+    var gameState = ref.watch(gameStateProvider);
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+      final cardWidth = constraints.maxWidth / 4;
+      final cardHeight = cardWidth / playingCardAspectRatio;
+      return Container(
+        height: cardHeight,
+        child: Row(
+          children: gameState.foundations
+              .mapIndexed((i, pile) => PileView(
+                    // TODO right
+                    entries: pile,
+                    canHighlight: (PileEntry entry) => false,
+                    canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
+                    baseBuilder: () => Container(
+                        color: Colors.blue,
+                        child: const AspectRatio(aspectRatio: playingCardAspectRatio, child: Center(child: Text("A")))),
+                    positioner: (int j, Widget child) {
+                      return Align(
+                          child: Transform(alignment: FractionalOffset.center, transform: _slop(i, j), child: child));
+                    },
+                  ))
+              .toList(),
+        ),
+      );
+    });
   }
 }
