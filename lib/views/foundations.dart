@@ -52,8 +52,10 @@ class _FoundationsState extends ConsumerState<Foundations> {
                     canHighlight: (PileEntry entry) => false,
                     canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
                     baseBuilder: () => Container(
-                        color: Colors.blue,
-                        child: const AspectRatio(aspectRatio: playingCardAspectRatio, child: Center(child: Text("A")))),
+                        color: Colors.green[700],
+                        child: AspectRatio(
+                            aspectRatio: playingCardAspectRatio,
+                            child: Center(child: Text("A", style: Theme.of(context).textTheme.headline2)))),
                     positioner: (int j, Widget child) {
                       return Align(
                           child: Transform(alignment: FractionalOffset.center, transform: _slop(i, j), child: child));

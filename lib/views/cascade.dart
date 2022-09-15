@@ -17,12 +17,16 @@ class Cascades extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var gs = ref.watch(gameStateProvider);
     // We sized the GameBoard to allow 10 columns of cards (in case there are 6 free cells.)
-    // Space our 8 evenly with 20% gap between them.
+    // Space our 8 evenly with 20% gap between them, 10% gap on either side.
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (var cascade in gs.cascades)
-          for (var i = 0; i < 2; i++) i == 0 ? Expanded(flex: 8, child: Cascade(entries: cascade)) : Spacer(flex: 2),
+        const Spacer(flex: 1),
+        for (var cascade in gs.cascades) ...[
+          Expanded(flex: 8, child: Cascade(entries: cascade)),
+          if (cascade != gs.cascades.last) const Spacer(flex: 2)
+        ],
+        const Spacer(flex: 1),
       ],
     );
   }

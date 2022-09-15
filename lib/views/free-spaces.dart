@@ -25,8 +25,17 @@ class FreeSpaces extends ConsumerWidget {
                     canHighlight: (PileEntry entry) => !entry.isTheBase,
                     canReceive: (PileEntry highlighted, PileEntry entry) => entry.isTheBase,
                     baseBuilder: () => Container(
-                        color: Colors.blue,
-                        child: AspectRatio(aspectRatio: playingCardAspectRatio, child: Center(child: Text("F!")))),
+                      color: Colors.green[700],
+                      child: AspectRatio(
+                        aspectRatio: playingCardAspectRatio,
+                        child: Center(
+                          child: Transform(
+                              transform: Matrix4.rotationZ(-.5),
+                              alignment: FractionalOffset.center,
+                              child: Text("FREE", style: Theme.of(context).textTheme.headline4)),
+                        ),
+                      ),
+                    ),
                     positioner: (int i, Widget child) => Align(child: child),
                   ))
               .toList(),

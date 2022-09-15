@@ -41,12 +41,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        textTheme: TextTheme(
+          bodyText1: TextStyle(),
+          bodyText2: TextStyle(),
+        ).apply(
+          bodyColor: Colors.orange,
+          displayColor: Colors.blue,
+        ),
       ),
       home: WillPopScope(
         // Ignore back button, preventing it from closing (and destroying) the app
         onWillPop: () async => false,
-        child: Container(padding: const EdgeInsets.all(20), color: Colors.green, child: const GameBoard()),
+        child: Container(padding: const EdgeInsets.all(10), color: Colors.green[400], child: const GameBoard()),
       ),
     );
   }
@@ -62,26 +68,30 @@ class GameBoard extends ConsumerWidget {
     final boardAspectRatio = playingCardAspectRatio * 10 / (2 + (maxCascade - 1) * Cascades.cardExposure);
     return Align(
       alignment: Alignment.topLeft,
-      child: ConstrainedAspectRatio(
-        maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller
-        child: Column(
-          children: [
-            Expanded(child: Cascades()),
-            Container(
-              color: Colors.red,
-              child: Row(children: [
-                Expanded(flex: 40, child: Foundations()),
-                Spacer(flex: 100 - 40 - (10 * gameState.numFreeCells)),
-                Expanded(
-                  flex: 10 * gameState.numFreeCells,
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: FreeSpaces(),
+      child: AnimatedContainer(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.all(Radius.circular(10))),
+        duration: Duration(seconds: 30),
+        child: ConstrainedAspectRatio(
+          maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller
+          child: Column(
+            children: [
+              Expanded(child: Cascades()),
+              Container(
+                child: Row(children: [
+                  Expanded(flex: 40, child: Foundations()),
+                  Spacer(flex: 100 - 40 - (10 * gameState.numFreeCells)),
+                  Expanded(
+                    flex: 10 * gameState.numFreeCells,
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: FreeSpaces(),
+                    ),
                   ),
-                ),
-              ]),
-            ),
-          ],
+                ]),
+              ),
+            ],
+          ),
         ),
       ),
     );
