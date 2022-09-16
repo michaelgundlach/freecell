@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../main.dart';
 import '../model/game-state.dart';
 import '../util/sound.dart';
 
@@ -16,10 +15,10 @@ class FreecellInteractTarget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var highlighted = ref.watch(gameStateProvider.select((gs) => gs.highlighted));
+    var highlighted = ref.watch(GameState.provider.select((gs) => gs.highlighted));
     return GestureDetector(
-      onTap: () async {
-        var model = ref.read(gameStateProvider);
+      onTapDown: (_) async {
+        var model = ref.read(GameState.provider);
         PileEntry? highlighted = model.highlighted;
 
         // Nobody highlighted: highlight us if we are allowed to be highlighted.

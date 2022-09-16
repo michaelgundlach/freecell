@@ -7,7 +7,6 @@ import 'package:freecell/views/pile-view.dart';
 import 'package:playing_cards/playing_cards.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
-import '../main.dart';
 import '../model/game-state.dart';
 
 class Foundations extends ConsumerStatefulWidget {
@@ -38,11 +37,11 @@ class _FoundationsState extends ConsumerState<Foundations> {
 
   @override
   Widget build(BuildContext context) {
-    var gameState = ref.watch(gameStateProvider);
+    var gameState = ref.watch(GameState.provider);
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       final cardWidth = constraints.maxWidth / 4;
       final cardHeight = cardWidth / playingCardAspectRatio;
-      return Container(
+      return SizedBox(
         height: cardHeight,
         child: Row(
           children: gameState.foundations

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/views/pile-view.dart';
 import 'package:playing_cards/playing_cards.dart';
 
-import '../main.dart';
 import '../model/game-state.dart';
 
 class FreeSpaces extends ConsumerWidget {
@@ -11,11 +10,11 @@ class FreeSpaces extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var gameState = ref.watch(gameStateProvider);
+    var gameState = ref.watch(GameState.provider);
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       final cardWidth = constraints.maxWidth / gameState.numFreeCells;
       final cardHeight = cardWidth / playingCardAspectRatio;
-      return Container(
+      return SizedBox(
         height: cardHeight,
         child: Row(
           children: gameState.freeCells

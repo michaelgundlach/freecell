@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 
 class PileEntry extends LinkedListEntry<PileEntry> {
@@ -63,4 +64,8 @@ class GameState extends ChangeNotifier {
     target.insertAfter(highlighted!);
     highlighted = null;
   }
+
+  static ChangeNotifierProvider<GameState> provider = ChangeNotifierProvider<GameState>((ref) {
+    return GameState();
+  });
 }

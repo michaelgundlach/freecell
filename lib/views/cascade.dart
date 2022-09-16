@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 
-import '../main.dart';
 import '../model/game-state.dart';
 import 'pile-view.dart';
 
@@ -15,7 +14,7 @@ class Cascades extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var gs = ref.watch(gameStateProvider);
+    var gs = ref.watch(GameState.provider);
     // We sized the GameBoard to allow 10 columns of cards (in case there are 6 free cells.)
     // Space our 8 evenly with 20% gap between them, 10% gap on either side.
     return Row(

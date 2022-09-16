@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freecell/views/cascade.dart';
-import 'package:freecell/views/constrained-aspect-ratio.dart';
 import 'package:playing_cards/playing_cards.dart';
 
-import 'freecell/deck-style.dart';
-import 'model/game-state.dart';
-import 'views/foundations.dart';
-import 'views/free-spaces.dart';
+import 'util/deck-style.dart';
+import 'views/game-board.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,16 +17,12 @@ void main() async {
 
 final deckStyleProvider = Provider<DeckStyle>((ref) {
   return DeckStyle(
-    elevation: 0,
+    elevation: 2,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(5),
-      side: const BorderSide(color: Colors.black, width: 1),
+      borderRadius: BorderRadius.circular(8),
+      side: const BorderSide(color: Colors.black45, width: 1),
     ),
   );
-});
-
-final gameStateProvider = ChangeNotifierProvider<GameState>((ref) {
-  return GameState();
 });
 
 class MyApp extends StatelessWidget {
@@ -53,46 +45,6 @@ class MyApp extends StatelessWidget {
         // Ignore back button, preventing it from closing (and destroying) the app
         onWillPop: () async => false,
         child: Container(padding: const EdgeInsets.all(10), color: Colors.green[400], child: const GameBoard()),
-      ),
-    );
-  }
-}
-
-class GameBoard extends ConsumerWidget {
-  const GameBoard({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final gameState = ref.watch(gameStateProvider);
-    final maxCascade = gameState.cascades.reduce((a, b) => a.length > b.length ? a : b).length + 2;
-    final boardAspectRatio = playingCardAspectRatio * 10 / (2 + (maxCascade - 1) * Cascades.cardExposure);
-    return Align(
-      alignment: Alignment.topLeft,
-      child: AnimatedContainer(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.all(Radius.circular(10))),
-        duration: Duration(seconds: 30),
-        child: ConstrainedAspectRatio(
-          maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller
-          child: Column(
-            children: [
-              Expanded(child: Cascades()),
-              Container(
-                child: Row(children: [
-                  Expanded(flex: 40, child: Foundations()),
-                  if (gameState.numFreeCells < 6) Spacer(flex: 100 - 40 - (10 * gameState.numFreeCells)),
-                  Expanded(
-                    flex: 10 * gameState.numFreeCells,
-                    child: Align(
-                      alignment: Alignment.topRight,
-                      child: FreeSpaces(),
-                    ),
-                  ),
-                ]),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
