@@ -49,6 +49,7 @@ class GameState extends ChangeNotifier {
     freeCells = List.generate(numFreeCells, (_) => emptyPile());
     foundations = List.generate(4, (_) => emptyPile());
     cascades = [for (int i = 0; i < 8; i++) someCards(i < 4 ? 7 : 6)];
+    notifyListeners();
   }
 
   _newDeck() {

@@ -14,6 +14,7 @@ class IntroScreen extends ConsumerWidget {
     return Material(
         child: Column(children: [
       TextField(
+        decoration: const InputDecoration(labelText: "Race number"),
         controller: controller,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],

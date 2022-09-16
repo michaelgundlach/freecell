@@ -60,7 +60,14 @@ class MyApp extends StatelessWidget {
         color: Theme.of(context).backgroundColor,
         child: Row(children: [
           const GameBoard(),
-          Consumer(builder: (_, ref, __) => Text(ref.watch(GameState.provider).seed.toString())),
+          Consumer(
+            builder: (_, ref, __) => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Material(
+                  child: Text(ref.watch(GameState.provider).seed.toString(),
+                      style: TextStyle(color: Theme.of(context).primaryColor))),
+            ),
+          ),
         ]),
       ),
     ),
