@@ -40,7 +40,7 @@ class GameState extends ChangeNotifier {
       return result;
     }
 
-    numFreeCells = 2;
+    numFreeCells = 5;
     freeCells = List.generate(numFreeCells, (_) => emptyPile());
     foundations = List.generate(4, (_) => emptyPile());
     cascades = [for (int i = 0; i < 8; i++) someCards(i < 4 ? 7 : 6)];

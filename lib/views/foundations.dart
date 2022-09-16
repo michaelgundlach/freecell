@@ -51,17 +51,21 @@ class _FoundationsState extends ConsumerState<Foundations> {
                     canHighlight: (PileEntry entry) => false,
                     canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
                     baseBuilder: () => Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).highlightColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: AspectRatio(
-                        aspectRatio: playingCardAspectRatio,
-                        child: FractionallySizedBox(
-                            widthFactor: .5,
-                            heightFactor: .5,
-                            child: FittedBox(
-                                fit: BoxFit.contain, child: Text("A", style: Theme.of(context).textTheme.headline4))),
+                      width: cardWidth,
+                      padding: const EdgeInsets.all(4), // same padding as PlayingCardView
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).highlightColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: AspectRatio(
+                          aspectRatio: playingCardAspectRatio,
+                          child: FractionallySizedBox(
+                              widthFactor: .5,
+                              heightFactor: .5,
+                              child: FittedBox(
+                                  fit: BoxFit.contain, child: Text("A", style: Theme.of(context).textTheme.headline4))),
+                        ),
                       ),
                     ),
 

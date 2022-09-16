@@ -15,18 +15,25 @@ class Cascades extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var gs = ref.watch(GameState.provider);
-    // We sized the GameBoard to allow 4 + numFreeCells columns of cards (8 minimum).
-    // Give 1000 to each cascade, then fill space with enough to equal (4+numFreecells)*1000.
-    final spacer = Spacer(flex: max(1, (gs.numFreeCells - 4) * 100));
+    // Space evenly around columns to use up all the width required by foundations and freecells.
+    const foundations = 4;
+    const cascadeColumns = 8;
+    final desiredColumns = max(foundations + gs.numFreeCells, cascadeColumns);
+    final blankColumns = desiredColumns - cascadeColumns;
+    const flexPerCascade = 1000;
+    const numSpacers = 9; // start, 7 between 8 columns, and end
+    final flexInAllSpacers = blankColumns * 1000;
+    final flexPerSpacer = max(flexInAllSpacers ~/ numSpacers, 1); // flex of 0 (numFreeCells <= 4) barfs
+    final spacer = Spacer(flex: flexPerSpacer);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         spacer,
         for (var cascade in gs.cascades) ...[
-          Expanded(flex: 1000, child: Cascade(entries: cascade)),
+          Expanded(flex: flexPerCascade, child: Cascade(entries: cascade)),
           spacer,
         ],
-        spacer,
       ],
     );
   }

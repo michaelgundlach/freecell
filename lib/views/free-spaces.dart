@@ -28,20 +28,24 @@ class FreeSpaces extends ConsumerWidget {
                   canHighlight: (PileEntry entry) => !entry.isTheBase,
                   canReceive: (PileEntry highlighted, PileEntry entry) => entry.isTheBase,
                   baseBuilder: () => Container(
-                    decoration:
-                        BoxDecoration(color: Theme.of(context).highlightColor, borderRadius: BorderRadius.circular(10)),
-                    child: AspectRatio(
-                      aspectRatio: playingCardAspectRatio,
-                      child: Center(
-                        child: Transform(
-                          transform: Matrix4.rotationZ(-.5),
-                          alignment: FractionalOffset.center,
-                          child: FractionallySizedBox(
-                              widthFactor: .7,
-                              heightFactor: .7,
-                              child: FittedBox(
-                                  fit: BoxFit.contain,
-                                  child: Text("FREE", style: Theme.of(context).textTheme.headline4))),
+                    width: cardWidth,
+                    padding: const EdgeInsets.all(4), // same padding as PlayingCardView
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).highlightColor, borderRadius: BorderRadius.circular(10)),
+                      child: AspectRatio(
+                        aspectRatio: playingCardAspectRatio,
+                        child: Center(
+                          child: Transform(
+                            transform: Matrix4.rotationZ(-.5),
+                            alignment: FractionalOffset.center,
+                            child: FractionallySizedBox(
+                                widthFactor: .7,
+                                heightFactor: .7,
+                                child: FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: Text("FREE", style: Theme.of(context).textTheme.headline4))),
+                          ),
                         ),
                       ),
                     ),

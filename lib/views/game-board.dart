@@ -41,10 +41,10 @@ class GameBoard extends ConsumerWidget {
             children: [
               const Expanded(child: Cascades()),
               Padding(
-                padding: const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.only(bottom: 5.0),
                 child: Row(children: [
                   const Expanded(flex: 40, child: Foundations()),
-                  const Spacer(flex: 2),
+                  const Spacer(flex: 1),
                   Expanded(flex: 10 * max(gameState.numFreeCells, 4), child: const FreeSpaces()),
                 ]),
               ),
