@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:playing_cards/playing_cards.dart';
+import 'package:freecell/model/game-state.dart';
+import 'package:go_router/go_router.dart';
 
 import 'util/deck-style.dart';
 import 'views/game-board.dart';
+import 'views/intro-screen.dart';
 
 final deckStyleProvider = Provider<DeckStyle>((ref) {
   return DeckStyle(
@@ -22,31 +24,45 @@ void main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   // Force to landscape mode
   await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         primaryColor: Colors.green[700],
         primaryColorDark: Colors.green[900],
         backgroundColor: Colors.green[500],
       ),
-      home: WillPopScope(
-        // Ignore back button, preventing it from closing (and destroying) the app
-        onWillPop: () async => false,
-        child: Builder(
-            builder: (context) => Container(
-                  padding: const EdgeInsets.all(10),
-                  color: Theme.of(context).backgroundColor,
-                  child: const GameBoard(),
-                )),
-      ),
+      routeInformationParser: _router.routeInformationParser,
+      routeInformationProvider: _router.routeInformationProvider,
+      routerDelegate: _router.routerDelegate,
     );
   }
+
+  final _router = GoRouter(routes: [
+    GoRoute(
+      path: "/",
+      builder: (context, state) => WillPopScope(
+        onWillPop: () async => false,
+        child: const IntroScreen(),
+      ),
+    ),
+    GoRoute(
+      path: "/game",
+      builder: (context, state) => Container(
+        padding: const EdgeInsets.all(10),
+        color: Theme.of(context).backgroundColor,
+        child: Row(children: [
+          const GameBoard(),
+          Consumer(builder: (_, ref, __) => Text(ref.watch(GameState.provider).seed.toString())),
+        ]),
+      ),
+    ),
+  ]);
 }

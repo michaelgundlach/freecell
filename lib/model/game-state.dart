@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,8 +31,12 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 
 class GameState extends ChangeNotifier {
   GameState() {
+    _init();
+  }
+
+  _init() {
     emptyPile() => LinkedList<PileEntry>()..add(PileEntry(null));
-    var deck = standardFiftyTwoCardDeck()..shuffle();
+    var deck = _newDeck();
     someCards(count) {
       var result = emptyPile();
       for (int i = 0; i < count; i++) {
@@ -46,10 +51,22 @@ class GameState extends ChangeNotifier {
     cascades = [for (int i = 0; i < 8; i++) someCards(i < 4 ? 7 : 6)];
   }
 
+  _newDeck() {
+    return standardFiftyTwoCardDeck()..shuffle(Random(seed));
+  }
+
+  int _seed = 1;
+  int get seed => _seed;
+  set seed(value) {
+    if (_seed == value) return;
+    _seed = value;
+    _init();
+  }
+
   late int numFreeCells;
-  late final List<LinkedList<PileEntry>> freeCells;
-  late final List<LinkedList<PileEntry>> foundations;
-  late final List<LinkedList<PileEntry>> cascades;
+  late List<LinkedList<PileEntry>> freeCells;
+  late List<LinkedList<PileEntry>> foundations;
+  late List<LinkedList<PileEntry>> cascades;
 
   PileEntry? _highlighted;
   PileEntry? get highlighted => _highlighted;
