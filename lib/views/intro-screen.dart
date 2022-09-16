@@ -15,6 +15,7 @@ class IntroScreen extends ConsumerWidget {
         child: Column(children: [
       TextField(
         controller: controller,
+        keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       ),
       ElevatedButton(
