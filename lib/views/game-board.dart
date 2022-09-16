@@ -20,7 +20,8 @@ class GameBoard extends ConsumerWidget {
       alignment: Alignment.topLeft,
       child: AnimatedContainer(
         padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.all(Radius.circular(10))),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.all(Radius.circular(10))),
         duration: Duration(seconds: 30),
         child: ConstrainedAspectRatio(
           maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller

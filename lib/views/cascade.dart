@@ -52,7 +52,8 @@ class Cascade extends ConsumerWidget {
             baseBuilder: () => AspectRatio(
                 aspectRatio: playingCardAspectRatio,
                 child: Container(
-                  decoration: BoxDecoration(color: Colors.blue[200], borderRadius: BorderRadius.circular(5)),
+                  decoration:
+                      BoxDecoration(color: Theme.of(context).highlightColor, borderRadius: BorderRadius.circular(5)),
                   width: constraints.maxWidth,
                 )),
             positioner: (i, child) {

@@ -25,7 +25,8 @@ class FreeSpaces extends ConsumerWidget {
                   canHighlight: (PileEntry entry) => !entry.isTheBase,
                   canReceive: (PileEntry highlighted, PileEntry entry) => entry.isTheBase,
                   baseBuilder: () => Container(
-                    decoration: BoxDecoration(color: Colors.green[700], borderRadius: BorderRadius.circular(10)),
+                    decoration:
+                        BoxDecoration(color: Theme.of(context).highlightColor, borderRadius: BorderRadius.circular(10)),
                     child: AspectRatio(
                       aspectRatio: playingCardAspectRatio,
                       child: Center(
