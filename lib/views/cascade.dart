@@ -15,17 +15,18 @@ class Cascades extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var gs = ref.watch(GameState.provider);
-    // We sized the GameBoard to allow 10 columns of cards (in case there are 6 free cells.)
-    // Space our 8 evenly with 20% gap between them, 10% gap on either side.
+    // We sized the GameBoard to allow 4 + numFreeCells columns of cards (8 minimum).
+    // Give 1000 to each cascade, then fill space with enough to equal (4+numFreecells)*1000.
+    final spacer = Spacer(flex: max(1, (gs.numFreeCells - 4) * 100));
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Spacer(flex: 1),
+        spacer,
         for (var cascade in gs.cascades) ...[
-          Expanded(flex: 8, child: Cascade(entries: cascade)),
-          if (cascade != gs.cascades.last) const Spacer(flex: 2)
+          Expanded(flex: 1000, child: Cascade(entries: cascade)),
+          spacer,
         ],
-        const Spacer(flex: 1),
+        spacer,
       ],
     );
   }
@@ -52,8 +53,10 @@ class Cascade extends ConsumerWidget {
             baseBuilder: () => AspectRatio(
                 aspectRatio: playingCardAspectRatio,
                 child: Container(
-                  decoration:
-                      BoxDecoration(color: Theme.of(context).highlightColor, borderRadius: BorderRadius.circular(5)),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).highlightColor,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                   width: constraints.maxWidth,
                 )),
             positioner: (i, child) {

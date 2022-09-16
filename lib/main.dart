@@ -32,15 +32,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.green)),
+      theme: ThemeData(
+        primaryColor: Colors.green[700],
+        primaryColorDark: Colors.green[900],
+        backgroundColor: Colors.green[500],
+      ),
       home: WillPopScope(
         // Ignore back button, preventing it from closing (and destroying) the app
         onWillPop: () async => false,
         child: Builder(
             builder: (context) => Container(
-                padding: const EdgeInsets.all(10),
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                child: const GameBoard())),
+                  padding: const EdgeInsets.all(10),
+                  color: Theme.of(context).backgroundColor,
+                  child: const GameBoard(),
+                )),
       ),
     );
   }

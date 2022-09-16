@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/views/pile-view.dart';
@@ -12,7 +14,7 @@ class FreeSpaces extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var gameState = ref.watch(GameState.provider);
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      final cardWidth = constraints.maxWidth / gameState.numFreeCells;
+      final cardWidth = constraints.maxWidth / max(gameState.numFreeCells, 4);
       final cardHeight = cardWidth / playingCardAspectRatio;
       return SizedBox(
         height: cardHeight,

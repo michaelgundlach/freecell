@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
@@ -15,30 +17,43 @@ class GameBoard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final gameState = ref.watch(GameState.provider);
     final maxCascade = gameState.cascades.reduce((a, b) => a.length > b.length ? a : b).length + 2;
-    final boardAspectRatio = playingCardAspectRatio * 10 / (2 + (maxCascade - 1) * Cascades.cardExposure);
+    final cardsWidth = 4 + max(4, gameState.numFreeCells);
+    final cardsHeight = 1 + 1 + (maxCascade - 1) * Cascades.cardExposure; // foundations, 1st card, and overlaps
+    final boardAspectRatio = cardsWidth / cardsHeight * playingCardAspectRatio;
     return Align(
       alignment: Alignment.topLeft,
-      child: AnimatedContainer(
-        padding: EdgeInsets.all(10),
+      child: Container(
+        padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.all(Radius.circular(10))),
-        duration: Duration(seconds: 30),
+          boxShadow: [
+            BoxShadow(
+              spreadRadius: 3,
+              color: Theme.of(context).primaryColorDark,
+              blurRadius: 2,
+            ),
+          ],
+          color: Theme.of(context).primaryColor,
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+        ),
         child: ConstrainedAspectRatio(
           maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller
           child: Column(
             children: [
-              Expanded(child: Cascades()),
-              Row(children: [
-                Expanded(flex: 40, child: Foundations()),
-                if (gameState.numFreeCells < 6) Spacer(flex: 100 - 40 - (10 * gameState.numFreeCells)),
-                Expanded(
-                  flex: 10 * gameState.numFreeCells,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: FreeSpaces(),
+              const Expanded(child: Cascades()),
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Row(children: [
+                  const Expanded(flex: 40, child: Foundations()),
+                  const Spacer(flex: 2),
+                  Expanded(
+                    flex: 10 * max(gameState.numFreeCells, 4),
+                    child: const Align(
+                      alignment: Alignment.centerRight,
+                      child: FreeSpaces(),
+                    ),
                   ),
-                ),
-              ]),
+                ]),
+              ),
             ],
           ),
         ),

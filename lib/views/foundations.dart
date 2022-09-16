@@ -52,7 +52,9 @@ class _FoundationsState extends ConsumerState<Foundations> {
                     canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
                     baseBuilder: () => Container(
                       decoration: BoxDecoration(
-                          color: Theme.of(context).highlightColor, borderRadius: BorderRadius.circular(10)),
+                        color: Theme.of(context).highlightColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       child: AspectRatio(
                         aspectRatio: playingCardAspectRatio,
                         child: FractionallySizedBox(
