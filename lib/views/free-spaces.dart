@@ -19,6 +19,7 @@ class FreeSpaces extends ConsumerWidget {
       return SizedBox(
         height: cardHeight,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: gameState.freeCells
               .map(
                 (pile) => PileView(
