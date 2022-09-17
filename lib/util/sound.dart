@@ -5,24 +5,31 @@ class Sound {
   final AudioPlayer _player;
   static final _sound = Sound._();
 
-  static Future<void> play(Sounds sound) async {
+  static play(Sounds sound) {
     // TODO Convince Flutter they have a bug re assets/ - it will randomly want to find them with or
     // without the assets/ prefix! >:(
-    try {
-      await _sound._player.setAsset('assets/audio/${_sound._fileForType(sound)}');
-    } catch (e) {
-      await _sound._player.setAsset('audio/${_sound._fileForType(sound)}');
-    }
-    _sound._player.play();
+    Future.delayed(Duration.zero, () async {
+      final file = _sound._fileForType(sound);
+      if (file == null) return;
+      try {
+        await _sound._player.setAsset('assets/audio/$file');
+      } catch (e) {
+        await _sound._player.setAsset('audio/$file');
+      }
+      await _sound._player.play();
+    });
   }
 
-  String _fileForType(Sounds sound) {
+  String? _fileForType(Sounds sound) {
     // TODO find out why some sounds work and some don't. What is wrong with their encoding?
+    // card-switch.wav : click
+    // card1.wav: slop
+    // cardSlid7.wav: shhhlop
     switch (sound) {
       case Sounds.highlighted:
-        return "card-switch.wav";
+        return null;
       case Sounds.played:
-        return "card1.wav";
+        return "card-switch.wav";
       case Sounds.failed:
         return "cardSlide7.wav";
     }

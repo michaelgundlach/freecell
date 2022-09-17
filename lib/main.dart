@@ -58,17 +58,7 @@ class MyApp extends StatelessWidget {
       builder: (context, state) => Container(
         padding: const EdgeInsets.all(10),
         color: Theme.of(context).backgroundColor,
-        child: Row(children: [
-          const GameBoard(),
-          Consumer(
-            builder: (_, ref, __) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Material(
-                  child: Text(ref.watch(GameState.provider).seed.toString(),
-                      style: TextStyle(color: Theme.of(context).primaryColor))),
-            ),
-          ),
-        ]),
+        child: const GameBoard(),
       ),
     ),
   ]);

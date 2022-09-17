@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 
+import '../util/rng.dart';
+
 class PileEntry extends LinkedListEntry<PileEntry> {
   PileEntry(this.card);
 
@@ -36,7 +38,7 @@ class GameState extends ChangeNotifier {
 
   _init() {
     emptyPile() => LinkedList<PileEntry>()..add(PileEntry(null));
-    var deck = _shuffle(standardFiftyTwoCardDeck());
+    var deck = _deckFromSeed();
     someCards(count) {
       var result = emptyPile();
       for (int i = 0; i < count; i++) {
@@ -52,8 +54,23 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
-  _shuffle(deck) {
-    return deck..shuffle(Random(seed));
+  _deckFromSeed() {
+    // In the order that Tynker uses: A of H S D C, 2 of H S D C, ..., K of H S D C
+    var deck = [
+      for (final index in [12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+        for (Suit suit in [Suit.hearts, Suit.spades, Suit.diamonds, Suit.clubs])
+          PlayingCard(suit, CardValue.values[index])
+    ];
+    return _shuffle(deck);
+  }
+
+  _shuffle(List<PlayingCard> deck) {
+    final rng = RNG(seed);
+    final shuffledDeck = [];
+    while (deck.isNotEmpty) {
+      shuffledDeck.add(deck.removeAt(rng.pickRandomBetweenOneAnd(deck.length) - 1));
+    }
+    return shuffledDeck;
   }
 
   int _seed = 1;

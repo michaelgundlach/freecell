@@ -37,16 +37,29 @@ class GameBoard extends ConsumerWidget {
         ),
         child: ConstrainedAspectRatio(
           maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller
-          child: Column(
+          child: Stack(
+            alignment: Alignment.bottomCenter,
             children: [
-              const Expanded(child: Cascades()),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5.0),
-                child: Row(children: [
-                  const Expanded(flex: 40, child: Foundations()),
-                  const Spacer(flex: 1),
-                  Expanded(flex: 10 * max(gameState.numFreeCells, 4), child: const FreeSpaces()),
-                ]),
+              Column(
+                children: [
+                  const Expanded(child: Cascades()),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5.0),
+                    child: Row(children: [
+                      const Expanded(flex: 40, child: Foundations()),
+                      const Spacer(flex: 1),
+                      Expanded(flex: 10 * max(gameState.numFreeCells, 4), child: const FreeSpaces()),
+                    ]),
+                  ),
+                ],
+              ),
+              Positioned(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Material(
+                      child: Text(ref.watch(GameState.provider).seed.toString(),
+                          style: TextStyle(color: Theme.of(context).primaryColor))),
+                ),
               ),
             ],
           ),
