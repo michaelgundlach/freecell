@@ -36,7 +36,7 @@ class GameState extends ChangeNotifier {
 
   _init() {
     emptyPile() => LinkedList<PileEntry>()..add(PileEntry(null));
-    var deck = _newDeck();
+    var deck = _shuffle(standardFiftyTwoCardDeck());
     someCards(count) {
       var result = emptyPile();
       for (int i = 0; i < count; i++) {
@@ -52,8 +52,8 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
-  _newDeck() {
-    return standardFiftyTwoCardDeck()..shuffle(Random(seed));
+  _shuffle(deck) {
+    return deck..shuffle(Random(seed));
   }
 
   int _seed = 1;
