@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Flutter Demo',
+      title: 'Freecell',
       theme: ThemeData(
         primaryColor: Colors.blue[700],
         primaryColorDark: Colors.blue[900],
