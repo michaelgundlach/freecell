@@ -1,7 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freecell/model/game-state.dart';
 import 'package:go_router/go_router.dart';
 
 import 'util/deck-style.dart';
@@ -12,7 +12,8 @@ final deckStyleProvider = Provider<DeckStyle>((ref) {
   return DeckStyle(
     elevation: 2,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
+      // Can't express radius as a % of width; give smaller on small screens
+      borderRadius: BorderRadius.circular(kIsWeb ? 8 : 4),
       side: const BorderSide(color: Colors.black45, width: 1),
     ),
   );

@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
@@ -10,7 +11,8 @@ import 'pile-view.dart';
 
 class Cascades extends ConsumerWidget {
   const Cascades({super.key});
-  static const cardExposure = .14;
+  // Fonts seem larger on web, can't see text w/o bigger exposure
+  static const cardExposure = kIsWeb ? .2 : .166;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

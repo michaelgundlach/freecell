@@ -16,10 +16,14 @@ class GameBoard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final gameState = ref.watch(GameState.provider);
-    final maxCascade = gameState.cascades.reduce((a, b) => a.length > b.length ? a : b).length + 2;
+    final longestCascade = gameState.cascades.reduce((a, b) => a.length > b.length ? a : b).length;
+    final mostCards = longestCascade - 1; // ignore base at cascade[0]
+    final fitThisManyCards = max(14, mostCards);
+    final reservedCascadeHeight = 1 + (fitThisManyCards - 1) * Cascades.cardExposure; // 1st card, then overlaps
+    const foundationHeight = 1;
+    final totalCardsHeight = foundationHeight + reservedCascadeHeight;
     final cardsWidth = 4 + max(4, gameState.numFreeCells);
-    final cardsHeight = 1 + 1 + (maxCascade - 1) * Cascades.cardExposure; // foundations, 1st card, and overlaps
-    final boardAspectRatio = cardsWidth / cardsHeight * playingCardAspectRatio;
+    final boardAspectRatio = cardsWidth / totalCardsHeight * playingCardAspectRatio;
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
