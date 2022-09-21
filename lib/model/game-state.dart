@@ -36,22 +36,23 @@ class GameState extends ChangeNotifier {
   }
 
   _init() {
-    emptyPile() => LinkedList<PileEntry>()..add(PileEntry(null));
     var deck = _deckFromSeed();
     someCards(count) {
-      var result = emptyPile();
+      var result = _emptyPile();
       for (int i = 0; i < count; i++) {
         result.add(PileEntry(deck.removeAt(0)));
       }
       return result;
     }
 
-    numFreeCells = 5;
-    freeCells = List.generate(numFreeCells, (_) => emptyPile());
-    foundations = List.generate(4, (_) => emptyPile());
+    numFreeCells = 1;
+    freeCells = List.generate(numFreeCells, (_) => _emptyPile());
+    foundations = List.generate(4, (_) => _emptyPile());
     cascades = [for (int i = 0; i < 8; i++) someCards(i < 4 ? 7 : 6)];
     notifyListeners();
   }
+
+  _emptyPile() => LinkedList<PileEntry>()..add(PileEntry(null));
 
   _deckFromSeed() {
     // In the order that Tynker uses: A of H S D C, 2 of H S D C, ..., K of H S D C
@@ -96,6 +97,10 @@ class GameState extends ChangeNotifier {
     assert(highlighted != null);
     highlighted!.unlink();
     target.insertAfter(highlighted!);
+    if (freeCells.every((cell) => !cell.last.isTheBase)) {
+      numFreeCells++;
+      freeCells.insert(0, _emptyPile());
+    }
     highlighted = null;
   }
 
