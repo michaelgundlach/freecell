@@ -7,6 +7,8 @@
 - App icon
 - win animation
 - feedback the more free cells you add
+- race code to the side
+- settings (easily extensible to add silly stuff over time?)
 
 - Make it look more like Tynker version, which is prettier:
   - Nice background color/image

@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.blue[700],
         primaryColorDark: Colors.blue[900],
-        backgroundColor: Colors.blue[500],
+        backgroundColor: Colors.blue[300],
       ),
       routeInformationParser: _router.routeInformationParser,
       routeInformationProvider: _router.routeInformationProvider,
