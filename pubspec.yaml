@@ -1,4 +1,4 @@
-name: Freecell
+name: freecell
 description: Freecell solitaire.
 
 # The following line prevents the package from being accidentally published to
@@ -48,6 +48,7 @@ dependencies:
   go_router: ^4.5.0
 
 dev_dependencies:
+
   flutter_test:
     sdk: flutter
 

@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freecell/views/pile-view.dart';
 import 'package:playing_cards/playing_cards.dart';
 
+import 'pile-view.dart';
 import '../model/game-state.dart';
 
 class FreeSpaces extends ConsumerWidget {
