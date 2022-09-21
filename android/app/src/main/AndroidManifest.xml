@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.freecell">
+    package="com.darkblueshark.freecell">
    <application
-        android:label="freecell"
+        android:label="Freecell"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

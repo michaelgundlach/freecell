@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "freecell" "\0"
+            VALUE "CompanyName", "Dark Blue Shark LLC" "\0"
+            VALUE "FileDescription", "Freecell" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "freecell" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
+            VALUE "InternalName", "Freecell" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 Dark Blue Shark LLC. All rights reserved." "\0"
             VALUE "OriginalFilename", "freecell.exe" "\0"
-            VALUE "ProductName", "freecell" "\0"
+            VALUE "ProductName", "Freecell" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

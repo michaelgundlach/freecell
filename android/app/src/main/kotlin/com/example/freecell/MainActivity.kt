@@ -1,4 +1,4 @@
-package com.example.freecell
+package com.darkblueshark.freecell
 
 import io.flutter.embedding.android.FlutterActivity
 

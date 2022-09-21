@@ -1,9 +1,16 @@
-# freecell
+# Freecell
 
 ## TODOs
 
+- pubspec.yaml points to github playing_cards, not file
+- random photos on AJQK
+- Capitalize Freecell wherever it's lowercased
+- App icon
+
 - Make it look more like Tynker version, which is prettier:
-  - Put everything on one fixed-aspect-ratio game board like in Tynker.  It's just better.
-    - No need for animating the container that way.
   - Nice background color/image
-  - Bigger font for playing cards
+
+- PR playing_cards changes
+
+Finally:
+- ship to store

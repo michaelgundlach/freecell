@@ -1,5 +1,5 @@
-name: freecell
-description: A new Flutter project.
+name: Freecell
+description: Freecell solitaire.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -41,7 +41,6 @@ dependencies:
 #    git: 
 #      url: https://github.com/michaelgundlach/playing_cards
 #      ref: bigger_font
-  assorted_layout_widgets: ^7.0.0
   flutter_riverpod: ^1.0.4
   collection: ^1.16.0
   vector_math: ^2.1.2
