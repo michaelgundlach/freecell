@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 
+import '../main.dart';
 import '../model/game-state.dart';
 import 'pile-view.dart';
 
@@ -63,8 +64,8 @@ class Cascade extends ConsumerWidget {
                 aspectRatio: playingCardAspectRatio,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).highlightColor,
-                    borderRadius: BorderRadius.circular(5),
+                    color: Theme.of(context).indicatorColor,
+                    borderRadius: BorderRadius.circular(ref.watch(deckStyleProvider).radius),
                   ),
                   width: constraints.maxWidth,
                 )),

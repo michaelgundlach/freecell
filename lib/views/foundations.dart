@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
+import '../main.dart';
 import 'pile-view.dart';
 import '../model/game-state.dart';
 
@@ -55,8 +56,8 @@ class _FoundationsState extends ConsumerState<Foundations> {
                       padding: const EdgeInsets.all(4), // same padding as PlayingCardView
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).highlightColor,
-                          borderRadius: BorderRadius.circular(10),
+                          color: Theme.of(context).indicatorColor,
+                          borderRadius: BorderRadius.circular(ref.watch(deckStyleProvider).radius),
                         ),
                         child: AspectRatio(
                           aspectRatio: playingCardAspectRatio,

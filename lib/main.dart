@@ -9,11 +9,13 @@ import 'views/game-board.dart';
 import 'views/intro-screen.dart';
 
 final deckStyleProvider = Provider<DeckStyle>((ref) {
+  const radius = kIsWeb ? 8.0 : 4.0;
   return DeckStyle(
+    radius: radius,
     elevation: 2,
     shape: RoundedRectangleBorder(
       // Can't express radius as a % of width; give smaller on small screens
-      borderRadius: BorderRadius.circular(kIsWeb ? 8 : 4),
+      borderRadius: BorderRadius.circular(radius),
       side: const BorderSide(color: Colors.black45, width: 1),
     ),
   );
@@ -24,7 +26,7 @@ void main() async {
   // Don't show Android UI overlays
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   // Force to landscape mode
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
   runApp(ProviderScope(child: MyApp()));
 }
 
