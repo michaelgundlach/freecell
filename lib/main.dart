@@ -24,7 +24,7 @@ final deckStyleProvider = Provider<DeckStyle>((ref) {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Don't show Android UI overlays
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   // Force to landscape mode
   await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
   runApp(ProviderScope(child: MyApp()));
