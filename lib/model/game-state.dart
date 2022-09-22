@@ -45,7 +45,7 @@ class GameState extends ChangeNotifier {
       return result;
     }
 
-    numFreeCells = 1;
+    numFreeCells = 2;
     freeCells = List.generate(numFreeCells, (_) => _emptyPile());
     foundations = List.generate(4, (_) => _emptyPile());
     cascades = [for (int i = 0; i < 8; i++) someCards(i < 4 ? 7 : 6)];
@@ -97,12 +97,16 @@ class GameState extends ChangeNotifier {
     assert(highlighted != null);
     highlighted!.unlink();
     target.insertAfter(highlighted!);
-    if (freeCells.every((cell) => !cell.last.isTheBase)) {
-      numFreeCells++;
-      freeCells.insert(0, _emptyPile());
-    }
     highlighted = null;
   }
+
+  void addFreeCell() {
+    numFreeCells++;
+    freeCells.insert(0, _emptyPile());
+    notifyListeners();
+  }
+
+  bool get freeCellsAreFull => freeCells.every((cell) => !cell.last.isTheBase);
 
   static ChangeNotifierProvider<GameState> provider = ChangeNotifierProvider<GameState>((ref) {
     return GameState();

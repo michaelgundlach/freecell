@@ -8,6 +8,7 @@ import 'package:playing_cards/playing_cards.dart';
 
 import '../main.dart';
 import '../model/game-state.dart';
+import 'free-spaces.dart';
 import 'pile-view.dart';
 
 class Cascades extends ConsumerWidget {
@@ -21,7 +22,7 @@ class Cascades extends ConsumerWidget {
     // Space evenly around columns to use up all the width required by foundations and freecells.
     const foundations = 4;
     const cascadeColumns = 8;
-    final desiredColumns = max(foundations + gs.numFreeCells, cascadeColumns);
+    var desiredColumns = max(foundations + FreeSpaces.numberOfColumns(gs), cascadeColumns);
     final blankColumns = desiredColumns - cascadeColumns;
     const flexPerCascade = 1000;
     const numSpacers = 9; // start, 7 between 8 columns, and end

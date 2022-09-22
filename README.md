@@ -7,7 +7,6 @@
 - settings (easily extensible to add silly stuff over time?)
 - win animation
 
-- allow rotation either way, don't force to left hand
 - Nice background color/image
 - random photos on AJQK
 

@@ -22,7 +22,7 @@ class GameBoard extends ConsumerWidget {
     final reservedCascadeHeight = 1 + (fitThisManyCards - 1) * Cascades.cardExposure; // 1st card, then overlaps
     const foundationHeight = 1;
     final totalCardsHeight = foundationHeight + reservedCascadeHeight;
-    final cardsWidth = 4 + max(4, gameState.numFreeCells);
+    final cardsWidth = 4 + FreeSpaces.numberOfColumns(gameState);
     final boardAspectRatio = cardsWidth / totalCardsHeight * playingCardAspectRatio;
     return Align(
       alignment: Alignment.topLeft,
@@ -52,7 +52,7 @@ class GameBoard extends ConsumerWidget {
                     child: Row(children: [
                       const Expanded(flex: 40, child: Foundations()),
                       const Spacer(flex: 1),
-                      Expanded(flex: 10 * max(gameState.numFreeCells, 4), child: const FreeSpaces()),
+                      Expanded(flex: 10 * FreeSpaces.numberOfColumns(gameState), child: const FreeSpaces()),
                     ]),
                   ),
                 ],
