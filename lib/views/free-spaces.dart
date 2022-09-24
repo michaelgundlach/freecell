@@ -44,16 +44,21 @@ class FreeSpaces extends ConsumerWidget {
     final color = Theme.of(context).highlightColor;
     return Center(
       child: Container(
+        padding: const EdgeInsets.all(4.0),
         width: cardWidth,
-        height: cardWidth,
-        padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
-        child: GestureDetector(
-          onTap: () => gameState.addFreeCell(),
-          child: Container(
-            width: cardWidth,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(100)),
-            child: Text("+", style: Theme.of(context).textTheme.headline4!),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: GestureDetector(
+            onTap: () => gameState.addFreeCell(),
+            child: Container(
+              width: cardWidth / 1.9,
+              height: cardWidth / 1.9,
+              decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(100)),
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Text("+", style: Theme.of(context).textTheme.caption),
+              ),
+            ),
           ),
         ),
       ),
