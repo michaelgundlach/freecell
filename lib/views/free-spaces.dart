@@ -87,5 +87,6 @@ class FreeSpaces extends ConsumerWidget {
     );
   }
 
-  static int numberOfColumns(GameState gs) => max(4, gs.numFreeCells + (gs.freeCellsAreFull ? 1 : 0));
+  /// At least 4 columns (we have 8 cascades and 4 foundations) and leave room for the More button.
+  static int numberOfColumns(GameState gs) => max(4, gs.numFreeCells + 1);
 }
