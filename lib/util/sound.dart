@@ -1,8 +1,16 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
-_Sound sound = _Sound();
+final soundProvider = ChangeNotifierProvider<Sound>((ref) {
+  return Sound._();
+});
 
-class _Sound {
+class Sound extends ChangeNotifier {
+  Sound._() {
+    init();
+  }
+
   final AudioPlayer _sfxPlayer = AudioPlayer();
   final AudioPlayer _musicPlayer = AudioPlayer();
 
@@ -11,6 +19,8 @@ class _Sound {
     await _musicPlayer.setVolume(0.12);
     await _preloadSound(_musicPlayer, Sounds.polka);
   }
+
+  get musicPlaying => _musicPlayer.playing;
 
   toggleMusic() async {
     if (_musicPlayer.playing) {
@@ -21,6 +31,7 @@ class _Sound {
       _musicPlayer.play();
       print("MUSIC ON");
     }
+    notifyListeners();
   }
 
   Future<bool> _preloadSound(player, sound) async {

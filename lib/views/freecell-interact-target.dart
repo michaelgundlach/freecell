@@ -16,6 +16,7 @@ class FreecellInteractTarget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var highlighted = ref.watch(GameState.provider.select((gs) => gs.highlighted));
+    var sound = ref.watch(soundProvider);
     return GestureDetector(
       onTapDown: (_) async {
         var model = ref.read(GameState.provider);
