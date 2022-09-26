@@ -11,6 +11,7 @@ class PileView extends StatelessWidget {
   final LinkedList<PileEntry> entries;
   final bool Function(PileEntry entry) canHighlight;
   final bool Function(PileEntry highlighted, PileEntry entry) canReceive;
+  final void Function(PileEntry entry)? received;
   final Widget Function() baseBuilder;
   final Widget Function(int i, Widget child) positioner;
 
@@ -20,6 +21,7 @@ class PileView extends StatelessWidget {
       required this.canReceive,
       required this.baseBuilder,
       required this.positioner,
+      this.received,
       super.key});
 
   @override
@@ -34,6 +36,7 @@ class PileView extends StatelessWidget {
       result = FreecellInteractTarget(
         canHighlight: () => canHighlight(entry),
         canReceive: (PileEntry highlighted) => canReceive(highlighted, entry),
+        received: received ?? (_) {},
         entry: entry,
         child: result,
       );
@@ -41,49 +44,3 @@ class PileView extends StatelessWidget {
     return entry.isTheBase ? Align(alignment: Alignment.topCenter, child: result) : positioner(i, result);
   }
 }
-
-/*
-
-GameMat sets aspect ratio to 10 cards by (whatever is needed for maxCards + 2)
- - but then gets taller if possible to fill container
- - so we need to write our own LayoutBuilder-based ConstrainedAspectRatio
-
- Top row of game mat is top aligned, so the stacks stay at the top of the screen
-
-
-                      child: PileView(
-                        width: full width? no, only wide enough that you can stack all the cards well given the offset
-                          function.  
-                        dont_forget_to:
-                            "let it grow somehow, maybe with overflowbox, to make room for any babies it places",
-                        entries: cascade,
-                        eachCardOffsetRelativeToLast: as a percentage of card width and height
-                            "a little bit lower so we can see the label",
-                            we are told we are card # 5 and we give an offset from base.  5 * exposure_pct * card height
-                        baseBuilder: () => "a nice empty space picture",
-                      ),
-
-                      each Foundation:
-                        size: who knows
-                        child: PileView(
-                          growth via overflowbox is intrinsic to PileView, not an option passed in
-                          entries: foundation[i],
-                          eachCardOffsetRelativeToLast: very tiny vertical offset - bonus if we can rotate
-                            looks like we want an offset relative to base.  so it needs ot be told which # in pile it is
-                          baseBuilder: () => "a little ace logo"
-                        )
-                      )
-
-                      each FreeCell:
-                        size: who knows
-                        child: PileView(
-                          same growth deal.  it is given a size, it uses all of it, it locks cards to that size.
-                          baseBuilder: a free cell
-                          cardoffset: 0
-                          canReceive: entries.isEmpty
-                          receive: gamestate.move
-
-
-                        )
-
-                      */

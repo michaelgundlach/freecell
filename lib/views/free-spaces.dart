@@ -8,14 +8,24 @@ import 'package:playing_cards/playing_cards.dart';
 import 'pile-view.dart';
 import '../model/game-state.dart';
 
-class FreeSpaces extends ConsumerWidget {
-  const FreeSpaces({Key? key}) : super(key: key);
+class FreeSpaces extends ConsumerStatefulWidget {
+  const FreeSpaces({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FreeSpaces> createState() => _FreeSpacesState();
+
+  /// At least 4 columns (we have 8 cascades and 4 foundations) and leave room for the More button.
+  static int numberOfColumns(GameState gs) => max(4, gs.numFreeCells + 1);
+}
+
+class _FreeSpacesState extends ConsumerState<FreeSpaces> {
+  var showButton = false;
+
+  @override
+  Widget build(BuildContext context) {
     var gameState = ref.watch(GameState.provider);
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      final cardWidth = constraints.maxWidth / numberOfColumns(gameState);
+      final cardWidth = constraints.maxWidth / FreeSpaces.numberOfColumns(gameState);
       final cardHeight = cardWidth / playingCardAspectRatio;
       return SizedBox(
         height: cardHeight,
@@ -28,6 +38,9 @@ class FreeSpaces extends ConsumerWidget {
                 entries: pile,
                 canHighlight: (PileEntry entry) => !entry.isTheBase,
                 canReceive: (PileEntry highlighted, PileEntry entry) => entry.isTheBase,
+                received: (entry) {
+                  if (ref.read(GameState.provider).freeCellsAreFull) setState(() => showButton = true);
+                },
                 baseBuilder: () => _buildBase(context, ref, cardWidth),
                 positioner: (_, Widget child) => child,
               ),
@@ -40,9 +53,12 @@ class FreeSpaces extends ConsumerWidget {
 
   Widget _moreButton(context, GameState gameState, cardWidth) {
     Widget button = const SizedBox.shrink();
-    if (gameState.freeCellsAreFull) {
+    if (showButton) {
       button = GestureDetector(
-        onTap: () => gameState.addFreeCell(),
+        onTap: () {
+          setState(() => showButton = false);
+          gameState.addFreeCell();
+        },
         child: Container(
           width: cardWidth / 1.9,
           height: cardWidth / 1.9,
@@ -59,10 +75,9 @@ class FreeSpaces extends ConsumerWidget {
         child: Align(
           alignment: Alignment.centerRight,
           child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 600),
-            reverseDuration: const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 800),
+            reverseDuration: const Duration(milliseconds: 0),
             switchInCurve: Curves.fastOutSlowIn,
-            switchOutCurve: Curves.fastOutSlowIn,
             child: button,
           ),
         ),
@@ -96,7 +111,4 @@ class FreeSpaces extends ConsumerWidget {
       ),
     );
   }
-
-  /// At least 4 columns (we have 8 cascades and 4 foundations) and leave room for the More button.
-  static int numberOfColumns(GameState gs) => max(4, gs.numFreeCells + 1);
 }

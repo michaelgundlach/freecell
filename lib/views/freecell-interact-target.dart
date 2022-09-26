@@ -7,11 +7,17 @@ import '../util/sound.dart';
 class FreecellInteractTarget extends ConsumerWidget {
   final bool Function() canHighlight;
   final bool Function(PileEntry) canReceive;
+  final void Function(PileEntry) received;
   final PileEntry entry;
   final Widget child;
 
   const FreecellInteractTarget(
-      {required this.canHighlight, required this.canReceive, required this.entry, required this.child, super.key});
+      {required this.canHighlight,
+      required this.canReceive,
+      required this.received,
+      required this.entry,
+      required this.child,
+      super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,6 +42,7 @@ class FreecellInteractTarget extends ConsumerWidget {
         // Somebody highlighted and we can receive them
         else if (canReceive(highlighted)) {
           model.moveHighlightedOnto(entry);
+          received(entry);
           await sound.sfx(Sounds.played);
         }
         // Somebody highlighted and we can't receive them: cancel highlight
