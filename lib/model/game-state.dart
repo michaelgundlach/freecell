@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,7 +74,7 @@ class GameState extends ChangeNotifier {
     return shuffledDeck;
   }
 
-  int _seed = 1;
+  int _seed = Random().nextInt(1000000); // TODO temp
   int get seed => _seed;
   set seed(value) {
     if (_seed == value) return;

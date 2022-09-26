@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
     ),
     GoRoute(
       path: "/",
-      builder: (_, __) => GameSurface(),
+      builder: (_, __) => const GameSurface(),
     ),
     GoRoute(
       path: "/oldgame",
@@ -79,11 +79,11 @@ class GameSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
       color: Theme.of(context).backgroundColor,
       child: Row(children: const [
-        GameMat(),
-        Expanded(child: SettingsPanel()),
+        Expanded(child: GameMat()),
+        SettingsPanel(),
       ]),
     );
   }

@@ -12,25 +12,28 @@ class SettingsPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sound = ref.watch(soundProvider);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        GestureDetector(
-          onTap: () => sound.toggleMusic(),
-          child: Column(
-            children: [
-              SizedBox(width: 130, child: Image.asset("assets/images/accordion.png")),
-              FittedBox(
-                fit: BoxFit.fill,
-                child:
-                    Text(sound.musicPlaying ? _polkaNo() : "POLKA PLS", style: Theme.of(context).textTheme.bodyLarge),
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          GestureDetector(
+            onTap: () => sound.toggleMusic(),
+            child: Column(
+              children: [
+                SizedBox(width: 130, child: Image.asset("assets/images/accordion.png")),
+                FittedBox(
+                  fit: BoxFit.fill,
+                  child:
+                      Text(sound.musicPlaying ? _polkaNo() : "POLKA PLS", style: Theme.of(context).textTheme.bodyLarge),
+                ),
+              ],
+            ),
           ),
-        ),
-        const Tiger(),
-      ],
+          const Tiger(),
+        ],
+      ),
     );
   }
 
