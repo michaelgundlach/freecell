@@ -2,14 +2,15 @@
 
 ## TODOs
 
-- feedback the more free cells you add
 - race code to the side
+- feedback the more free cells you add
 - settings (easily extensible to add silly stuff over time?)
 - win animation
-- more button disappears, not fades out, when you click it
 
 - Nice background color/image
 - random photos on AJQK
+- music on intro, with floaty tiger.  what a cool sound!
+
 
 Finally:
 - PR playing_cards changes

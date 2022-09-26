@@ -66,7 +66,7 @@ class Sound extends ChangeNotifier {
       case Sounds.failed:
         return "cardSlide7.wav";
       case Sounds.polka:
-        return "tech-polka.mp3";
+        return "waltz-polka.mp3";
     }
   }
 }
