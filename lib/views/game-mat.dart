@@ -42,8 +42,15 @@ class GameMat extends ConsumerWidget {
         child: ConstrainedAspectRatio(
           maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller
           child: Stack(
-            alignment: Alignment.bottomCenter,
+            alignment: Alignment.center,
             children: [
+              Align(
+                alignment: const FractionalOffset(0.5, 0.7),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset("assets/images/freecell-logo.png"),
+                ),
+              ),
               Column(
                 children: [
                   const Expanded(child: Cascades()),
@@ -56,14 +63,6 @@ class GameMat extends ConsumerWidget {
                     ]),
                   ),
                 ],
-              ),
-              Positioned(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                      child: Text(ref.watch(GameState.provider).seed.toString(),
-                          style: TextStyle(color: Theme.of(context).primaryColor))),
-                ),
               ),
             ],
           ),

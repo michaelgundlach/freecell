@@ -47,7 +47,6 @@ class _FoundationsState extends ConsumerState<Foundations> {
         child: Row(
           children: gameState.foundations
               .mapIndexed((i, pile) => PileView(
-                    // TODO right
                     entries: pile,
                     canHighlight: (PileEntry entry) => false,
                     canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
@@ -62,14 +61,20 @@ class _FoundationsState extends ConsumerState<Foundations> {
                         child: AspectRatio(
                           aspectRatio: playingCardAspectRatio,
                           child: FractionallySizedBox(
-                              widthFactor: .5,
+                              widthFactor: .8,
                               heightFactor: .5,
                               child: FittedBox(
-                                  fit: BoxFit.contain, child: Text("A", style: Theme.of(context).textTheme.headline4))),
+                                alignment: const FractionalOffset(0.3, 0),
+                                fit: BoxFit.contain,
+                                child: Text("A",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline4!
+                                        .copyWith(fontFamily: "Gwendolyn", fontWeight: FontWeight.bold)),
+                              )),
                         ),
                       ),
                     ),
-
                     positioner: (int j, Widget child) {
                       return Align(
                           child: Transform(alignment: FractionalOffset.center, transform: _slop(i, j), child: child));
