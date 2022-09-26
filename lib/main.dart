@@ -5,8 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'util/deck-style.dart';
-import 'views/game-board.dart';
+import 'util/sound.dart';
+import 'views/game-mat.dart';
 import 'views/intro-screen.dart';
+import 'views/settings-panel.dart';
 
 final deckStyleProvider = Provider<DeckStyle>((ref) {
   const radius = kIsWeb ? 8.0 : 4.0;
@@ -23,6 +25,7 @@ final deckStyleProvider = Provider<DeckStyle>((ref) {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  sound.init();
   // Don't show Android UI overlays
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   // Force to landscape mode
@@ -50,19 +53,39 @@ class MyApp extends StatelessWidget {
 
   final _router = GoRouter(routes: [
     GoRoute(
-      path: "/",
+      path: "/oldhome",
       builder: (context, state) => WillPopScope(
         onWillPop: () async => false,
         child: const IntroScreen(),
       ),
     ),
     GoRoute(
-      path: "/game",
+      path: "/",
+      builder: (_, __) => GameSurface(),
+    ),
+    GoRoute(
+      path: "/oldgame",
       builder: (context, state) => Container(
         padding: const EdgeInsets.all(10),
         color: Theme.of(context).backgroundColor,
-        child: const GameBoard(),
+        child: const GameMat(),
       ),
     ),
   ]);
+}
+
+class GameSurface extends StatelessWidget {
+  const GameSurface({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      color: Theme.of(context).backgroundColor,
+      child: Row(children: const [
+        GameMat(),
+        Expanded(child: SettingsPanel()),
+      ]),
+    );
+  }
 }

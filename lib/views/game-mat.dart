@@ -10,8 +10,8 @@ import 'constrained-aspect-ratio.dart';
 import 'foundations.dart';
 import 'free-spaces.dart';
 
-class GameBoard extends ConsumerWidget {
-  const GameBoard({super.key});
+class GameMat extends ConsumerWidget {
+  const GameMat({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

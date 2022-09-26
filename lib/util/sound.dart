@@ -1,23 +1,45 @@
 import 'package:just_audio/just_audio.dart';
 
-class Sound {
-  Sound._() : _player = AudioPlayer();
-  final AudioPlayer _player;
-  static final _sound = Sound._();
+_Sound sound = _Sound();
 
-  static play(Sounds sound) {
+class _Sound {
+  final AudioPlayer _sfxPlayer = AudioPlayer();
+  final AudioPlayer _musicPlayer = AudioPlayer();
+
+  init() async {
+    await _musicPlayer.setLoopMode(LoopMode.one);
+    await _musicPlayer.setVolume(0.12);
+    await _preloadSound(_musicPlayer, Sounds.polka);
+  }
+
+  toggleMusic() async {
+    if (_musicPlayer.playing) {
+      await _musicPlayer.pause();
+      await _musicPlayer.seek(Duration.zero);
+      print("MUSIC OFF");
+    } else {
+      _musicPlayer.play();
+      print("MUSIC ON");
+    }
+  }
+
+  Future<bool> _preloadSound(player, sound) async {
     // TODO Convince Flutter they have a bug re assets/ - it will randomly want to find them with or
     // without the assets/ prefix! >:(
-    Future.delayed(Duration.zero, () async {
-      final file = _sound._fileForType(sound);
-      if (file == null) return;
-      try {
-        await _sound._player.setAsset('assets/audio/$file');
-      } catch (e) {
-        await _sound._player.setAsset('audio/$file');
-      }
-      await _sound._player.play();
-    });
+    final file = _fileForType(sound);
+    if (file == null) return false;
+    try {
+      await player.setAsset('assets/audio/$file');
+      return true;
+    } catch (e) {
+      await player.setAsset('audio/$file');
+      return true;
+    }
+  }
+
+  sfx(Sounds sound) async {
+    await _preloadSound(_sfxPlayer, sound);
+    _sfxPlayer.play();
   }
 
   String? _fileForType(Sounds sound) {
@@ -32,6 +54,8 @@ class Sound {
         return "card-switch.wav";
       case Sounds.failed:
         return "cardSlide7.wav";
+      case Sounds.polka:
+        return "tech-polka.mp3";
     }
   }
 }
@@ -40,4 +64,5 @@ enum Sounds {
   highlighted,
   played,
   failed,
+  polka,
 }

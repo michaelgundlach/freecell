@@ -25,7 +25,7 @@ class FreecellInteractTarget extends ConsumerWidget {
         if (highlighted == null) {
           if (canHighlight()) {
             model.highlighted = entry;
-            await Sound.play(Sounds.highlighted);
+            await sound.sfx(Sounds.highlighted);
           }
         }
         // Somebody highlighted: if it's us, cancel highlight
@@ -35,12 +35,12 @@ class FreecellInteractTarget extends ConsumerWidget {
         // Somebody highlighted and we can receive them
         else if (canReceive(highlighted)) {
           model.moveHighlightedOnto(entry);
-          await Sound.play(Sounds.played);
+          await sound.sfx(Sounds.played);
         }
         // Somebody highlighted and we can't receive them: cancel highlight
         else {
           model.highlighted = null;
-          await Sound.play(Sounds.failed);
+          await sound.sfx(Sounds.failed);
         }
       },
       child: highlighted == entry ? Glow(child: child) : child,
