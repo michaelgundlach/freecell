@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/game-state.dart';
+import '../../model/game-state.dart';
 
 /// Friendly tiger who controls the seed and comments upon your play.
 

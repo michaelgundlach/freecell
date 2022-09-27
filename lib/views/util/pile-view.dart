@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'freecell-card-view.dart';
-import '../model/game-state.dart';
+import '../../model/game-state.dart';
 import 'freecell-interact-target.dart';
 
 class PileView extends StatelessWidget {

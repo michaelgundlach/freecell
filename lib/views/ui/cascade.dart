@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 
-import '../main.dart';
-import '../model/game-state.dart';
+import '../../main.dart';
+import '../../model/game-state.dart';
 import 'free-spaces.dart';
-import 'pile-view.dart';
+import '../util/pile-view.dart';
 
 class Cascades extends ConsumerWidget {
   const Cascades({super.key});
@@ -55,21 +55,26 @@ class Cascade extends ConsumerWidget {
         final cardHeight = constraints.maxWidth / playingCardAspectRatio;
         final cardsShown = max(1, 1 + (entries.length - 2) * Cascades.cardExposure);
         final pileHeight = cardHeight * cardsShown;
+        final radius = Radius.circular(ref.watch(deckStyleProvider).radius);
         return SizedBox(
           height: pileHeight,
           child: PileView(
             entries: entries,
             canHighlight: (entry) => !entry.isTheBase,
             canReceive: (highlighted, entry) => entry.canCascade(highlighted),
-            baseBuilder: () => AspectRatio(
-                aspectRatio: playingCardAspectRatio,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).indicatorColor,
-                    borderRadius: BorderRadius.circular(ref.watch(deckStyleProvider).radius),
-                  ),
-                  width: constraints.maxWidth,
-                )),
+            baseBuilder: () => Container(
+              width: constraints.maxWidth,
+              height: cardHeight,
+              foregroundDecoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topLeft: radius, topRight: radius),
+                gradient: LinearGradient(
+                  colors: [Theme.of(context).indicatorColor, Theme.of(context).primaryColor],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: const [0, 0.8],
+                ),
+              ),
+            ),
             positioner: (i, child) {
               return Positioned(top: Cascades.cardExposure * cardHeight * (i - 1), left: 0, right: 0, child: child);
             },

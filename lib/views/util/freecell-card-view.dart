@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 
-import '../main.dart';
+import '../../main.dart';
 
 class FreecellCardView extends ConsumerWidget {
   const FreecellCardView({required this.card, this.covered = false, super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/game-state.dart';
-import '../util/sound.dart';
+import '../../model/game-state.dart';
+import '../../util/sound.dart';
 
 class FreecellInteractTarget extends ConsumerWidget {
   final bool Function() canHighlight;

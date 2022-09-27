@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 
-import '../model/game-state.dart';
+import '../../model/game-state.dart';
 import 'cascade.dart';
-import 'constrained-aspect-ratio.dart';
+import '../util/constrained-aspect-ratio.dart';
 import 'foundations.dart';
 import 'free-spaces.dart';
-import 'text-stamp.dart';
+import '../util/text-stamp.dart';
 
 class GameMat extends ConsumerWidget {
   const GameMat({super.key});

@@ -6,10 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
-import '../main.dart';
-import 'pile-view.dart';
-import '../model/game-state.dart';
-import 'text-stamp.dart';
+import '../../main.dart';
+import '../util/pile-view.dart';
+import '../../model/game-state.dart';
+import '../util/text-stamp.dart';
 
 class Foundations extends ConsumerStatefulWidget {
   const Foundations({Key? key}) : super(key: key);
@@ -58,6 +58,13 @@ class _FoundationsState extends ConsumerState<Foundations> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).indicatorColor,
                           borderRadius: BorderRadius.circular(ref.watch(deckStyleProvider).radius),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).primaryColorDark,
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                            )
+                          ],
                         ),
                         child: const AspectRatio(
                           aspectRatio: playingCardAspectRatio,

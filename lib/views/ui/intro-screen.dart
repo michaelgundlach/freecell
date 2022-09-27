@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../model/game-state.dart';
+import '../../model/game-state.dart';
 
 class IntroScreen extends ConsumerWidget {
   const IntroScreen({super.key});

@@ -5,8 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/main.dart';
 import 'package:playing_cards/playing_cards.dart';
 
-import 'pile-view.dart';
-import '../model/game-state.dart';
+import '../util/pile-view.dart';
+import '../../model/game-state.dart';
+import '../util/text-stamp.dart';
 
 class FreeSpaces extends ConsumerStatefulWidget {
   const FreeSpaces({super.key});
@@ -93,6 +94,13 @@ class _FreeSpacesState extends ConsumerState<FreeSpaces> {
         decoration: BoxDecoration(
           color: Theme.of(context).indicatorColor,
           borderRadius: BorderRadius.circular(ref.watch(deckStyleProvider).radius),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).primaryColorDark,
+              spreadRadius: 1,
+              blurRadius: 5,
+            )
+          ],
         ),
         child: AspectRatio(
           aspectRatio: playingCardAspectRatio,
@@ -100,10 +108,10 @@ class _FreeSpacesState extends ConsumerState<FreeSpaces> {
             child: Transform(
               transform: Matrix4.rotationZ(-.5),
               alignment: FractionalOffset.center,
-              child: FractionallySizedBox(
+              child: const FractionallySizedBox(
                 widthFactor: .7,
                 heightFactor: .7,
-                child: FittedBox(fit: BoxFit.contain, child: Text("FREE", style: Theme.of(context).textTheme.caption)),
+                child: TextStamp("FREE", fontFamily: "Gwendolyn", shadow: 3),
               ),
             ),
           ),

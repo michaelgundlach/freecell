@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'util/deck-style.dart';
-import 'views/game-mat.dart';
-import 'views/intro-screen.dart';
-import 'views/settings-panel.dart';
+import 'views/ui/game-mat.dart';
+import 'views/ui/intro-screen.dart';
+import 'views/ui/settings-panel.dart';
 
 final deckStyleProvider = Provider<DeckStyle>((ref) {
   const radius = kIsWeb ? 8.0 : 4.0;
