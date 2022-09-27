@@ -9,6 +9,7 @@ import 'package:vector_math/vector_math_64.dart' hide Colors;
 import '../main.dart';
 import 'pile-view.dart';
 import '../model/game-state.dart';
+import 'text-stamp.dart';
 
 class Foundations extends ConsumerStatefulWidget {
   const Foundations({Key? key}) : super(key: key);
@@ -58,26 +59,20 @@ class _FoundationsState extends ConsumerState<Foundations> {
                           color: Theme.of(context).indicatorColor,
                           borderRadius: BorderRadius.circular(ref.watch(deckStyleProvider).radius),
                         ),
-                        child: AspectRatio(
+                        child: const AspectRatio(
                           aspectRatio: playingCardAspectRatio,
                           child: FractionallySizedBox(
                               widthFactor: .8,
                               heightFactor: .5,
-                              child: FittedBox(
-                                alignment: const FractionalOffset(0.3, 0),
-                                fit: BoxFit.contain,
-                                child: Text("A",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline4!
-                                        .copyWith(fontFamily: "Gwendolyn", fontWeight: FontWeight.bold)),
-                              )),
+                              alignment: FractionalOffset(0.3, 0.5),
+                              child: TextStamp("A", fontFamily: "Gwendolyn", shadow: 2)),
                         ),
                       ),
                     ),
                     positioner: (int j, Widget child) {
                       return Align(
-                          child: Transform(alignment: FractionalOffset.center, transform: _slop(i, j), child: child));
+                        child: Transform(alignment: FractionalOffset.center, transform: _slop(i, j), child: child),
+                      );
                     },
                   ))
               .toList(),

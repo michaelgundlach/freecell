@@ -9,6 +9,7 @@ import 'cascade.dart';
 import 'constrained-aspect-ratio.dart';
 import 'foundations.dart';
 import 'free-spaces.dart';
+import 'text-stamp.dart';
 
 class GameMat extends ConsumerWidget {
   const GameMat({super.key});
@@ -42,13 +43,15 @@ class GameMat extends ConsumerWidget {
         child: ConstrainedAspectRatio(
           maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller
           child: Stack(
-            alignment: Alignment.center,
             children: [
-              Align(
-                alignment: const FractionalOffset(0.5, 0.7),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset("assets/images/freecell-logo.png"),
+              const Align(
+                alignment: FractionalOffset(0.5, 0.7),
+                child: FractionallySizedBox(
+                  widthFactor: 0.5,
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1),
+                  ),
                 ),
               ),
               Column(
