@@ -45,9 +45,9 @@ class GameMat extends ConsumerWidget {
           child: Stack(
             children: [
               const Align(
-                alignment: FractionalOffset(0.5, 0.7),
+                alignment: FractionalOffset(0.5, 0.67),
                 child: FractionallySizedBox(
-                  widthFactor: 0.5,
+                  widthFactor: 0.42,
                   child: FittedBox(
                     fit: BoxFit.contain,
                     child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1),
