@@ -80,10 +80,13 @@ class GameSurface extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
       color: Theme.of(context).backgroundColor,
-      child: Row(children: const [
-        Expanded(child: GameMat()),
-        SettingsPanel(),
-      ]),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: const [
+          Flexible(child: GameMat()),
+          SettingsPanel(),
+        ],
+      ),
     );
   }
 }

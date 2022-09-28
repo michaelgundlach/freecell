@@ -25,50 +25,47 @@ class GameMat extends ConsumerWidget {
     final totalCardsHeight = foundationHeight + reservedCascadeHeight;
     final cardsWidth = 4 + FreeSpaces.numberOfColumns(gameState);
     final boardAspectRatio = cardsWidth / totalCardsHeight * playingCardAspectRatio;
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              spreadRadius: 3,
-              color: Theme.of(context).primaryColorDark,
-              blurRadius: 2,
-            ),
-          ],
-          color: Theme.of(context).primaryColor,
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-        ),
-        child: ConstrainedAspectRatio(
-          maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller
-          child: Stack(
-            children: [
-              const Align(
-                alignment: FractionalOffset(0.5, 0.67),
-                child: FractionallySizedBox(
-                  widthFactor: 0.42,
-                  child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1),
-                  ),
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            spreadRadius: 3,
+            color: Theme.of(context).primaryColorDark,
+            blurRadius: 2,
+          ),
+        ],
+        color: Theme.of(context).primaryColor,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+      ),
+      child: ConstrainedAspectRatio(
+        maxAspectRatio: boardAspectRatio, // If parent is too tall, grow taller
+        child: Stack(
+          children: [
+            const Align(
+              alignment: FractionalOffset(0.5, 0.67),
+              child: FractionallySizedBox(
+                widthFactor: 0.42,
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1),
                 ),
               ),
-              Column(
-                children: [
-                  const Expanded(child: Cascades()),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 5.0),
-                    child: Row(children: [
-                      const Expanded(flex: 40, child: Foundations()),
-                      const Spacer(flex: 1),
-                      Expanded(flex: 10 * FreeSpaces.numberOfColumns(gameState), child: const FreeSpaces()),
-                    ]),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+            Column(
+              children: [
+                const Expanded(child: Cascades()),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5.0),
+                  child: Row(children: [
+                    const Expanded(flex: 40, child: Foundations()),
+                    const Spacer(flex: 1),
+                    Expanded(flex: 10 * FreeSpaces.numberOfColumns(gameState), child: const FreeSpaces()),
+                  ]),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

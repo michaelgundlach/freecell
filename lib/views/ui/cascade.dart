@@ -71,7 +71,7 @@ class Cascade extends ConsumerWidget {
                   colors: [Theme.of(context).indicatorColor, Theme.of(context).primaryColor],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  stops: const [0, 0.8],
+                  stops: const [0, 0.7],
                 ),
               ),
             ),

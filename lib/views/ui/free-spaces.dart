@@ -63,8 +63,8 @@ class _FreeSpacesState extends ConsumerState<FreeSpaces> {
         child: Container(
           width: cardWidth / 1.9,
           height: cardWidth / 1.9,
-          decoration: BoxDecoration(color: Theme.of(context).highlightColor, borderRadius: BorderRadius.circular(100)),
-          child: FittedBox(fit: BoxFit.contain, child: Text("+", style: Theme.of(context).textTheme.caption)),
+          decoration: BoxDecoration(color: Theme.of(context).indicatorColor, borderRadius: BorderRadius.circular(100)),
+          child: const TextStamp("+"),
         ),
       );
     }
@@ -89,7 +89,8 @@ class _FreeSpacesState extends ConsumerState<FreeSpaces> {
   Widget _buildBase(BuildContext context, WidgetRef ref, double cardWidth) {
     return Container(
       width: cardWidth,
-      padding: const EdgeInsets.all(4.0), // same padding as PlayingCardView
+      margin: const EdgeInsets.only(top: 1),
+      padding: const EdgeInsets.all(2), // vs playingcard having 4, so we get a little border
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).indicatorColor,
@@ -104,14 +105,14 @@ class _FreeSpacesState extends ConsumerState<FreeSpaces> {
         ),
         child: AspectRatio(
           aspectRatio: playingCardAspectRatio,
-          child: Center(
+          child: Align(
+            alignment: const FractionalOffset(-.1, 0.85),
             child: Transform(
               transform: Matrix4.rotationZ(-.5),
-              alignment: FractionalOffset.center,
               child: const FractionallySizedBox(
-                widthFactor: .7,
-                heightFactor: .7,
-                child: TextStamp("FREE", fontFamily: "Gwendolyn", shadow: 3),
+                widthFactor: .6,
+                heightFactor: .6,
+                child: TextStamp("free", fontFamily: "FleurDeLeah", shadow: 2),
               ),
             ),
           ),

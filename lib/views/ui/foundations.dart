@@ -53,7 +53,8 @@ class _FoundationsState extends ConsumerState<Foundations> {
                     canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
                     baseBuilder: () => Container(
                       width: cardWidth,
-                      padding: const EdgeInsets.all(4), // same padding as PlayingCardView
+                      margin: const EdgeInsets.only(top: 1),
+                      padding: const EdgeInsets.all(2), // vs playingcard having 4, so we get a little border
                       child: Container(
                         decoration: BoxDecoration(
                           color: Theme.of(context).indicatorColor,
