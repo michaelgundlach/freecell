@@ -32,6 +32,20 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 }
 
 class GameState extends ChangeNotifier {
+  String stage = "playing"; // "intro", "dealing", "playing", "winning", "lost", "play again"
+
+  late int numFreeCells;
+  late List<LinkedList<PileEntry>> freeCells;
+  late List<LinkedList<PileEntry>> foundations;
+  late List<LinkedList<PileEntry>> cascades;
+
+  PileEntry? _highlighted;
+  PileEntry? get highlighted => _highlighted;
+  set highlighted(PileEntry? val) {
+    _highlighted = val;
+    notifyListeners();
+  }
+
   GameState() {
     _init();
   }
@@ -80,18 +94,6 @@ class GameState extends ChangeNotifier {
     if (_seed == value) return;
     _seed = value;
     _init();
-  }
-
-  late int numFreeCells;
-  late List<LinkedList<PileEntry>> freeCells;
-  late List<LinkedList<PileEntry>> foundations;
-  late List<LinkedList<PileEntry>> cascades;
-
-  PileEntry? _highlighted;
-  PileEntry? get highlighted => _highlighted;
-  set highlighted(PileEntry? val) {
-    _highlighted = val;
-    notifyListeners();
   }
 
   void moveHighlightedOnto(PileEntry target) {

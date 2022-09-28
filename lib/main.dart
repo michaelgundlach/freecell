@@ -10,12 +10,12 @@ import 'views/ui/intro-screen.dart';
 import 'views/ui/settings-panel.dart';
 
 final deckStyleProvider = Provider<DeckStyle>((ref) {
+  // Can't express radius as a % of width; give smaller on small screens
   const radius = kIsWeb ? 8.0 : 4.0;
   return DeckStyle(
     radius: radius,
     elevation: 2,
     shape: RoundedRectangleBorder(
-      // Can't express radius as a % of width; give smaller on small screens
       borderRadius: BorderRadius.circular(radius),
       side: const BorderSide(color: Colors.black45, width: 1),
     ),

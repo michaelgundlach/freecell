@@ -7,7 +7,7 @@
 - settings (easily extensible to add silly stuff over time?)
 - win animation
 
-- Nice background color/image
+- Nice background image
 - random photos on AJQK
 - music on intro, with floaty tiger.  what a cool sound!
 

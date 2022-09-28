@@ -72,7 +72,7 @@ class _FoundationsState extends ConsumerState<Foundations> {
                           child: FractionallySizedBox(
                               widthFactor: .8,
                               heightFactor: .5,
-                              alignment: FractionalOffset(0.3, 0.5),
+                              alignment: FractionalOffset(0.25, 0.45),
                               child: TextStamp("A", fontFamily: "Gwendolyn", shadow: 2)),
                         ),
                       ),

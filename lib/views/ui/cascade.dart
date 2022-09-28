@@ -52,10 +52,11 @@ class Cascade extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
+        final deckStyle = ref.watch(deckStyleProvider);
         final cardHeight = constraints.maxWidth / playingCardAspectRatio;
         final cardsShown = max(1, 1 + (entries.length - 2) * Cascades.cardExposure);
         final pileHeight = cardHeight * cardsShown;
-        final radius = Radius.circular(ref.watch(deckStyleProvider).radius);
+        final radius = Radius.circular(deckStyle.radius);
         return SizedBox(
           height: pileHeight,
           child: PileView(
@@ -76,6 +77,22 @@ class Cascade extends ConsumerWidget {
               ),
             ),
             positioner: (i, child) {
+              if (ref.watch(GameState.provider.select((gs) => gs.stage)) == "intro") {
+                child = PlayingCardView(
+                  shape: deckStyle.shape,
+                  showBack: true,
+                  card: PlayingCard(Suit.clubs, CardValue.ace),
+                  style: PlayingCardViewStyle(cardBackContentBuilder: (context) {
+                    return Container(
+                      color: Theme.of(context).primaryColorDark,
+                      child: Align(
+                        alignment: const FractionalOffset(0, 0.3),
+                        child: Image.asset("assets/images/tiger.png"),
+                      ),
+                    );
+                  }),
+                );
+              }
               return Positioned(top: Cascades.cardExposure * cardHeight * (i - 1), left: 0, right: 0, child: child);
             },
           ),
