@@ -32,7 +32,13 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 }
 
 class GameState extends ChangeNotifier {
-  String stage = "playing"; // "intro", "dealing", "playing", "winning", "lost", "play again"
+  String _stage = "playing"; // "intro", "dealing", "playing", "winning", "lost", "play again"
+  get stage => _stage;
+  set stage(val) {
+    if (_stage == val) return;
+    _stage = val;
+    notifyListeners();
+  }
 
   late int numFreeCells;
   late List<LinkedList<PileEntry>> freeCells;

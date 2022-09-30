@@ -36,44 +36,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'Freecell',
       theme: ThemeData(
         primaryColor: Colors.blue[700],
         primaryColorDark: Colors.blue[900],
         backgroundColor: Colors.blue[300],
       ),
-      routeInformationParser: _router.routeInformationParser,
-      routeInformationProvider: _router.routeInformationProvider,
-      routerDelegate: _router.routerDelegate,
+      home: const FreecellApp(),
     );
   }
-
-  final _router = GoRouter(routes: [
-    GoRoute(
-      path: "/oldhome",
-      builder: (context, state) => WillPopScope(
-        onWillPop: () async => false,
-        child: const IntroScreen(),
-      ),
-    ),
-    GoRoute(
-      path: "/",
-      builder: (_, __) => const GameSurface(),
-    ),
-    GoRoute(
-      path: "/oldgame",
-      builder: (context, state) => Container(
-        padding: const EdgeInsets.all(10),
-        color: Theme.of(context).backgroundColor,
-        child: const GameMat(),
-      ),
-    ),
-  ]);
 }
 
-class GameSurface extends StatelessWidget {
-  const GameSurface({super.key});
+class FreecellApp extends StatelessWidget {
+  const FreecellApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +59,10 @@ class GameSurface extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: const [
+          SizedBox(width: 100),
           Flexible(child: GameMat()),
-          SettingsPanel(),
+          SizedBox(width: 100, child: SettingsPanel()),
+          //IntroScreen(),
         ],
       ),
     );

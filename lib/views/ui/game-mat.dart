@@ -27,7 +27,18 @@ class GameMat extends ConsumerWidget {
     final boardAspectRatio = cardsWidth / totalCardsHeight * playingCardAspectRatio;
     final logo = gameState.numFreeCells < 6
         ? "Freecell"
-        : {6: "Hi  Mom", 7: "Really?", 8: "Wimpcell", 9: "Not-even-tryingcell"}[gameState.numFreeCells] ?? "Losercell";
+        : {
+              6: "Hi  Mom",
+              7: "Really?",
+              8: "Wimpcell",
+              9: "Not-even-tryingcell",
+              10: "Losercell",
+              11: "Oh-come-on-cell",
+              12: "Are-you-kidding-me-cell",
+              13: "Now you're just curious, right?",
+              14: "Can you even read the cards?"
+            }[gameState.numFreeCells] ??
+            "Fifty two free cells should do it...";
     return Container(
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
@@ -48,7 +59,8 @@ class GameMat extends ConsumerWidget {
             Align(
               alignment: const FractionalOffset(0.5, 0.67),
               child: FractionallySizedBox(
-                widthFactor: 0.42,
+                heightFactor: 0.35,
+                widthFactor: .9,
                 child: FittedBox(
                   fit: BoxFit.contain,
                   child: TextStamp(logo, fontFamily: "FleurDeLeah", shadow: 1),

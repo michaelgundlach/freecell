@@ -22,7 +22,7 @@ class SettingsPanel extends ConsumerWidget {
             onTap: () => sound.toggleMusic(),
             child: Column(
               children: [
-                SizedBox(width: 130, child: Image.asset("assets/images/accordion.png")),
+                Image.asset("assets/images/accordion.png"),
                 FittedBox(
                   fit: BoxFit.fill,
                   child:

@@ -14,7 +14,7 @@ class Tiger extends ConsumerWidget {
       children: [
         Column(
           children: [
-            SizedBox(width: 130, child: Image.asset("assets/images/tiger.png")),
+            Image.asset("assets/images/tiger.png"),
             FittedBox(
               fit: BoxFit.fill,
               child: Text(ref.watch(GameState.provider).seed.toString(), style: Theme.of(context).textTheme.bodyLarge),
