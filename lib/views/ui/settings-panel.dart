@@ -31,7 +31,7 @@ class SettingsPanel extends ConsumerWidget {
               ],
             ),
           ),
-          const Tiger(),
+          const Hero(tag: "tiger", child: Tiger(width: 100)),
         ],
       ),
     );

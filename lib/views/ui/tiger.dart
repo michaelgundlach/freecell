@@ -6,22 +6,28 @@ import '../../model/game-state.dart';
 /// Friendly tiger who controls the seed and comments upon your play.
 
 class Tiger extends ConsumerWidget {
-  const Tiger({super.key});
+  const Tiger({required this.width, super.key});
+
+  final double width;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Stack(
-      children: [
-        Column(
-          children: [
-            Image.asset("assets/images/tiger.png"),
-            FittedBox(
-              fit: BoxFit.fill,
-              child: Text(ref.watch(GameState.provider).seed.toString(), style: Theme.of(context).textTheme.bodyLarge),
-            ),
-          ],
-        )
-      ],
+    return SizedBox(
+      width: width,
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Image.asset("assets/images/tiger.png"),
+              FittedBox(
+                fit: BoxFit.fill,
+                child:
+                    Text(ref.watch(GameState.provider).seed.toString(), style: Theme.of(context).textTheme.bodyLarge),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

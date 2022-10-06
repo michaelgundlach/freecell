@@ -63,7 +63,7 @@ class GameMat extends ConsumerWidget {
                 widthFactor: .9,
                 child: FittedBox(
                   fit: BoxFit.contain,
-                  child: TextStamp(logo, fontFamily: "FleurDeLeah", shadow: 1),
+                  child: Hero(tag: "freecell", child: TextStamp(logo, fontFamily: "FleurDeLeah", shadow: 1)),
                 ),
               ),
             ),

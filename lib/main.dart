@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'model/game-state.dart';
 import 'util/deck-style.dart';
 import 'views/ui/game-mat.dart';
 import 'views/ui/intro-screen.dart';
@@ -28,11 +29,11 @@ void main() async {
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   // Force to landscape mode
   await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
-  runApp(ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +49,25 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class FreecellApp extends StatelessWidget {
+class FreecellApp extends ConsumerWidget {
   const FreecellApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gs = ref.watch(GameState.provider);
+    if (gs.stage == "intro") {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.push(
+            context,
+            PageRouteBuilder(
+                opaque: false,
+                pageBuilder: (_, __, ___) => const IntroScreen(),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: const Duration(milliseconds: 4500),
+                transitionsBuilder: (context, animation, _, child) =>
+                    FadeTransition(opacity: animation, child: child)));
+      });
+    }
     return Container(
       padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
       color: Theme.of(context).backgroundColor,
@@ -62,7 +77,6 @@ class FreecellApp extends StatelessWidget {
           SizedBox(width: 100),
           Flexible(child: GameMat()),
           SizedBox(width: 100, child: SettingsPanel()),
-          //IntroScreen(),
         ],
       ),
     );
