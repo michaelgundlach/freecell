@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../model/game-state.dart';
-
 /// Friendly tiger who controls the seed and comments upon your play.
 
 class Tiger extends ConsumerWidget {
@@ -15,18 +13,8 @@ class Tiger extends ConsumerWidget {
     return SizedBox(
       width: width,
       child: Stack(
-        children: [
-          Column(
-            children: [
-              Image.asset("assets/images/tiger.png"),
-              FittedBox(
-                fit: BoxFit.fill,
-                child:
-                    Text(ref.watch(GameState.provider).seed.toString(), style: Theme.of(context).textTheme.bodyLarge),
-              ),
-            ],
-          )
-        ],
+        children: [Image.asset("assets/images/tiger.png")],
+        // TODO: speech bubbles, sfx
       ),
     );
   }

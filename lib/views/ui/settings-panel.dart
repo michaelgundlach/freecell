@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../model/game-state.dart';
 import '../../util/sound.dart';
 import 'tiger.dart';
 
@@ -31,7 +32,16 @@ class SettingsPanel extends ConsumerWidget {
               ],
             ),
           ),
-          const Hero(tag: "tiger", child: Tiger(width: 100)),
+          Column(
+            children: [
+              const Hero(tag: "tiger", child: Tiger(width: 100)),
+              FittedBox(
+                fit: BoxFit.fill,
+                child:
+                    Text(ref.watch(GameState.provider).seed.toString(), style: Theme.of(context).textTheme.bodyLarge),
+              ),
+            ],
+          ),
         ],
       ),
     );

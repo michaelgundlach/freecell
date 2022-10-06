@@ -2,20 +2,32 @@
 
 ## TODOs
 
-- race code to the side
-- feedback the more free cells you add
-- settings (easily extensible to add silly stuff over time?)
 - win animation
+- correct button affordances in settings
+- button on tiger to redeal (open intro screen)
+- less ugly seed input
 
 - Nice background image
-- random photos on AJQK
-- music on intro, with floaty tiger.  what a cool sound!
+- music on intro.  what a cool sound!
 
+- cards fly correctly (fix z index right as they start flying, by querying gamestate)
+  - pick random screen positions in a list for them.  them rearrange their stack order
+    but keep their screen positions.
 
 Finally:
 - PR playing_cards changes
 - pubspec.yaml points to github playing_cards, not file
 - ship to store
+
+v1.1:
+- random photos on AJQK
+- Intro tiger floats
+- Discouragement for more free cells
+  - tiger mocks you (make these many options so it doesn't get old)
+  - background image changes to something less pleasant
+- Encouragement as you approach winner
+  - SFX
+  - tiger comments (make these very many options so it doesn't get old)
 
 ## Sequence
 

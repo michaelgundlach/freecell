@@ -45,28 +45,43 @@ class IntroScreen extends ConsumerWidget {
       color: Theme.of(context).primaryColor,
       child: Column(
         children: [
+          const Hero(tag: "freecell", child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Hero(tag: "tiger", child: Tiger(width: 80)),
+              Text("Enter a code to race your friends!"),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 100,
+                child: TextField(
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  ref.watch(GameState.provider).stage = "playing";
+                  if (controller.value.text != "") {
+                    ref.watch(GameState.provider).seed = int.parse(controller.value.text);
+                  }
+                  Navigator.pop(context);
+                },
+                child: const Text("Deal"),
+              ),
+            ],
+          ),
+          const Spacer(),
           SizedBox(
             height: 80,
             child: FlatCardFan(
               children: standardFiftyTwoCardDeck().map((c) => FreecellCardView(card: c)).toList(),
             ),
-          ),
-          //SizedBox(width: 65, child: FreecellCardView(card: PlayingCard(Suit.hearts, CardValue.ace))),
-          const Hero(tag: "freecell", child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1)),
-          TextField(
-            decoration: const InputDecoration(
-                icon: Hero(tag: "tiger", child: Tiger(width: 100)), labelText: "Enter a code to race your friends!"),
-            controller: controller,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          ),
-          ElevatedButton(
-            onPressed: () {
-              ref.watch(GameState.provider).stage = "playing";
-              ref.watch(GameState.provider).seed = int.parse(controller.value.text);
-              Navigator.pop(context);
-            },
-            child: const Text("Start"),
           ),
         ],
       ),
