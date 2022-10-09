@@ -8,33 +8,6 @@ import '../../model/game-state.dart';
 import '../util/text-stamp.dart';
 import 'tiger.dart';
 
-class InitroScreen extends ConsumerWidget {
-  const InitroScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(context, ref) {
-    final gs = ref.watch(GameState.provider);
-    return Center(
-      child: FractionallySizedBox(
-        widthFactor: .8,
-        heightFactor: .8,
-        child: Container(
-          color: Colors.green,
-          child: Center(
-            child: TextButton(
-              onPressed: () {
-                gs.stage = "playing";
-                Navigator.pop(context);
-              },
-              child: const Text("Play"),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class IntroScreen extends ConsumerWidget {
   const IntroScreen({super.key});
 
@@ -43,49 +16,60 @@ class IntroScreen extends ConsumerWidget {
     final controller = TextEditingController();
     return Material(
       color: Theme.of(context).primaryColor,
-      child: Column(
-        children: [
-          const FractionallySizedBox(
-              widthFactor: 0.33,
-              child: Hero(tag: "freecell", child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1))),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Hero(tag: "tiger", child: SizedBox(height: 90, child: Tiger())),
-              Text("Enter a code to race your friends!"),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 100,
-                child: TextField(
-                  controller: controller,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 10,
+              child: FlatCardFan(
+                children: standardFiftyTwoCardDeck().map((c) => FreecellCardView(card: c)).toList(),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  ref.watch(GameState.provider).stage = "playing";
-                  if (controller.value.text != "") {
-                    ref.watch(GameState.provider).seed = int.parse(controller.value.text);
-                  }
-                  Navigator.pop(context);
-                },
-                child: const Text("Deal"),
-              ),
-            ],
-          ),
-          const Spacer(),
-          SizedBox(
-            height: 80,
-            child: FlatCardFan(
-              children: standardFiftyTwoCardDeck().map((c) => FreecellCardView(card: c)).toList(),
             ),
-          ),
-        ],
+            const Spacer(flex: 10),
+            const Expanded(
+              flex: 40,
+              child: Hero(tag: "freecell", child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1)),
+            ),
+            Expanded(
+              flex: 25,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Hero(tag: "tiger", child: Tiger()),
+                  Text("Enter a code to race your friends!", style: Theme.of(context).textTheme.headline4),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 10,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: TextField(
+                      controller: controller,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      ref.watch(GameState.provider).stage = "playing";
+                      if (controller.value.text != "") {
+                        ref.watch(GameState.provider).seed = int.parse(controller.value.text);
+                      }
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Deal"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
