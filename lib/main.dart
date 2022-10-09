@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import 'model/game-state.dart';
 import 'util/deck-style.dart';
@@ -74,9 +73,9 @@ class FreecellApp extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: const [
-          SizedBox(width: 100),
-          Flexible(child: GameMat()),
-          SizedBox(width: 100, child: SettingsPanel()),
+          Expanded(flex: 1, child: SizedBox.shrink()),
+          Flexible(flex: 7, child: GameMat()),
+          Expanded(flex: 1, child: SettingsPanel()),
         ],
       ),
     );

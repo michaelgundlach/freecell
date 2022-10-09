@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,7 +24,7 @@ class SettingsPanel extends ConsumerWidget {
                 Image.asset("assets/images/accordion.png"),
                 FittedBox(
                   fit: BoxFit.fill,
-                  child: Text(sound.musicPlaying ? _polkaNo() : "ACCORDI-ON",
+                  child: Text(sound.musicPlaying ? sound.polkaNo() : "ACCORDI-ON",
                       style: Theme.of(context).textTheme.bodyLarge, textAlign: TextAlign.center),
                 ),
               ],
@@ -45,16 +43,5 @@ class SettingsPanel extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  _polkaNo() {
-    const options = [
-      "ACCORDI-OFF",
-      "LESS AMBIANCE",
-      "UNACCORDIATE",
-      "ACCORDI-UNDO",
-      "FEWER\nACCORDIONS",
-    ];
-    return options[Random().nextInt(options.length)];
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -31,6 +33,7 @@ class Sound extends ChangeNotifier {
     } else {
       _musicPlayer.play();
       print("MUSIC ON");
+      _polkaNo = null;
     }
     notifyListeners();
   }
@@ -52,6 +55,20 @@ class Sound extends ChangeNotifier {
   sfx(Sounds sound) async {
     await _preloadSound(_sfxPlayer, sound);
     _sfxPlayer.play();
+  }
+
+  String? _polkaNo;
+  polkaNo() {
+    if (_polkaNo != null) return _polkaNo;
+    const options = [
+      "ACCORDI-OFF",
+      "LESS AMBIANCE",
+      "UNACCORDIATE",
+      "ACCORDI-UNDO",
+      "FEWER\nACCORDIONS",
+    ];
+
+    return _polkaNo = options[Random().nextInt(options.length)];
   }
 
   String? _fileForType(Sounds sound) {
