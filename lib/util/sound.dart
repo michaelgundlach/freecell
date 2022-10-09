@@ -18,6 +18,7 @@ class Sound extends ChangeNotifier {
     await _musicPlayer.setLoopMode(LoopMode.one);
     await _musicPlayer.setVolume(0.12);
     await _preloadSound(_musicPlayer, Sounds.polka);
+    toggleMusic();
   }
 
   get musicPlaying => _musicPlayer.playing;

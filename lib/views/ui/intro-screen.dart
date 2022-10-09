@@ -45,11 +45,13 @@ class IntroScreen extends ConsumerWidget {
       color: Theme.of(context).primaryColor,
       child: Column(
         children: [
-          const Hero(tag: "freecell", child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1)),
+          const FractionallySizedBox(
+              widthFactor: 0.33,
+              child: Hero(tag: "freecell", child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1))),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
-              Hero(tag: "tiger", child: Tiger(width: 80)),
+              Hero(tag: "tiger", child: SizedBox(height: 90, child: Tiger())),
               Text("Enter a code to race your friends!"),
             ],
           ),

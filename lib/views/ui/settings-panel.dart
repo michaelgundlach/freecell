@@ -26,15 +26,15 @@ class SettingsPanel extends ConsumerWidget {
                 Image.asset("assets/images/accordion.png"),
                 FittedBox(
                   fit: BoxFit.fill,
-                  child:
-                      Text(sound.musicPlaying ? _polkaNo() : "POLKA PLS", style: Theme.of(context).textTheme.bodyLarge),
+                  child: Text(sound.musicPlaying ? _polkaNo() : "ACCORDI-ON",
+                      style: Theme.of(context).textTheme.bodyLarge, textAlign: TextAlign.center),
                 ),
               ],
             ),
           ),
           Column(
             children: [
-              const Hero(tag: "tiger", child: Tiger(width: 100)),
+              const Hero(tag: "tiger", child: Tiger()),
               FittedBox(
                 fit: BoxFit.fill,
                 child:
@@ -49,12 +49,11 @@ class SettingsPanel extends ConsumerWidget {
 
   _polkaNo() {
     const options = [
-      "NEVERMIND",
-      "I TAKE IT BACK!",
-      "TURN IT OFF!",
-      "JUST KIDDING LOL",
-      "STOP STOP STOP",
-      "LESS POLKA",
+      "ACCORDI-OFF",
+      "LESS AMBIANCE",
+      "UNACCORDIATE",
+      "ACCORDI-UNDO",
+      "FEWER\nACCORDIONS",
     ];
     return options[Random().nextInt(options.length)];
   }
