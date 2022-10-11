@@ -20,26 +20,15 @@ class IntroScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Expanded(
-              flex: 10,
-              child: FlatCardFan(
-                children: standardFiftyTwoCardDeck().map((c) => FreecellCardView(card: c)).toList(),
-              ),
-            ),
-            const Spacer(flex: 10),
             const Expanded(
               flex: 40,
               child: Hero(tag: "freecell", child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1)),
             ),
+            const Expanded(flex: 30, child: Hero(tag: "tiger", child: Tiger())),
+            const Spacer(flex: 5),
             Expanded(
-              flex: 25,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Hero(tag: "tiger", child: Tiger()),
-                  Text("Enter a code to race your friends!", style: Theme.of(context).textTheme.headline4),
-                ],
-              ),
+              flex: 8,
+              child: Text("Enter a code to race your friends!", style: Theme.of(context).textTheme.headline4),
             ),
             Expanded(
               flex: 10,
@@ -68,6 +57,14 @@ class IntroScreen extends ConsumerWidget {
                 ],
               ),
             ),
+            const Spacer(flex: 5),
+            Expanded(
+              flex: 10,
+              child: FlatCardFan(
+                children: standardFiftyTwoCardDeck().map((c) => FreecellCardView(card: c)).toList(),
+              ),
+            ),
+            //const Spacer(flex: 10),
           ],
         ),
       ),

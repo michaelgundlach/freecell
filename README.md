@@ -13,7 +13,6 @@
 - cards fly correctly (fix z index right as they start flying, by querying gamestate)
   - pick random screen positions in a list for them.  them rearrange their stack order
     but keep their screen positions.
-- sized well both on mobile and desktop - prob use fractionallysizedbox instead of widths
 
 Finally:
 - PR playing_cards changes
