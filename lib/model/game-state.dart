@@ -18,6 +18,9 @@ class PileEntry extends LinkedListEntry<PileEntry> {
   Suit get suit => card!.suit;
   bool get isRed => suit == Suit.hearts || suit == Suit.diamonds;
 
+  // Is it currently on a lower-rank card in the cascades?
+  bool badlyPlaced = false;
+
   /// True if `candidate` can be played on `this` in a Cascade.
   bool canCascade(PileEntry candidate) {
     if (isTheBase) return true;
@@ -41,6 +44,7 @@ class GameState extends ChangeNotifier {
   }
 
   late List<PlayingCard> deck;
+  late int badlyPlacedCards;
 
   late int numFreeCells;
   late List<LinkedList<PileEntry>> freeCells;
@@ -59,12 +63,19 @@ class GameState extends ChangeNotifier {
   }
 
   _init() {
+    badlyPlacedCards = 0;
     deck = _deckFromSeed();
     final cascadeDeck = deck.toList(); // copy to consume in someCards()
+    lastCardBadlyPlaced(pile) => !pile.last.previous!.isTheBase && pile.last.previous!.value < pile.last.value;
     someCards(count) {
       var result = _emptyPile();
       for (int i = 0; i < count; i++) {
         result.add(PileEntry(cascadeDeck.removeAt(0)));
+        if (lastCardBadlyPlaced(result)) {
+          result.last.badlyPlaced = true;
+          badlyPlacedCards++;
+          print("BAD: ${result.last.value} on ${result.last.previous!.value}");
+        }
       }
       return result;
     }
@@ -76,7 +87,7 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
-  _emptyPile() => LinkedList<PileEntry>()..add(PileEntry(null));
+  LinkedList<PileEntry> _emptyPile() => LinkedList<PileEntry>()..add(PileEntry(null));
 
   _deckFromSeed() {
     // In the order that Tynker uses: A of H S D C, 2 of H S D C, ..., K of H S D C
@@ -108,6 +119,12 @@ class GameState extends ChangeNotifier {
   void moveHighlightedOnto(PileEntry target) {
     assert(highlighted != null);
     highlighted!.unlink();
+    if (highlighted!.badlyPlaced) {
+      highlighted!.badlyPlaced = false;
+      badlyPlacedCards -= 1;
+      if (badlyPlacedCards == 0) print("WIN");
+    }
+
     target.insertAfter(highlighted!);
     highlighted = null;
   }
