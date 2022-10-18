@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'model/game-state.dart';
 import 'util/deck-style.dart';
 import 'views/ui/game-mat.dart';
 import 'views/ui/intro-screen.dart';
@@ -43,30 +42,18 @@ class MyApp extends StatelessWidget {
         primaryColorDark: Colors.blue[900],
         backgroundColor: Colors.blue[300],
       ),
-      home: const FreecellApp(),
+      home: const IntroScreen(),
     );
   }
 }
 
-class FreecellApp extends ConsumerWidget {
-  const FreecellApp({super.key});
+class GameScreen extends StatelessWidget {
+  const GameScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final gs = ref.watch(GameState.provider);
-    if (gs.stage == "intro") {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.push(
-            context,
-            PageRouteBuilder(
-                opaque: false,
-                pageBuilder: (_, __, ___) => const IntroScreen(),
-                transitionDuration: Duration.zero,
-                reverseTransitionDuration: const Duration(milliseconds: 4500),
-                transitionsBuilder: (context, animation, _, child) =>
-                    FadeTransition(opacity: animation, child: child)));
-      });
-    }
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(

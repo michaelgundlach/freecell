@@ -27,7 +27,7 @@ class FreecellCardView extends ConsumerWidget {
       tag: "${card.value}${card.suit}",
       child: cardView,
       flightShuttleBuilder: (_, Animation<double> animation, __, ___, ____) =>
-          FadeTransition(opacity: animation.drive(Tween(begin: 1.0, end: 0.3)), child: cardView),
+          FadeTransition(opacity: animation.drive(Tween(begin: 0.3, end: 1.0)), child: cardView),
     );
   }
 

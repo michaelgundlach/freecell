@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/views/util/freecell-card-view.dart';
 import 'package:playing_cards/playing_cards.dart';
 
+import '../../main.dart';
 import '../../model/game-state.dart';
 import '../../util/sound.dart';
 import '../util/text-stamp.dart';
@@ -63,7 +64,14 @@ class IntroScreen extends ConsumerWidget {
         ref.watch(GameState.provider).seed = int.parse(controller.value.text);
       }
       if (kIsWeb) ref.watch(soundProvider).toggleMusic(fade: true);
-      Navigator.pop(context);
+      Navigator.push(
+          context,
+          PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (_, __, ___) => const GameScreen(),
+              reverseTransitionDuration: Duration.zero,
+              transitionDuration: const Duration(milliseconds: 4500),
+              transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child)));
     }
 
     return Material(

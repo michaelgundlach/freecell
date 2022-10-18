@@ -122,7 +122,10 @@ class GameState extends ChangeNotifier {
     if (highlighted!.badlyPlaced) {
       highlighted!.badlyPlaced = false;
       badlyPlacedCards -= 1;
-      if (badlyPlacedCards == 0) print("WIN");
+      if (badlyPlacedCards == 0) {
+        stage = "winning";
+        print("WIN");
+      }
     }
 
     target.insertAfter(highlighted!);
