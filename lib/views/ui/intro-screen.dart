@@ -54,6 +54,15 @@ class IntroScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = TextEditingController();
+
+    void deal([value]) {
+      ref.watch(GameState.provider).stage = "playing";
+      if (controller.value.text != "") {
+        ref.watch(GameState.provider).seed = int.parse(controller.value.text);
+      }
+      Navigator.pop(context);
+    }
+
     return Material(
       color: Theme.of(context).primaryColor,
       child: Padding(
@@ -83,9 +92,12 @@ class IntroScreen extends ConsumerWidget {
                             SizedBox(
                               width: 50,
                               child: TextField(
+                                textInputAction: TextInputAction.done,
+                                onSubmitted: deal,
                                 controller: controller,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                textAlign: TextAlign.end,
                               ),
                             ),
                           ],
@@ -95,13 +107,7 @@ class IntroScreen extends ConsumerWidget {
                       Expanded(
                         flex: 10,
                         child: ElevatedButton(
-                          onPressed: () {
-                            ref.watch(GameState.provider).stage = "playing";
-                            if (controller.value.text != "") {
-                              ref.watch(GameState.provider).seed = int.parse(controller.value.text);
-                            }
-                            Navigator.pop(context);
-                          },
+                          onPressed: deal,
                           child: const Text("Deal"),
                         ),
                       ),
