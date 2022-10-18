@@ -13,18 +13,21 @@ class FreecellCardView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var deckStyle = ref.watch(deckStyleProvider);
+    final cardView = PlayingCardView(
+      card: card,
+      elevation: deckStyle.elevation,
+      shape: deckStyle.shape,
+      style: PlayingCardViewStyle(
+        suitStyles: makeStyles(),
+        suitBesideLabel: true,
+      ),
+    );
 
     return Hero(
       tag: "${card.value}${card.suit}",
-      child: PlayingCardView(
-        card: card,
-        elevation: deckStyle.elevation,
-        shape: deckStyle.shape,
-        style: PlayingCardViewStyle(
-          suitStyles: makeStyles(),
-          suitBesideLabel: true,
-        ),
-      ),
+      child: cardView,
+      flightShuttleBuilder: (_, Animation<double> animation, __, ___, ____) =>
+          FadeTransition(opacity: animation.drive(Tween(begin: 1.0, end: 0.5)), child: cardView),
     );
   }
 

@@ -40,6 +40,8 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
+  late List<PlayingCard> deck;
+
   late int numFreeCells;
   late List<LinkedList<PileEntry>> freeCells;
   late List<LinkedList<PileEntry>> foundations;
@@ -57,11 +59,12 @@ class GameState extends ChangeNotifier {
   }
 
   _init() {
-    var deck = _deckFromSeed();
+    deck = _deckFromSeed();
+    final cascadeDeck = deck.toList(); // copy to consume in someCards()
     someCards(count) {
       var result = _emptyPile();
       for (int i = 0; i < count; i++) {
-        result.add(PileEntry(deck.removeAt(0)));
+        result.add(PileEntry(cascadeDeck.removeAt(0)));
       }
       return result;
     }
@@ -77,17 +80,17 @@ class GameState extends ChangeNotifier {
 
   _deckFromSeed() {
     // In the order that Tynker uses: A of H S D C, 2 of H S D C, ..., K of H S D C
-    var deck = [
+    var heck = [
       for (final index in [12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
         for (Suit suit in [Suit.hearts, Suit.spades, Suit.diamonds, Suit.clubs])
           PlayingCard(suit, CardValue.values[index])
     ];
-    return _shuffle(deck);
+    return _shuffle(heck);
   }
 
   _shuffle(List<PlayingCard> deck) {
     final rng = RNG(seed);
-    final shuffledDeck = [];
+    final shuffledDeck = <PlayingCard>[];
     while (deck.isNotEmpty) {
       shuffledDeck.add(deck.removeAt(rng.pickRandomBetweenOneAnd(deck.length) - 1));
     }
