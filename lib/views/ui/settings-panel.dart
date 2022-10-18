@@ -13,6 +13,17 @@ class SettingsPanel extends ConsumerWidget {
     final sound = ref.watch(soundProvider);
     return Container(
       padding: const EdgeInsets.only(left: 10, right: 10),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            spreadRadius: 3,
+            color: Theme.of(context).primaryColorDark,
+            blurRadius: 2,
+          ),
+        ],
+        color: Theme.of(context).primaryColor,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

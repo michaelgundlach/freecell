@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -15,22 +17,42 @@ class Sound extends ChangeNotifier {
 
   final AudioPlayer _sfxPlayer = AudioPlayer();
   final AudioPlayer _musicPlayer = AudioPlayer();
+  final _musicVolume = 0.12;
 
   init() async {
     await _musicPlayer.setLoopMode(LoopMode.one);
-    await _musicPlayer.setVolume(0.12);
+    await _musicPlayer.setVolume(_musicVolume);
     await _preloadSound(_musicPlayer, Sounds.polka);
-    toggleMusic();
+    if (!kIsWeb) toggleMusic();
   }
 
   get musicPlaying => _musicPlayer.playing;
 
-  toggleMusic() async {
+  toggleMusic({fade = false}) async {
     if (_musicPlayer.playing) {
       await _musicPlayer.pause();
       await _musicPlayer.seek(Duration.zero);
       print("MUSIC OFF");
     } else {
+      if (fade) {
+        _musicPlayer.setVolume(0);
+        final stopwatch = Stopwatch()..start();
+        const duration = 10.0;
+        Timer.periodic(const Duration(milliseconds: 100), (timer) {
+          double animation = (stopwatch.elapsed.inMilliseconds / 1000) / duration;
+          if (animation < 1) {
+            _musicPlayer.setVolume(
+              Tween(begin: 0, end: _musicVolume)
+                  .chain(CurveTween(curve: Curves.easeIn))
+                  .transform(animation)
+                  .toDouble(),
+            );
+          } else {
+            _musicPlayer.setVolume(_musicVolume);
+            timer.cancel();
+          }
+        });
+      }
       _musicPlayer.play();
       print("MUSIC ON");
       _polkaNo = null;

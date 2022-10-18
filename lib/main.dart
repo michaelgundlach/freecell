@@ -68,8 +68,11 @@ class FreecellApp extends ConsumerWidget {
       });
     }
     return Container(
-      padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
-      color: Theme.of(context).backgroundColor,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        image: const DecorationImage(image: AssetImage("assets/images/clouds-2.jpg"), fit: BoxFit.cover),
+        color: Theme.of(context).backgroundColor,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: const [

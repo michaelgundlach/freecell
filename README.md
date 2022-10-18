@@ -3,16 +3,6 @@
 ## TODOs
 
 - win animation
-- correct button affordances in settings
-- button on tiger to redeal (open intro screen)
-- less ugly seed input
-
-- Nice background image
-- music on intro.  what a cool sound!
-
-- cards fly correctly (fix z index right as they start flying, by querying gamestate)
-  - pick random screen positions in a list for them.  them rearrange their stack order
-    but keep their screen positions.
 
 Finally:
 - PR playing_cards changes
@@ -20,6 +10,10 @@ Finally:
 - ship to store
 
 v1.1:
+- correct button affordances in settings
+- button on tiger to redeal (open intro screen)
+- less ugly seed input, limited to 0-3
+- ensure random seed is 0-3 digits only
 - random photos on AJQK
 - Intro tiger floats
 - Discouragement for more free cells
