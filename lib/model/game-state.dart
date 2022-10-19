@@ -164,8 +164,9 @@ class GameState extends ChangeNotifier {
     g.freeCells = llcopy(freeCells);
     g.numFreeCells = numFreeCells;
 
-    // Move the lowest-ranked card on the end of a cascade to its foundation.  If no cards on foundations, done.
-    List<PileEntry?> pileEntries = g.cascades.map((c) => c.last.isTheBase ? null : c.last).toList();
+    // Move the lowest-ranked card on the end of a cascade/free cell to its
+    // foundation.  If all cards on foundations, done.
+    var pileEntries = (g.cascades + g.freeCells).map((c) => c.last.isTheBase ? null : c.last).toList();
     if (pileEntries.every((pileEntry) => pileEntry == null)) {
       g._stage = "game over";
     } else {
