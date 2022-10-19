@@ -17,12 +17,18 @@ class Sound extends ChangeNotifier {
 
   final AudioPlayer _sfxPlayer = AudioPlayer();
   final AudioPlayer _musicPlayer = AudioPlayer();
+  final AudioPlayer _winMusicPlayer = AudioPlayer();
   final _musicVolume = 0.12;
 
   init() async {
     await _musicPlayer.setLoopMode(LoopMode.one);
     await _musicPlayer.setVolume(_musicVolume);
     await _preloadSound(_musicPlayer, Sounds.polka);
+    // Just in case this would slow things down
+    Future.delayed(const Duration(seconds: 20), () {
+      _winMusicPlayer.setLoopMode(LoopMode.one);
+      _preloadSound(_winMusicPlayer, Sounds.winMusic);
+    });
     if (!kIsWeb) toggleMusic();
   }
 
@@ -58,6 +64,11 @@ class Sound extends ChangeNotifier {
       _polkaNo = null;
     }
     notifyListeners();
+  }
+
+  playWinMusic() {
+    _musicPlayer.stop();
+    if (!_winMusicPlayer.playing) _winMusicPlayer.play();
   }
 
   Future<bool> _preloadSound(player, sound) async {
@@ -107,6 +118,8 @@ class Sound extends ChangeNotifier {
         return "cardSlide7.wav";
       case Sounds.polka:
         return "waltz-polka.mp3";
+      case Sounds.winMusic:
+        return "win.mp3";
     }
   }
 }
@@ -116,4 +129,5 @@ enum Sounds {
   played,
   failed,
   polka,
+  winMusic,
 }

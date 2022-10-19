@@ -2,10 +2,6 @@
 
 ## TODOs
 
-- win animation
-  - music
-  - dancy logo
-
 Finally:
 - resize images (last widget inspector button)
 - PR playing_cards changes

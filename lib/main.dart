@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freecell/util/sound.dart';
 
 import 'model/game-state.dart';
 import 'util/deck-style.dart';
@@ -66,6 +67,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     // ourselves we navigate recursively to a succession of more and more
     // settled GameScreens.
     if (gameState.stage == "winning" && !widget.isPerformingWinDance) {
+      ref.watch(soundProvider).playWinMusic();
       Timer.run(() => performWinDance(context, gameState));
     }
 

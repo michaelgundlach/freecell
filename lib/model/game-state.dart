@@ -125,7 +125,6 @@ class GameState extends ChangeNotifier {
       badlyPlacedCards -= 1;
       if (badlyPlacedCards == 0) {
         stage = "winning";
-        print("WIN");
       }
     }
 
