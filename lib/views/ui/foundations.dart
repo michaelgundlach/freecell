@@ -7,9 +7,37 @@ import 'package:playing_cards/playing_cards.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 import '../../main.dart';
+import '../util/freecell-card-view.dart';
+import '../util/freecell-interact-target.dart';
 import '../util/pile-view.dart';
 import '../../model/game-state.dart';
 import '../util/text-stamp.dart';
+
+final slopProvider = Provider<SlopTracker>((ref) => SlopTracker());
+
+class SlopTracker {
+  final Map<Suit, Map<CardValue, Matrix4>> _slops = {};
+  final int maxTiltDegrees = 5;
+  final int maxTranslatePixels = 10; // in any direction
+  final rnd = Random();
+
+  slop(Widget child, GameState gameState) {
+    if (child.runtimeType == FreecellInteractTarget) {
+      child = (child as FreecellInteractTarget).child;
+    }
+    PlayingCard card = (child as FreecellCardView).card;
+    _slops.putIfAbsent(card.suit, () => {}).putIfAbsent(card.value, () {
+      Matrix4 slop = Matrix4.identity();
+      if (card.value == CardValue.ace) return slop;
+      double tilt = (gameState.stage != "playing") ? 0 : maxTiltDegrees * (rnd.nextDouble() - .5);
+      slop.rotateZ(radians(tilt));
+      List<double> slide = List.generate(2, (_) => maxTranslatePixels * (rnd.nextDouble() - .5));
+      slop.translate(slide[0], slide[1]);
+      return slop;
+    });
+    return _slops[card.suit]![card.value];
+  }
+}
 
 class Foundations extends ConsumerStatefulWidget {
   const Foundations({Key? key}) : super(key: key);
@@ -19,27 +47,11 @@ class Foundations extends ConsumerStatefulWidget {
 }
 
 class _FoundationsState extends ConsumerState<Foundations> {
-  final int maxTiltDegrees = 5;
-  final int maxTranslatePixels = 10; // in any direction
-  final rnd = Random();
-  final List<List<Matrix4>> slops = List.generate(4, (_) => [Matrix4.identity()]);
-
-  Matrix4 _slop(i, j) {
-    j = j - 1; // We only ask starting with entry #1, which we store at [0]
-    while (slops[i].length <= j) {
-      Matrix4 slop = Matrix4.identity();
-      double tilt = maxTiltDegrees * (rnd.nextDouble() - .5);
-      slop.rotateZ(radians(tilt));
-      List<double> slide = List.generate(2, (_) => maxTranslatePixels * (rnd.nextDouble() - .5));
-      slop.translate(slide[0], slide[1]);
-      slops[i].add(slop);
-    }
-    return slops[i][j];
-  }
-
   @override
   Widget build(BuildContext context) {
     var gameState = ref.watch(GameState.provider);
+    var slopTracker = ref.watch(slopProvider);
+
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       final cardWidth = constraints.maxWidth / 4;
       final cardHeight = cardWidth / playingCardAspectRatio;
@@ -79,7 +91,10 @@ class _FoundationsState extends ConsumerState<Foundations> {
                     ),
                     positioner: (int j, Widget child) {
                       return Align(
-                        child: Transform(alignment: FractionalOffset.center, transform: _slop(i, j), child: child),
+                        child: Transform(
+                            alignment: FractionalOffset.center,
+                            transform: slopTracker.slop(child, gameState),
+                            child: child),
                       );
                     },
                   ))
