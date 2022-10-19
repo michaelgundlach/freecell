@@ -177,9 +177,18 @@ class GameState extends ChangeNotifier {
         (f) => (lowCard.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == lowCard.suit,
       );
       targetFoundation.last.insertAfter(lowCard);
+      g.settlingCard = lowCard.card;
     }
 
     return g;
+  }
+
+  PlayingCard? settlingCard;
+  // true if it's in the foundation and not the settling card.
+  bool isAlreadySettledCard(PlayingCard card) {
+    match(c) => (c != null) && (c.suit == card.suit && c.value == card.value);
+    if (match(settlingCard)) return false;
+    return foundations.any((foundation) => foundation.any((pileEntry) => match(pileEntry.card)));
   }
 
   static ChangeNotifierProvider<GameState> provider = ChangeNotifierProvider<GameState>((ref) {

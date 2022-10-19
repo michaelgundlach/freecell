@@ -22,7 +22,11 @@ class FreecellCardView extends ConsumerWidget {
       ),
     );
 
-    final startOpacity = ref.watch(GameState.provider).stage == "playing" ? 0.3 : 1.0;
+    final gameState = ref.watch(GameState.provider);
+    if (gameState.isAlreadySettledCard(cardView.card)) {
+      return cardView; // don't wrap as hero lest its flight cause a wiggle during win animation (due to rotation)
+    }
+    final startOpacity = gameState.stage == "playing" ? 0.3 : 1.0;
     return Hero(
       tag: "${card.value}${card.suit}",
       child: cardView,

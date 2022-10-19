@@ -106,7 +106,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             child: const GameScreen(isPerformingWinDance: true),
           );
         },
-        transitionDuration: const Duration(milliseconds: 800),
+        transitionDuration: const Duration(milliseconds: 500),
       ),
     );
   }
