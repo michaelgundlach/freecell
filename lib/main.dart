@@ -51,32 +51,24 @@ class MyApp extends StatelessWidget {
 }
 
 class GameScreen extends ConsumerStatefulWidget {
-  const GameScreen({super.key, this.isWinningThingy = false});
-  final bool isWinningThingy;
+  const GameScreen({super.key, this.isPerformingWinDance = false});
+  final bool isPerformingWinDance;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _GameScreenState();
 }
 
 class _GameScreenState extends ConsumerState<GameScreen> {
-  // This either needs to build as a game that is ready to run,
-  // or as a game that immediately transitions to a more-settled game.
-  // If gamestate is not winning, do the first.
-  // If gamestate is winning, do the second.
-
   @override
   Widget build(BuildContext context) {
     var gameState = ref.watch(GameState.provider);
-    // If we're in "winning" stage, right after displaying ourselves we navigate
-    // recursively to a succession of more and more settled GameScreens.
-    if (gameState.stage == "winning" && !widget.isWinningThingy) {
-      Timer.run(() => performWinningDance(context, gameState));
+    // If we're in "winning" stage, right after building and displaying
+    // ourselves we navigate recursively to a succession of more and more
+    // settled GameScreens.
+    if (gameState.stage == "winning" && !widget.isPerformingWinDance) {
+      Timer.run(() => performWinDance(context, gameState));
     }
-    // Normally, display the GameScreen for the user to play.
-    return _x(context);
-  }
 
-  Widget _x(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -95,7 +87,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   }
 
   // only run by top level GameScreen.  Pushes a series of more-settled GameScreens onto the board.
-  performWinningDance(context, GameState gameState) {
+  performWinDance(context, GameState gameState) {
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
@@ -105,13 +97,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           if (nextGameState.stage == "winning") {
             animation.addStatusListener((status) {
               if (status == AnimationStatus.completed) {
-                performWinningDance(context, nextGameState);
+                performWinDance(context, nextGameState);
               }
             });
           }
           return ProviderScope(
             overrides: [GameState.provider.overrideWithValue(nextGameState)],
-            child: const GameScreen(isWinningThingy: true),
+            child: const GameScreen(isPerformingWinDance: true),
           );
         },
         transitionDuration: const Duration(milliseconds: 800),

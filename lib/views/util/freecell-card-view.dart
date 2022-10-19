@@ -6,10 +6,8 @@ import '../../main.dart';
 import '../../model/game-state.dart';
 
 class FreecellCardView extends ConsumerWidget {
-  const FreecellCardView({required this.card, this.covered = false, super.key});
+  const FreecellCardView({required this.card, super.key});
   final PlayingCard card;
-  // TODO replace with "badlyPlaced" to count down to win condition, complete with encouragement
-  final bool covered;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -3,11 +3,11 @@
 ## TODOs
 
 - win animation
-  - cards land on top of, not under foundation
   - music
   - dancy logo
 
 Finally:
+- resize images (last widget inspector button)
 - PR playing_cards changes
 - pubspec.yaml points to github playing_cards, not file
 - ship to store

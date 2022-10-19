@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:simple_animations/simple_animations.dart';
 
-import '../../main.dart';
 import '../../model/game-state.dart';
 import '../../util/sound.dart';
 
