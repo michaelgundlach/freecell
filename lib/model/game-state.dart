@@ -96,6 +96,7 @@ class GameState extends ChangeNotifier {
         for (Suit suit in [Suit.hearts, Suit.spades, Suit.diamonds, Suit.clubs])
           PlayingCard(suit, CardValue.values[index])
     ];
+    if (seed == 999999) return heck.reversed.toList(); // TODO temp
     return _shuffle(heck);
   }
 

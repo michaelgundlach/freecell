@@ -114,7 +114,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             child: const GameScreen(isWinningThingy: true),
           );
         },
-        transitionDuration: const Duration(milliseconds: 1000),
+        transitionDuration: const Duration(milliseconds: 800),
       ),
     );
   }

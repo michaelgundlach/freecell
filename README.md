@@ -3,6 +3,9 @@
 ## TODOs
 
 - win animation
+  - cards land on top of, not under foundation
+  - music
+  - dancy logo
 
 Finally:
 - PR playing_cards changes

@@ -11,7 +11,7 @@ class Tiger extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
-      onTap: () => ref.watch(GameState.provider).badlyPlacedCards = 1, // TODO temp for testing
+      onTap: () => ref.watch(GameState.provider).stage = "winning", // TODO temp for testing
       child: Stack(
         children: [Image.asset("assets/images/tiger.png")],
         // TODO: speech bubbles, sfx
