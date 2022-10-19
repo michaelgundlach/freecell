@@ -25,8 +25,9 @@ class Sound extends ChangeNotifier {
     await _musicPlayer.setVolume(_musicVolume);
     await _preloadSound(_musicPlayer, Sounds.polka);
     // Just in case this would slow things down
-    Future.delayed(const Duration(seconds: 20), () {
+    Future.delayed(const Duration(seconds: 5), () {
       _winMusicPlayer.setLoopMode(LoopMode.one);
+      _winMusicPlayer.setVolume(_musicVolume);
       _preloadSound(_winMusicPlayer, Sounds.winMusic);
     });
     if (!kIsWeb) toggleMusic();

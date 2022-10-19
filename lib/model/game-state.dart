@@ -74,7 +74,6 @@ class GameState extends ChangeNotifier {
         if (lastCardBadlyPlaced(result)) {
           result.last.badlyPlaced = true;
           badlyPlacedCards++;
-          print("BAD: ${result.last.value} on ${result.last.previous!.value}");
         }
       }
       return result;

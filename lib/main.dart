@@ -99,7 +99,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           if (nextGameState.stage == "winning") {
             animation.addStatusListener((status) {
               if (status == AnimationStatus.completed) {
-                performWinDance(context, nextGameState);
+                Timer.run(() => performWinDance(context, nextGameState));
               }
             });
           }

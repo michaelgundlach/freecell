@@ -52,8 +52,10 @@ class _GameMatState extends ConsumerState<GameMat> {
             "Fifty two free cells should do it...";
 
     if (gameState.stage == "game over" && wiggleControl == Control.stop) {
-      wiggleControl = Control.mirror;
-      growControl = slideControl = Control.play;
+      setState(() {
+        wiggleControl = Control.mirror;
+        growControl = slideControl = Control.play;
+      });
       Timer.periodic(const Duration(milliseconds: 600), (timer) {
         r(int a, int b) => Random().nextInt(b - a) + a;
         setState(() => logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255)));
@@ -75,43 +77,50 @@ class _GameMatState extends ConsumerState<GameMat> {
         duration: const Duration(seconds: 5),
         delay: const Duration(seconds: 2),
         control: slideControl,
-        builder: (context, value, child) => Align(
-          alignment: FractionalOffset(value.get('dx'), value.get('dy')),
-          child: FractionallySizedBox(
-            widthFactor: 0.9,
-            heightFactor: 0.35,
-            child: CustomAnimationBuilder<double>(
-              builder: (_, scale, child) => FractionallySizedBox(widthFactor: scale, heightFactor: scale, child: child),
-              tween: Tween(begin: 1, end: 2.2),
-              duration: const Duration(seconds: 5),
-              delay: const Duration(seconds: 2),
-              control: growControl,
+        builder: (context, value, child) {
+          Widget logoStamp = TextStamp(
+            logo,
+            fontFamily: "FleurDeLeah",
+            shadow: 1,
+            color: logoColor, // initial null lets TextStamp choose; will be set when we win
+          );
+          // Make sure that when the logo starts to dance, it doesn't have to Hero transition in from the
+          // previous screen, screwing up its rotation for a moment.
+          if (gameState.stage != "game over") {
+            logoStamp = Hero(tag: "freecell", child: logoStamp);
+          }
+          return Align(
+            alignment: FractionalOffset(value.get('dx'), value.get('dy')),
+            child: FractionallySizedBox(
+              widthFactor: 0.9,
+              heightFactor: 0.35,
               child: CustomAnimationBuilder<double>(
-                builder: (_, rotation, child) => Transform(
-                  transform: Matrix4.rotationZ(rotation),
-                  alignment: Alignment.center,
-                  child: child,
-                ),
-                tween: Tween(begin: -pi / 6, end: pi / 6),
-                startPosition: 0.493,
-                duration: const Duration(milliseconds: 600),
-                curve: Curves.easeInOutCubic,
-                control: wiggleControl,
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: Hero(
-                      tag: "freecell",
-                      child: TextStamp(
-                        logo,
-                        fontFamily: "FleurDeLeah",
-                        shadow: 1,
-                        color: logoColor, // initial null lets TextStamp choose; will be set when we win
-                      )),
+                builder: (_, scale, child) =>
+                    FractionallySizedBox(widthFactor: scale, heightFactor: scale, child: child),
+                tween: Tween(begin: 1, end: 2.2),
+                duration: const Duration(seconds: 5),
+                delay: const Duration(seconds: 2),
+                control: growControl,
+                child: CustomAnimationBuilder<double>(
+                  builder: (_, rotation, child) => Transform(
+                    transform: Matrix4.rotationZ(rotation),
+                    alignment: Alignment.center,
+                    child: child,
+                  ),
+                  tween: Tween(begin: -pi / 6, end: pi / 6),
+                  startPosition: 0.493,
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeInOutCubic,
+                  control: wiggleControl,
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: logoStamp,
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
       Column(
         // Force cascades to render after foundations, so win animation doesn't fly cards underneath foundations
