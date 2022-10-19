@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:simple_animations/simple_animations.dart';
 
+import '../../main.dart';
 import '../../model/game-state.dart';
 import '../../util/sound.dart';
 
@@ -24,31 +26,32 @@ class FreecellInteractTarget extends ConsumerWidget {
     var highlighted = ref.watch(GameState.provider.select((gs) => gs.highlighted));
     var sound = ref.watch(soundProvider);
     return GestureDetector(
-      onTapDown: (_) async {
-        var model = ref.read(GameState.provider);
-        PileEntry? highlighted = model.highlighted;
+      onTapDown: (_) {
+        var gameState = ref.read(GameState.provider);
+        if (gameState.stage != "playing") return; // probably winning
+        PileEntry? highlighted = gameState.highlighted;
 
         // Nobody highlighted: highlight us if we are allowed to be highlighted.
         if (highlighted == null) {
           if (canHighlight()) {
-            model.highlighted = entry;
-            await sound.sfx(Sounds.highlighted);
+            gameState.highlighted = entry;
+            sound.sfx(Sounds.highlighted);
           }
         }
         // Somebody highlighted: if it's us, cancel highlight
         else if (highlighted == entry) {
-          model.highlighted = null;
+          gameState.highlighted = null;
         }
         // Somebody highlighted and we can receive them
         else if (canReceive(highlighted)) {
-          model.moveHighlightedOnto(entry);
+          gameState.moveHighlightedOnto(entry);
           received(entry);
-          await sound.sfx(Sounds.played);
+          sound.sfx(Sounds.played);
         }
         // Somebody highlighted and we can't receive them: cancel highlight
         else {
-          model.highlighted = null;
-          await sound.sfx(Sounds.failed);
+          gameState.highlighted = null;
+          sound.sfx(Sounds.failed);
         }
       },
       child: highlighted == entry ? Glow(child: child) : child,

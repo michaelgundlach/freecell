@@ -64,7 +64,7 @@ class IntroScreen extends ConsumerWidget {
         ref.watch(GameState.provider).seed = int.parse(controller.value.text);
       }
       if (kIsWeb) ref.watch(soundProvider).toggleMusic(fade: true);
-      Navigator.push(
+      Navigator.pushReplacement(
           context,
           PageRouteBuilder(
               opaque: false,

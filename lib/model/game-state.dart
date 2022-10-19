@@ -35,7 +35,7 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 }
 
 class GameState extends ChangeNotifier {
-  String _stage = "intro"; // "intro", "dealing", "playing", "winning", "lost", "play again"
+  String _stage = "intro"; // "intro", "playing", "winning", "lost", "play again"
   get stage => _stage;
   set stage(val) {
     if (_stage == val) return;
@@ -139,6 +139,46 @@ class GameState extends ChangeNotifier {
   }
 
   bool get freeCellsAreFull => freeCells.every((cell) => !cell.last.isTheBase);
+
+  /// Copy of this with one auto-win dance step taken.  If it finishes the last step, sets stage to "game over".
+  GameState._();
+  GameState moreSettledByOne() {
+    llcopy(List<LinkedList<PileEntry>> ll) {
+      return ll.map((linkedlist) {
+        LinkedList<PileEntry> t = LinkedList();
+        for (final pe in linkedlist) {
+          t.add(PileEntry(pe.card));
+        }
+        return t;
+      }).toList();
+    }
+
+    var g = GameState._();
+    g._seed = _seed;
+    g._stage = _stage;
+    g.badlyPlacedCards = badlyPlacedCards;
+    g.cascades = llcopy(cascades);
+    g.deck = deck;
+    g.foundations = llcopy(foundations);
+    g.freeCells = llcopy(freeCells);
+    g.numFreeCells = numFreeCells;
+
+    // Move the lowest-ranked card on the end of a cascade to its foundation.  If no cards on foundations, done.
+    List<PileEntry?> pileEntries = g.cascades.map((c) => c.last.isTheBase ? null : c.last).toList();
+    if (pileEntries.every((pileEntry) => pileEntry == null)) {
+      g._stage = "game over";
+    } else {
+      pileEntries = pileEntries.where((p) => p != null).toList();
+      var lowCard = pileEntries.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2);
+      lowCard!.unlink();
+      var targetFoundation = g.foundations.firstWhere(
+        (f) => (lowCard.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == lowCard.suit,
+      );
+      targetFoundation.last.insertAfter(lowCard);
+    }
+
+    return g;
+  }
 
   static ChangeNotifierProvider<GameState> provider = ChangeNotifierProvider<GameState>((ref) {
     return GameState();

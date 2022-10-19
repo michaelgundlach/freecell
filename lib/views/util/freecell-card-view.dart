@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 
 import '../../main.dart';
+import '../../model/game-state.dart';
 
 class FreecellCardView extends ConsumerWidget {
   const FreecellCardView({required this.card, this.covered = false, super.key});
@@ -23,11 +24,12 @@ class FreecellCardView extends ConsumerWidget {
       ),
     );
 
+    final startOpacity = ref.watch(GameState.provider).stage == "playing" ? 0.3 : 1.0;
     return Hero(
       tag: "${card.value}${card.suit}",
       child: cardView,
       flightShuttleBuilder: (_, Animation<double> animation, __, ___, ____) =>
-          FadeTransition(opacity: animation.drive(Tween(begin: 0.3, end: 1.0)), child: cardView),
+          FadeTransition(opacity: Tween(begin: startOpacity, end: 1.0).animate(animation), child: cardView),
     );
   }
 
