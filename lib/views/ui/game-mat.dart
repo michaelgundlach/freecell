@@ -68,8 +68,9 @@ class GameMat extends ConsumerWidget {
               ),
             ),
             Column(
+              // Force cascades to render after foundations, so win animation doesn't fly cards underneath foundations
+              verticalDirection: VerticalDirection.up,
               children: [
-                const Expanded(child: Cascades()),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 5.0),
                   child: Row(children: [
@@ -78,6 +79,7 @@ class GameMat extends ConsumerWidget {
                     Expanded(flex: 10 * FreeSpaces.numberOfColumns(gameState), child: const FreeSpaces()),
                   ]),
                 ),
+                const Expanded(child: Cascades()),
               ],
             ),
           ],
