@@ -161,6 +161,7 @@ class GameState extends ChangeNotifier {
     g.foundations = llcopy(foundations);
     g.freeCells = llcopy(freeCells);
     g.numFreeCells = numFreeCells;
+    g.settledCards = settledCards + 1;
 
     // Move the lowest-ranked card on the end of a cascade/free cell to its
     // foundation.  If all cards on foundations, done.
@@ -182,6 +183,7 @@ class GameState extends ChangeNotifier {
   }
 
   PlayingCard? settlingCard;
+  int settledCards = 0;
   // true if it's in the foundation and not the settling card.
   bool isAlreadySettledCard(PlayingCard card) {
     match(c) => (c != null) && (c.suit == card.suit && c.value == card.value);

@@ -56,7 +56,7 @@ class _GameMatState extends ConsumerState<GameMat> {
         wiggleControl = Control.mirror;
         growControl = slideControl = Control.play;
       });
-      Timer.periodic(const Duration(milliseconds: 600), (timer) {
+      Timer.periodic(const Duration(milliseconds: 500), (timer) {
         r(int a, int b) => Random().nextInt(b - a) + a;
         setState(() => logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255)));
         // TODO temp
@@ -109,7 +109,7 @@ class _GameMatState extends ConsumerState<GameMat> {
                   ),
                   tween: Tween(begin: -pi / 6, end: pi / 6),
                   startPosition: 0.493,
-                  duration: const Duration(milliseconds: 600),
+                  duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOutCubic,
                   control: wiggleControl,
                   child: FittedBox(

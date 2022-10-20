@@ -3,7 +3,7 @@
 ## TODOs
 
 Finally:
-- resize images (last widget inspector button)
+- resize images (last widget inspector button), music
 - PR playing_cards changes
 - pubspec.yaml points to github playing_cards, not file
 - ship to store

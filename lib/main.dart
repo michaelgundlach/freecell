@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,8 @@ class GameScreen extends ConsumerStatefulWidget {
 }
 
 class _GameScreenState extends ConsumerState<GameScreen> {
+  Stopwatch sync = Stopwatch();
+
   @override
   Widget build(BuildContext context) {
     var gameState = ref.watch(GameState.provider);
@@ -90,12 +93,17 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   // only run by top level GameScreen.  Pushes a series of more-settled GameScreens onto the board.
   performWinDance(context, GameState gameState) {
+    sync.start(); // does nothing if already running
+    final nextGameState = gameState.moreSettledByOne();
+    int transitionSpeed = nextGameState.settledCards <= 4
+        ? (2000 * (nextGameState.settledCards) - sync.elapsed.inMilliseconds)
+        : (8000 + (nextGameState.settledCards - 4) * 500 - sync.elapsed.inMilliseconds);
+    transitionSpeed = max(transitionSpeed, 1);
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
         opaque: false,
         pageBuilder: (context, animation, __) {
-          final nextGameState = gameState.moreSettledByOne();
           if (nextGameState.stage == "winning") {
             animation.addStatusListener((status) {
               if (status == AnimationStatus.completed) {
@@ -108,7 +116,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             child: const GameScreen(isPerformingWinDance: true),
           );
         },
-        transitionDuration: const Duration(milliseconds: 500),
+        transitionDuration: Duration(milliseconds: transitionSpeed),
       ),
     );
   }
