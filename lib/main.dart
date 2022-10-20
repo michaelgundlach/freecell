@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         primaryColorDark: Colors.blue[900],
         backgroundColor: Colors.blue[300],
       ),
-      home: const IntroScreen(),
+      home: const GameScreen(),
     );
   }
 }
@@ -66,6 +66,21 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   Widget build(BuildContext context) {
     var gameState = ref.watch(GameState.provider);
+    if (gameState.stage == "intro") {
+      Timer.run(
+        () => Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => const IntroScreen(),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: const Duration(milliseconds: 4500),
+            transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+      );
+      return const SizedBox.shrink();
+    }
+
     var sound = ref.watch(soundProvider);
     sound.setNumFreeCells(gameState.numFreeCells);
     // If we're in "winning" stage, right after building and displaying

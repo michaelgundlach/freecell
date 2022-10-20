@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
@@ -5,8 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/views/util/freecell-card-view.dart';
 import 'package:playing_cards/playing_cards.dart';
+import 'package:simple_animations/simple_animations.dart';
 
-import '../../main.dart';
 import '../../model/game-state.dart';
 import '../../util/sound.dart';
 import '../util/text-stamp.dart';
@@ -29,10 +31,7 @@ class _CardSmearState extends ConsumerState<CardSmear> {
       // TODO less ugly data wrangling?  Ask SO
       deck.forEachIndexed((i, c) {
         double w = 10, h = 5;
-        // lol
         double alignX = 1 / (w - 1) * ((i ~/ h) % w) * 2 - 1;
-        // alignX = alignX * 0.5 + (alignX < 0 ? -1 : 1) * 0.5; // push out to edges
-
         double alignY = 1 / (h - 1) * (i % h) * 2 - 1;
         cardAlignments[c.suit]![c.value] = Alignment(alignX, alignY);
       });
@@ -42,7 +41,7 @@ class _CardSmearState extends ConsumerState<CardSmear> {
           .map((c) => Align(
                 alignment: cardAlignments[c.suit]![c.value]!,
                 child: FractionallySizedBox(
-                  widthFactor: 1 / 17,
+                  widthFactor: 1 / 15,
                   child: FreecellCardView(card: c),
                 ),
               ))
@@ -52,28 +51,40 @@ class _CardSmearState extends ConsumerState<CardSmear> {
 }
 
 class IntroScreen extends ConsumerWidget {
-  const IntroScreen({super.key});
+  const IntroScreen({super.key, this.dialog = false});
+
+  final bool dialog;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(soundProvider).wakeUp();
+    final gameState = ref.watch(GameState.provider);
+
     final controller = TextEditingController();
 
     void deal([value]) {
-      ref.watch(GameState.provider).stage = "playing";
-      if (controller.value.text != "") {
-        ref.watch(GameState.provider).seed = int.parse(controller.value.text);
+      gameState.stage = "playing";
+      if (dialog) {
+        // If they enter the same number, actually redeal, by triggering a seed change.
+        gameState.seed = 0;
       }
-      if (kIsWeb) ref.watch(soundProvider).toggleMusic(fade: true);
-      Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-              opaque: false,
-              pageBuilder: (_, __, ___) => const GameScreen(),
-              reverseTransitionDuration: Duration.zero,
-              transitionDuration: const Duration(milliseconds: 4500),
-              transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child)));
+      if (controller.value.text != "") {
+        gameState.seed = int.parse(controller.value.text);
+      } else {
+        gameState.seed = Random().nextInt(1000000);
+      }
+      if (kIsWeb && !dialog) ref.watch(soundProvider).toggleMusic(fade: true);
+      Navigator.pop(context);
     }
+
+    var x = 50.0, y = 10.0, yOffset = -10;
+    MovieTween tigerTween = MovieTween()
+      ..scene(begin: Duration.zero, duration: const Duration(milliseconds: 2000))
+          .tween('x', Tween(begin: -x / 2, end: 0.0), curve: Curves.easeIn)
+          .tween('y', Tween(begin: -y / 2 + yOffset, end: y / 2 + yOffset), curve: Curves.easeInOut)
+          .thenFor(duration: const Duration(milliseconds: 2000))
+          .tween('x', Tween(begin: 0.0, end: x / 2), curve: Curves.easeOut)
+          .tween('y', Tween(begin: y / 2 + yOffset, end: -y / 2 + yOffset), curve: Curves.easeInOut);
 
     return Material(
       color: Theme.of(context).primaryColor,
@@ -94,7 +105,20 @@ class IntroScreen extends ConsumerWidget {
                         child:
                             Hero(tag: "freecell", child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1)),
                       ),
-                      const Expanded(flex: 30, child: Hero(tag: "tiger", child: Tiger())),
+                      Expanded(
+                        flex: 30,
+                        child: CustomAnimationBuilder(
+                          builder: (context, value, child) => Transform(
+                            transform: Matrix4.translationValues(value.get('x'), value.get('y'), 0),
+                            child: child,
+                          ),
+                          tween: tigerTween,
+                          startPosition: .5,
+                          duration: tigerTween.duration,
+                          control: dialog ? Control.stop : Control.mirror,
+                          child: const Hero(tag: "tiger", child: Tiger()),
+                        ),
+                      ),
                       Expanded(
                         flex: 8,
                         child: Container(
@@ -126,9 +150,20 @@ class IntroScreen extends ConsumerWidget {
                       const Spacer(flex: 5),
                       Expanded(
                         flex: 10,
-                        child: ElevatedButton(
-                          onPressed: deal,
-                          child: const Text("Deal"),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ElevatedButton(
+                              onPressed: deal,
+                              child: const Text("Deal"),
+                            ),
+                            if (dialog) const SizedBox(width: 10),
+                            if (dialog)
+                              ElevatedButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("Cancel"),
+                              ),
+                          ],
                         ),
                       ),
                       const Spacer(flex: 5),

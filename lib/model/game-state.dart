@@ -35,7 +35,7 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 }
 
 class GameState extends ChangeNotifier {
-  String _stage = "intro"; // "intro", "playing", "winning", "lost", "play again"
+  String _stage = "intro"; // "intro", "playing", "winning", "game over"
   get stage => _stage;
   set stage(val) {
     if (_stage == val) return;
@@ -108,7 +108,7 @@ class GameState extends ChangeNotifier {
     return shuffledDeck;
   }
 
-  int _seed = Random().nextInt(1000000); // TODO temp
+  int _seed = Random().nextInt(1000000); // to generate cards on intro screen
   int get seed => _seed;
   set seed(value) {
     if (_seed == value) return;

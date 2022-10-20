@@ -23,15 +23,21 @@ class FreecellCardView extends ConsumerWidget {
     );
 
     final gameState = ref.watch(GameState.provider);
-    if (gameState.isAlreadySettledCard(cardView.card)) {
-      return cardView; // don't wrap as hero lest its flight cause a wiggle during win animation (due to rotation)
+    if (gameState.stage == "winning" && gameState.isAlreadySettledCard(cardView.card)) {
+      // don't wrap as hero lest its flight cause a wiggle during win animation (due to rotation).
+      // but do make them heroes during play, so that the redeal modal can capture them.
+      return cardView;
     }
-    final startOpacity = gameState.stage == "playing" ? 0.3 : 1.0;
+    var opacityTween = Tween(
+      begin: 1.0,
+      // During win dance, we want full opacity the whole time.
+      end: gameState.stage == "winning" ? 1.0 : 0.3,
+    );
     return Hero(
       tag: "${card.value}${card.suit}",
       child: cardView,
       flightShuttleBuilder: (_, Animation<double> animation, __, ___, ____) =>
-          FadeTransition(opacity: Tween(begin: startOpacity, end: 1.0).animate(animation), child: cardView),
+          FadeTransition(opacity: opacityTween.animate(animation), child: cardView),
     );
   }
 

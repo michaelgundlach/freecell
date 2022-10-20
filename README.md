@@ -7,12 +7,9 @@ Finally:
 - ship to store
 
 v1.1:
-- correct button affordances in settings
-- button on tiger to redeal (open intro screen)
 - less ugly seed input, limited to 0-3
 - ensure random seed is 0-3 digits only
 - random photos on AJQK
-- Intro tiger floats
 - Discouragement for more free cells
   - tiger mocks you (make these many options so it doesn't get old)
   - background image changes to something less pleasant
