@@ -36,10 +36,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   playing_cards:
-    path: /Users/family/code/playing_cards
-#    git: 
-#      url: https://github.com/michaelgundlach/playing_cards
-#      ref: bigger_font
+    # path: /Users/family/code/playing_cards
+    git: 
+      url: https://github.com/michaelgundlach/playing_cards
+      ref: bigger_font
   flutter_riverpod: ^1.0.4
   collection: ^1.16.0
   vector_math: ^2.1.2

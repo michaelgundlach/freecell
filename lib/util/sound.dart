@@ -29,10 +29,10 @@ class Sound extends ChangeNotifier {
     await _musicPlayer.setLoopMode(LoopMode.one);
     await _musicPlayer.setVolume(_musicVolume);
     await _preloadSound(_musicPlayer, Sounds.polka);
+    if (!kIsWeb) toggleMusic();
     _winMusicPlayer.setLoopMode(LoopMode.one);
     _winMusicPlayer.setVolume(_musicVolume);
     Timer.run(() => setNumFreeCells(2)); // just in case this could jank startup animation
-    if (!kIsWeb) toggleMusic();
   }
 
   get musicPlaying => _musicPlayer.playing;

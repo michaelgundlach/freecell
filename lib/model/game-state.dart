@@ -90,13 +90,13 @@ class GameState extends ChangeNotifier {
 
   _deckFromSeed() {
     // In the order that Tynker uses: A of H S D C, 2 of H S D C, ..., K of H S D C
-    var heck = [
+    var orderedDeck = [
       for (final index in [12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
         for (Suit suit in [Suit.hearts, Suit.spades, Suit.diamonds, Suit.clubs])
           PlayingCard(suit, CardValue.values[index])
     ];
-    if (seed == 999999) return heck.reversed.toList(); // TODO temp
-    return _shuffle(heck);
+    if (seed == 999999) return orderedDeck.reversed.toList(); // for testing
+    return _shuffle(orderedDeck);
   }
 
   _shuffle(List<PlayingCard> deck) {

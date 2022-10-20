@@ -4,7 +4,6 @@
 
 Finally:
 - PR playing_cards changes
-- pubspec.yaml points to github playing_cards, not file
 - ship to store
 
 v1.1:

@@ -299,9 +299,11 @@ packages:
   playing_cards:
     dependency: "direct main"
     description:
-      path: "/Users/family/code/playing_cards"
-      relative: false
-    source: path
+      path: "."
+      ref: bigger_font
+      resolved-ref: "2aeaa351a53a119854685b29bbb77746e23e3b60"
+      url: "https://github.com/michaelgundlach/playing_cards"
+    source: git
     version: "0.3.1+9"
   plugin_platform_interface:
     dependency: transitive
