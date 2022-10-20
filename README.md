@@ -2,8 +2,10 @@
 
 ## TODOs
 
+- dance tiger and lady
+
 Finally:
-- resize images (last widget inspector button), music
+- resize images (last widget inspector button)
 - PR playing_cards changes
 - pubspec.yaml points to github playing_cards, not file
 - ship to store

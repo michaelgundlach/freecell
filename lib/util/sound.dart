@@ -123,26 +123,23 @@ class Sound extends ChangeNotifier {
   }
 
   String? _fileForType(Sounds sound) {
-    // TODO find out why some sounds work and some don't. What is wrong with their encoding?
-    // card-switch.wav : click
-    // card1.wav: slop
-    // cardSlid7.wav: shhhlop
     switch (sound) {
       case Sounds.highlighted:
         return null;
       case Sounds.played:
         return "card-switch.wav";
       case Sounds.failed:
-        return "cardSlide7.wav";
+        return "card-fail.mp3";
       case Sounds.polka:
         return "waltz-polka.mp3";
       case Sounds.winMusic:
-        if (_numFreeCells < 4)
+        if (_numFreeCells < 4) {
           return "win-a.mp3";
-        else if (_numFreeCells <= 6)
+        } else if (_numFreeCells <= 6) {
           return "win-b.mp3";
-        else
+        } else {
           return "win-f.mp3";
+        }
     }
   }
 }
