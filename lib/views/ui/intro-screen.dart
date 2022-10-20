@@ -56,6 +56,7 @@ class IntroScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(soundProvider).wakeUp();
     final controller = TextEditingController();
 
     void deal([value]) {

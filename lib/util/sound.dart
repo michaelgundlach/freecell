@@ -12,24 +12,26 @@ final soundProvider = ChangeNotifierProvider<Sound>((ref) {
 
 class Sound extends ChangeNotifier {
   Sound._() {
-    init();
+    _init();
   }
 
   final AudioPlayer _sfxPlayer = AudioPlayer();
   final AudioPlayer _musicPlayer = AudioPlayer();
   final AudioPlayer _winMusicPlayer = AudioPlayer();
   final _musicVolume = 0.12;
+  int _numFreeCells = 0; // TODO watch gameState instead of having to track this separately
+  String? winSong;
 
-  init() async {
+  // Needed to force lazy provider to create sound and start preloading
+  wakeUp() {}
+
+  _init() async {
     await _musicPlayer.setLoopMode(LoopMode.one);
     await _musicPlayer.setVolume(_musicVolume);
     await _preloadSound(_musicPlayer, Sounds.polka);
-    // Just in case this would slow things down
-    Future.delayed(const Duration(seconds: 5), () {
-      _winMusicPlayer.setLoopMode(LoopMode.one);
-      _winMusicPlayer.setVolume(_musicVolume);
-      _preloadSound(_winMusicPlayer, Sounds.winMusic);
-    });
+    _winMusicPlayer.setLoopMode(LoopMode.one);
+    _winMusicPlayer.setVolume(_musicVolume);
+    Timer.run(() => setNumFreeCells(2)); // just in case this could jank startup animation
     if (!kIsWeb) toggleMusic();
   }
 
@@ -67,21 +69,36 @@ class Sound extends ChangeNotifier {
     notifyListeners();
   }
 
-  playWinMusic() {
-    _musicPlayer.stop();
-    if (!_winMusicPlayer.playing) _winMusicPlayer.play();
+  /// TODO watch gamestate instead
+  setNumFreeCells(n) {
+    if (_numFreeCells == n) return;
+    _numFreeCells = n;
+    if (winSong == _fileForType(Sounds.winMusic)) return;
+    winSong = _fileForType(Sounds.winMusic);
+    print("Num free cells increased to $n, adjusting win music");
+    _preloadSound(_winMusicPlayer, Sounds.winMusic);
   }
 
-  Future<bool> _preloadSound(player, sound) async {
+  playWinMusic() {
+    _musicPlayer.stop();
+    if (!_winMusicPlayer.playing) {
+      _winMusicPlayer.play();
+    }
+  }
+
+  Future<bool> _preloadSound(AudioPlayer player, sound) async {
     // TODO Convince Flutter they have a bug re assets/ - it will randomly want to find them with or
     // without the assets/ prefix! >:(
     final file = _fileForType(sound);
     if (file == null) return false;
+    print("Preload begun for $file");
     try {
-      await player.setAsset('assets/audio/$file');
+      await player.setAsset('audio/$file');
+      print("Preloaded $file");
       return true;
     } catch (e) {
-      await player.setAsset('audio/$file');
+      await player.setAsset('assets/audio/$file');
+      print("Preloaded $file");
       return true;
     }
   }
@@ -120,7 +137,12 @@ class Sound extends ChangeNotifier {
       case Sounds.polka:
         return "waltz-polka.mp3";
       case Sounds.winMusic:
-        return "win.mp3";
+        if (_numFreeCells < 4)
+          return "win-a.mp3";
+        else if (_numFreeCells <= 6)
+          return "win-b.mp3";
+        else
+          return "win-f.mp3";
     }
   }
 }

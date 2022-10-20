@@ -66,11 +66,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   Widget build(BuildContext context) {
     var gameState = ref.watch(GameState.provider);
+    var sound = ref.watch(soundProvider);
+    sound.setNumFreeCells(gameState.numFreeCells);
     // If we're in "winning" stage, right after building and displaying
     // ourselves we navigate recursively to a succession of more and more
     // settled GameScreens.
     if (gameState.stage == "winning" && !widget.isPerformingWinDance) {
-      ref.watch(soundProvider).playWinMusic();
+      sound.playWinMusic();
       Timer.run(() => performWinDance(context, gameState));
     }
 
