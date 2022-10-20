@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 import '../../model/game-state.dart';
 import '../../util/sound.dart';
+import '../util/game-over-dancer.dart';
 import 'tiger.dart';
 
 class SettingsPanel extends ConsumerWidget {
@@ -10,6 +14,7 @@ class SettingsPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final gameState = ref.watch(GameState.provider);
     final sound = ref.watch(soundProvider);
     return Container(
       padding: const EdgeInsets.only(left: 10, right: 10),
@@ -32,7 +37,10 @@ class SettingsPanel extends ConsumerWidget {
             onTap: () => sound.toggleMusic(),
             child: Column(
               children: [
-                Image.asset("assets/images/accordion.png"),
+                GameOverDancer(
+                  tween: Tween(begin: -pi / 36, end: pi / 36),
+                  child: Image.asset("assets/images/accordion.png"),
+                ),
                 FittedBox(
                   fit: BoxFit.fill,
                   child: Text(sound.musicPlaying ? sound.polkaNo() : "ACCORDI-ON",
@@ -43,11 +51,11 @@ class SettingsPanel extends ConsumerWidget {
           ),
           Column(
             children: [
-              const Hero(tag: "tiger", child: Tiger()),
+              const GameOverDancer(
+                  curve: Curves.easeInOutQuint, stoppedChild: Hero(tag: "tiger", child: Tiger()), child: Tiger()),
               FittedBox(
                 fit: BoxFit.fill,
-                child:
-                    Text(ref.watch(GameState.provider).seed.toString(), style: Theme.of(context).textTheme.bodyLarge),
+                child: Text(gameState.seed.toString(), style: Theme.of(context).textTheme.bodyLarge),
               ),
             ],
           ),

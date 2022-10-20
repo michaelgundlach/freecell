@@ -109,7 +109,7 @@ class IntroScreen extends ConsumerWidget {
                               SizedBox(
                                 width: 60,
                                 child: TextField(
-                                  autofocus: true,
+                                  autofocus: kIsWeb, // kbd blocks view on mobile
                                   textInputAction: TextInputAction.done,
                                   onSubmitted: deal,
                                   controller: controller,

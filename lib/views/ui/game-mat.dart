@@ -7,6 +7,7 @@ import 'package:playing_cards/playing_cards.dart';
 import 'package:simple_animations/simple_animations.dart';
 
 import '../../model/game-state.dart';
+import '../util/game-over-dancer.dart';
 import 'cascade.dart';
 import '../util/constrained-aspect-ratio.dart';
 import 'foundations.dart';
@@ -104,17 +105,8 @@ class _GameMatState extends ConsumerState<GameMat> {
                 duration: const Duration(seconds: 5),
                 delay: const Duration(seconds: 2),
                 control: growControl,
-                child: CustomAnimationBuilder<double>(
-                  builder: (_, rotation, child) => Transform(
-                    transform: Matrix4.rotationZ(rotation),
-                    alignment: Alignment.center,
-                    child: child,
-                  ),
-                  tween: Tween(begin: -pi / 6, end: pi / 6),
-                  startPosition: 0.493,
-                  duration: const Duration(milliseconds: 500),
+                child: GameOverDancer(
                   curve: Curves.easeInOutCubic,
-                  control: wiggleControl,
                   child: FittedBox(
                     fit: BoxFit.contain,
                     child: logoStamp,
