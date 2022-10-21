@@ -176,9 +176,6 @@ class GameState extends ChangeNotifier {
     var stacksToPlayFrom = (cascades + freeCells);
     var optionsToPlay = stacksToPlayFrom.map((stack) => stack.last.isTheBase ? null : stack.last).toList();
     optionsToPlay = optionsToPlay.where((p) => p != null).toList();
-    if (optionsToPlay.isEmpty) {
-      int x = 4;
-    }
     assert(optionsToPlay.isNotEmpty);
     var lowCard = optionsToPlay.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2);
     lowCard!.unlink();

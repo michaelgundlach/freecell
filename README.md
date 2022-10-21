@@ -2,6 +2,10 @@
 
 ## TODOs
 
+- restart music after win if user had music on
+- see notes from previous commit about moving fake gameState below GameScreen
+- tiger turns on sound upon win? something's wrong there.
+
 - redeal has to actually work after winning!
   - stop win music
   - correctly go back to playing mode
