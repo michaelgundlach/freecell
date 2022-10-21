@@ -28,7 +28,8 @@ class _GameMatState extends ConsumerState<GameMat> {
 
   @override
   Widget build(BuildContext context) {
-    final gameState = ref.watch(GameState.provider);
+    var gameState = ref.watch(GameState.provider);
+
     final longestCascade = gameState.cascades.reduce((a, b) => a.length > b.length ? a : b).length;
     final mostCards = longestCascade - 1; // ignore base at cascade[0]
     final fitThisManyCards = max(14, mostCards);
@@ -44,7 +45,7 @@ class _GameMatState extends ConsumerState<GameMat> {
               7: "Really?",
               8: "Wimpcell",
               9: "Not-even-tryingcell",
-              10: "Losercell",
+              10: "Maybe try again when you're older",
               11: "Oh-come-on-cell",
               12: "Are-you-kidding-me-cell",
               13: "Now you're just curious, right?",
@@ -60,8 +61,8 @@ class _GameMatState extends ConsumerState<GameMat> {
       Timer.periodic(const Duration(milliseconds: 500), (timer) {
         r(int a, int b) => Random().nextInt(b - a) + a;
         setState(() => logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255)));
-        // TODO temp
-        if (gameState.stage == "playing") {
+        if (gameState.stage != "game over") {
+          // game restarted
           timer.cancel();
         }
       });

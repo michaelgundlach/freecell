@@ -8,7 +8,7 @@ import 'package:playing_cards/playing_cards.dart';
 import '../util/rng.dart';
 
 class PileEntry extends LinkedListEntry<PileEntry> {
-  PileEntry(this.card);
+  PileEntry(this.card, {this.badlyPlaced = false});
 
   // null means this is an empty spot where a card could go.  All piles start with one.
   final PlayingCard? card;
@@ -19,7 +19,7 @@ class PileEntry extends LinkedListEntry<PileEntry> {
   bool get isRed => suit == Suit.hearts || suit == Suit.diamonds;
 
   // Is it currently on a lower-rank card in the cascades?
-  bool badlyPlaced = false;
+  bool badlyPlaced;
 
   /// True if `candidate` can be played on `this` in a Cascade.
   bool canCascade(PileEntry candidate) {
@@ -139,59 +139,70 @@ class GameState extends ChangeNotifier {
 
   bool get freeCellsAreFull => freeCells.every((cell) => !cell.last.isTheBase);
 
-  /// Copy of this with one auto-win dance step taken.  If it finishes the last step, sets stage to "game over".
-  GameState._();
-  GameState moreSettledByOne() {
+  /// Copy, autoplayed by one.
+  GameState._(GameState original) {
+    // Returns a deep copy of a list of linked lists of pileentries
     llcopy(List<LinkedList<PileEntry>> ll) {
       return ll.map((linkedlist) {
         LinkedList<PileEntry> t = LinkedList();
-        for (final pe in linkedlist) {
-          t.add(PileEntry(pe.card));
+        for (PileEntry pe in linkedlist) {
+          t.add(PileEntry(pe.card, badlyPlaced: pe.badlyPlaced));
         }
         return t;
       }).toList();
     }
 
-    var g = GameState._();
-    g._seed = _seed;
-    g._stage = _stage;
-    g.badlyPlacedCards = badlyPlacedCards;
-    g.cascades = llcopy(cascades);
-    g.deck = deck;
-    g.foundations = llcopy(foundations);
-    g.freeCells = llcopy(freeCells);
-    g.numFreeCells = numFreeCells;
-    g.settledCards = settledCards + 1;
+    freeCells = llcopy(original.freeCells);
+    foundations = llcopy(original.foundations);
+    cascades = llcopy(original.cascades);
 
-    // Move the lowest-ranked card on the end of a cascade/free cell to its
-    // foundation.  If all cards on foundations, done.
-    var pileEntries = (g.cascades + g.freeCells).map((c) => c.last.isTheBase ? null : c.last).toList();
-    if (pileEntries.every((pileEntry) => pileEntry == null)) {
-      g._stage = "game over";
-    } else {
-      pileEntries = pileEntries.where((p) => p != null).toList();
-      var lowCard = pileEntries.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2);
-      lowCard!.unlink();
-      var targetFoundation = g.foundations.firstWhere(
-        (f) => (lowCard.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == lowCard.suit,
-      );
-      targetFoundation.last.insertAfter(lowCard);
-      g.settlingCard = lowCard.card;
-    }
+    _seed = original._seed;
+    _stage = original._stage;
+    _highlighted = original._highlighted;
 
-    return g;
+    numFreeCells = original.numFreeCells;
+    badlyPlacedCards = original.badlyPlacedCards;
+    deck = original.deck.toList();
   }
+
+  /// Returns a copy of this, autoplayed by one.  Assumes there is something to autoplay.
+  GameState oneAutoplayed() {
+    return GameState._(this)..autoplayOne();
+  }
+
+  // Autoplays one card onto a foundation (the lowest card available to play).  Assumes there is at least one to play.
+  void autoplayOne() {
+    // Move the lowest-ranked card on the end of a cascade/free cell to its foundation.
+    var stacksToPlayFrom = (cascades + freeCells);
+    var optionsToPlay = stacksToPlayFrom.map((stack) => stack.last.isTheBase ? null : stack.last).toList();
+    optionsToPlay = optionsToPlay.where((p) => p != null).toList();
+    if (optionsToPlay.isEmpty) {
+      int x = 4;
+    }
+    assert(optionsToPlay.isNotEmpty);
+    var lowCard = optionsToPlay.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2);
+    lowCard!.unlink();
+    var targetFoundation = foundations.firstWhere(
+      (f) => (lowCard.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == lowCard.suit,
+    );
+    targetFoundation.last.insertAfter(lowCard);
+    settledCards = settledCards + 1;
+
+    settlingCard = lowCard.card;
+    notifyListeners();
+  }
+
+  // False if any king is not on its foundation.
+  bool get foundationsFull => foundations.every((f) => f.length == 14); // the base plus A-K
 
   PlayingCard? settlingCard;
   int settledCards = 0;
-  // true if it's in the foundation and not the settling card.
+  // true if it's in the foundation and not the autoplayed card.
   bool isAlreadySettledCard(PlayingCard card) {
     match(c) => (c != null) && (c.suit == card.suit && c.value == card.value);
     if (match(settlingCard)) return false;
     return foundations.any((foundation) => foundation.any((pileEntry) => match(pileEntry.card)));
   }
 
-  static ChangeNotifierProvider<GameState> provider = ChangeNotifierProvider<GameState>((ref) {
-    return GameState();
-  });
+  static ChangeNotifierProvider<GameState> provider = ChangeNotifierProvider<GameState>((ref) => GameState());
 }

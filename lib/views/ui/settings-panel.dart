@@ -34,25 +34,32 @@ class SettingsPanel extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           GestureDetector(
-            onTap: () => sound.toggleMusic(),
+            onTap: () {
+              if (gameState.stage != "winning") sound.toggleMusic();
+            },
             child: Column(
               children: [
                 GameOverDancer(
                   tween: Tween(begin: -pi / 36, end: pi / 36),
                   child: Image.asset("assets/images/accordion.png"),
                 ),
-                FittedBox(
-                  fit: BoxFit.fill,
-                  child: ElevatedButton(
-                    onPressed: () => sound.toggleMusic(),
-                    child: Text(sound.musicPlaying ? sound.polkaNo() : "ACCORDI-ON", textAlign: TextAlign.center),
+                Opacity(
+                  opacity: gameState.stage == "winning" ? 0.5 : 1.0,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (gameState.stage != "winning") sound.toggleMusic();
+                      },
+                      child: Text(sound.musicPlaying ? sound.polkaNo() : "ACCORDI-ON", textAlign: TextAlign.center),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           GestureDetector(
-            onTap: () => _tigerClicked(context, gameState),
+            onTap: () => _tigerClicked(context, ref, gameState),
             child: Column(
               children: [
                 const GameOverDancer(
@@ -64,11 +71,14 @@ class SettingsPanel extends ConsumerWidget {
                   fit: BoxFit.fill,
                   child: Text(gameState.seed.toString(), style: Theme.of(context).textTheme.bodyLarge),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: ElevatedButton(
-                    onPressed: () => _tigerClicked(context, gameState),
-                    child: const Text("Redeal"),
+                Opacity(
+                  opacity: gameState.stage == "winning" ? 0.5 : 1.0,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: ElevatedButton(
+                      onPressed: () => _tigerClicked(context, ref, gameState),
+                      child: const Text("Redeal"),
+                    ),
                   ),
                 ),
               ],
@@ -79,11 +89,14 @@ class SettingsPanel extends ConsumerWidget {
     );
   }
 
-  _tigerClicked(context, gameState) {
-    if (gameState.seed == 999999) {
+  _tigerClicked(context, ref, gameState) {
+    if (gameState.stage == "winning") return;
+    if (gameState.seed == 999999 && gameState.stage == "playing") {
       // for testing
-      gameState.stage = (gameState.stage == "playing" ? "winning" : "playing");
-    } else if (gameState.stage == "playing") {
+      ref.watch(soundProvider).toggleWinMusic(play: true);
+      for (int i = 0; i < 50; i++) gameState.autoplayOne();
+      gameState.stage = "winning";
+    } else if (gameState.stage != "intro") {
       Navigator.push(
         context,
         PageRouteBuilder(
@@ -93,7 +106,7 @@ class SettingsPanel extends ConsumerWidget {
           pageBuilder: (context, _, __) => const FractionallySizedBox(
             widthFactor: 0.8,
             heightFactor: 0.8,
-            child: IntroScreen(dialog: true),
+            child: IntroScreen(isDialog: true),
           ),
           transitionDuration: const Duration(milliseconds: 500),
         ),

@@ -11,7 +11,7 @@ class TextStamp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FittedBox(
-      fit: BoxFit.contain,
+      fit: BoxFit.fitHeight,
       child: Text(text,
           style: Theme.of(context).textTheme.headline1!.copyWith(
             fontFamily: fontFamily,

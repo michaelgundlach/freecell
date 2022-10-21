@@ -29,24 +29,30 @@ class Sound extends ChangeNotifier {
     await _musicPlayer.setLoopMode(LoopMode.one);
     await _musicPlayer.setVolume(_musicVolume);
     await _preloadSound(_musicPlayer, Sounds.polka);
-    if (!kIsWeb) toggleMusic();
+    if (!kIsWeb) toggleMusic(play: true);
     _winMusicPlayer.setLoopMode(LoopMode.one);
     _winMusicPlayer.setVolume(_musicVolume);
     Timer.run(() => setNumFreeCells(2)); // just in case this could jank startup animation
   }
 
   get musicPlaying => _musicPlayer.playing;
+  get winMusicPlaying => _winMusicPlayer.playing;
 
-  toggleMusic({fade = false}) async {
-    if (_musicPlayer.playing) {
+  toggleMusic({bool? play, fade = false}) async {
+    bool shouldPlay = play ?? !_musicPlayer.playing;
+    if (shouldPlay == _musicPlayer.playing) return;
+    if (!shouldPlay) {
       await _musicPlayer.pause();
       await _musicPlayer.seek(Duration.zero);
       print("MUSIC OFF");
     } else {
+      await _winMusicPlayer.pause();
+      await _winMusicPlayer.seek(Duration.zero);
       if (fade) {
         _musicPlayer.setVolume(0);
         final stopwatch = Stopwatch()..start();
-        const duration = 10.0;
+        const duration = 3.0;
+        // TODO what's the right way to do this with a PlayAnimation?
         Timer.periodic(const Duration(milliseconds: 100), (timer) {
           double animation = (stopwatch.elapsed.inMilliseconds / 1000) / duration;
           if (animation < 1) {
@@ -79,10 +85,16 @@ class Sound extends ChangeNotifier {
     _preloadSound(_winMusicPlayer, Sounds.winMusic);
   }
 
-  playWinMusic() {
-    _musicPlayer.stop();
-    if (!_winMusicPlayer.playing) {
-      _winMusicPlayer.play();
+  toggleWinMusic({bool? play}) async {
+    if (play ?? !_musicPlayer.playing) {
+      await _musicPlayer.pause();
+      await _musicPlayer.seek(Duration.zero);
+      if (!_winMusicPlayer.playing) {
+        _winMusicPlayer.play();
+      }
+    } else {
+      await _winMusicPlayer.pause();
+      await _winMusicPlayer.seek(Duration.zero);
     }
   }
 

@@ -2,6 +2,10 @@
 
 ## TODOs
 
+- redeal has to actually work after winning!
+  - stop win music
+  - correctly go back to playing mode
+
 Finally:
 - PR playing_cards changes
 - ship to store

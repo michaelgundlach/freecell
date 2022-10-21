@@ -50,21 +50,45 @@ class _CardSmearState extends ConsumerState<CardSmear> {
   }
 }
 
-class IntroScreen extends ConsumerWidget {
-  const IntroScreen({super.key, this.dialog = false});
-
-  final bool dialog;
+class IntroScreen extends ConsumerStatefulWidget {
+  const IntroScreen({super.key, this.isDialog = false});
+  final bool isDialog;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(soundProvider).wakeUp();
-    final gameState = ref.watch(GameState.provider);
+  ConsumerState<ConsumerStatefulWidget> createState() => _IntroScreenState();
+}
 
+class _IntroScreenState extends ConsumerState<IntroScreen> {
+  // Way too much work in order to start playing music and tiger dancing on web
+  // when race textfield clicked (since Chrome disables autoplay.)
+  bool tigerMayDance = !kIsWeb;
+  FocusNode raceFocusNode = FocusNode();
+  Sound? sound;
+
+  @override
+  void initState() {
+    super.initState();
+    if (kIsWeb) {
+      raceFocusNode.addListener(() {
+        if (raceFocusNode.hasFocus) {
+          tigerMayDance = true;
+          sound!.toggleMusic(play: true, fade: true);
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final gameState = ref.watch(GameState.provider);
     final controller = TextEditingController();
+    sound ??= ref.watch(soundProvider);
+
+    sound!.wakeUp();
 
     void deal([value]) {
       gameState.stage = "playing";
-      if (dialog) {
+      if (widget.isDialog) {
         // If they enter the same number, actually redeal, by triggering a seed change.
         gameState.seed = 0;
       }
@@ -73,11 +97,11 @@ class IntroScreen extends ConsumerWidget {
       } else {
         gameState.seed = Random().nextInt(1000000);
       }
-      if (kIsWeb && !dialog) ref.watch(soundProvider).toggleMusic(fade: true);
+      if (kIsWeb && !widget.isDialog) sound!.toggleMusic(play: true, fade: true);
       Navigator.pop(context);
     }
 
-    var x = 50.0, y = 10.0, yOffset = -10;
+    var x = 50.0, y = 10.0, yOffset = -60;
     MovieTween tigerTween = MovieTween()
       ..scene(begin: Duration.zero, duration: const Duration(milliseconds: 2000))
           .tween('x', Tween(begin: -x / 2, end: 0.0), curve: Curves.easeIn)
@@ -100,10 +124,22 @@ class IntroScreen extends ConsumerWidget {
                   flex: 20,
                   child: Column(
                     children: [
-                      const Expanded(
+                      Expanded(
                         flex: 40,
-                        child:
-                            Hero(tag: "freecell", child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1)),
+                        child: CustomAnimationBuilder<double>(
+                          builder: (BuildContext context, value, Widget? child) {
+                            return Transform.scale(scale: value, child: child);
+                          },
+                          tween: Tween(begin: 1, end: 1.03),
+                          duration: const Duration(seconds: 4),
+                          startPosition: 0.5,
+                          curve: Curves.easeInOut,
+                          control: widget.isDialog ? Control.stop : Control.mirror,
+                          child: const Hero(
+                            tag: "freecell",
+                            child: TextStamp("Freecell", fontFamily: "FleurDeLeah", shadow: 1),
+                          ),
+                        ),
                       ),
                       Expanded(
                         flex: 30,
@@ -115,7 +151,7 @@ class IntroScreen extends ConsumerWidget {
                           tween: tigerTween,
                           startPosition: .5,
                           duration: tigerTween.duration,
-                          control: dialog ? Control.stop : Control.mirror,
+                          control: widget.isDialog || !tigerMayDance ? Control.stop : Control.mirror,
                           child: const Hero(tag: "tiger", child: Tiger()),
                         ),
                       ),
@@ -133,9 +169,10 @@ class IntroScreen extends ConsumerWidget {
                               SizedBox(
                                 width: 60,
                                 child: TextField(
-                                  autofocus: kIsWeb, // kbd blocks view on mobile
+                                  autofocus: false, // kIsWeb, // kbd blocks view on mobile
                                   textInputAction: TextInputAction.done,
                                   onSubmitted: deal,
+                                  focusNode: raceFocusNode,
                                   controller: controller,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -157,8 +194,8 @@ class IntroScreen extends ConsumerWidget {
                               onPressed: deal,
                               child: const Text("Deal"),
                             ),
-                            if (dialog) const SizedBox(width: 10),
-                            if (dialog)
+                            if (widget.isDialog) const SizedBox(width: 10),
+                            if (widget.isDialog)
                               ElevatedButton(
                                 onPressed: () => Navigator.pop(context),
                                 child: const Text("Cancel"),
