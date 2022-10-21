@@ -69,9 +69,7 @@ class _GameMatState extends ConsumerState<GameMat> {
     } else if (gameState.stage == "winning" && gameState.settledCards > 0) {
       r(int a, int b) => Random().nextInt(b - a) + a;
       logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255));
-    }
-    // TODO temp
-    else if (gameState.stage == "playing" && wiggleControl != Control.stop) {
+    } else if (gameState.stage == "playing" && wiggleControl != Control.stop) {
       wiggleControl = growControl = slideControl = Control.stop;
     }
     List<Widget> stackChildren = [

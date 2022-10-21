@@ -35,7 +35,7 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 }
 
 class GameState extends ChangeNotifier {
-  String _stage = "intro"; // "intro", "playing", "winning", "game over"
+  String _stage = ""; // "intro", "playing", "winning", "game over"
   get stage => _stage;
   set stage(val) {
     if (_stage == val) return;

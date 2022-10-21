@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         primaryColorDark: Colors.blue[900],
         backgroundColor: Colors.blue[300],
       ),
-      home: GameScreen(),
+      home: const GameScreen(),
     );
   }
 }
@@ -71,7 +71,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
     // On very first load, push an intro screen on top of ourselves, to pop itself when it's time to deal.
     if (!widget.isPreview) {
-      if (gameState.stage == "intro") {
+      if (gameState.stage == "") {
+        Timer.run(() => gameState.stage = "intro");
         _showInitialIntroScreen(context);
         return const SizedBox.shrink();
       }
@@ -177,7 +178,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       () => Navigator.push(
         context,
         PageRouteBuilder(
-          pageBuilder: (_, __, ___) => IntroScreen(),
+          pageBuilder: (_, __, ___) => const IntroScreen(),
           transitionDuration: Duration.zero,
           // For when we deal, popping IntroScreen to reveal GameScreen
           reverseTransitionDuration: const Duration(milliseconds: 4500),
