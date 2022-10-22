@@ -2,11 +2,15 @@
 
 ## TODOs
 
+- Get the textfield visible and the numbers aligned on both screens
+- upon redeal, reset the Freecell logo color
+
 Finally:
 - PR playing_cards changes
 - ship to store
 
 v1.1:
+- trim blank space around tiger image, icon image
 - restart music after win if user had music on
 - better sound management around redealing - honor user's sound requests, don't
   let them toggle win music off and accordion on during "game over" stage

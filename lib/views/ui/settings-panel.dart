@@ -105,7 +105,7 @@ class SettingsPanel extends ConsumerWidget {
           barrierColor: Colors.black45,
           pageBuilder: (context, _, __) => const FractionallySizedBox(
             widthFactor: 0.8,
-            heightFactor: 0.8,
+            heightFactor: 0.9,
             child: IntroScreen(isDialog: true),
           ),
           transitionDuration: const Duration(milliseconds: 1000),

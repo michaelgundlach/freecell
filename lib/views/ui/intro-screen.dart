@@ -71,7 +71,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
     if (kIsWeb) {
       raceFocusNode.addListener(() {
         if (raceFocusNode.hasFocus) {
-          tigerMayDance = true;
+          setState(() => tigerMayDance = true);
           sound!.toggleMusic(play: true, fade: true);
         }
       });
@@ -101,7 +101,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
       Navigator.pop(context);
     }
 
-    var x = 50.0, y = 10.0, yOffset = -60;
+    var x = 50.0, y = 10.0, yOffset = 0;
     MovieTween tigerTween = MovieTween()
       ..scene(begin: Duration.zero, duration: const Duration(milliseconds: 2000))
           .tween('x', Tween(begin: -x / 2, end: 0.0), curve: Curves.easeIn)
@@ -155,8 +155,9 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                           child: const Hero(tag: "tiger", child: Tiger()),
                         ),
                       ),
-                      Expanded(
-                        flex: 8,
+                      const Spacer(flex: 2),
+                      SizedBox(
+                        height: 40,
                         child: Container(
                           color: Colors.white,
                           padding: const EdgeInsets.all(8),
@@ -177,6 +178,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                   textAlign: TextAlign.center,
+                                  textAlignVertical: TextAlignVertical.center,
                                   decoration: const InputDecoration(contentPadding: EdgeInsets.only(bottom: 14)),
                                 ),
                               ),
@@ -184,24 +186,21 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                           ),
                         ),
                       ),
-                      const Spacer(flex: 5),
-                      Expanded(
-                        flex: 10,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton(
+                            onPressed: deal,
+                            child: const Text("Deal"),
+                          ),
+                          if (widget.isDialog) const SizedBox(width: 10),
+                          if (widget.isDialog)
                             ElevatedButton(
-                              onPressed: deal,
-                              child: const Text("Deal"),
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("Cancel"),
                             ),
-                            if (widget.isDialog) const SizedBox(width: 10),
-                            if (widget.isDialog)
-                              ElevatedButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("Cancel"),
-                              ),
-                          ],
-                        ),
+                        ],
                       ),
                       const Spacer(flex: 5),
                     ],
