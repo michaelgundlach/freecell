@@ -2,7 +2,6 @@
 
 ## TODOs
 
-- Get the textfield visible and the numbers aligned on both screens
 - upon redeal, reset the Freecell logo color
 
 Finally:

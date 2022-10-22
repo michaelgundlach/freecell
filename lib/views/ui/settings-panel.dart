@@ -110,6 +110,7 @@ class SettingsPanel extends ConsumerWidget {
           ),
           transitionDuration: const Duration(milliseconds: 1000),
           reverseTransitionDuration: const Duration(seconds: 2),
+          transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
         ),
       );
     }
