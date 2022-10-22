@@ -62,6 +62,7 @@ class _GameMatState extends ConsumerState<GameMat> {
         r(int a, int b) => Random().nextInt(b - a) + a;
         setState(() => logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255)));
         if (gameState.stage != "game over") {
+          logoColor = null;
           // game restarted
           timer.cancel();
         }

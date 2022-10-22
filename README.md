@@ -2,8 +2,6 @@
 
 ## TODOs
 
-- upon redeal, reset the Freecell logo color
-
 Finally:
 - PR playing_cards changes
 - ship to store
@@ -14,6 +12,7 @@ v1.1:
 - better sound management around redealing - honor user's sound requests, don't
   let them toggle win music off and accordion on during "game over" stage
 - tiger turns on sound upon win? something's wrong there.
+- upon click tiger after victory, he should fly (disabled Hero causes this)
 
 - less ugly seed input, limited to 0-3
 - ensure random seed is 0-3 digits only
