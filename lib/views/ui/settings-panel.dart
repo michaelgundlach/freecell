@@ -73,8 +73,8 @@ class SettingsPanel extends ConsumerWidget {
                 ),
                 Opacity(
                   opacity: gameState.stage == "winning" ? 0.5 : 1.0,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
+                  child: FittedBox(
+                    fit: BoxFit.fill,
                     child: ElevatedButton(
                       onPressed: () => _tigerClicked(context, ref, gameState),
                       child: const Text("Redeal"),
