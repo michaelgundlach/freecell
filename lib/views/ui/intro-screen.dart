@@ -92,10 +92,10 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
         // If they enter the same number, actually redeal, by triggering a seed change.
         gameState.seed = 0;
       }
-      if (controller.value.text != "") {
+      if (controller.value.text != "" && controller.value.text != "0") {
         gameState.seed = int.parse(controller.value.text);
       } else {
-        gameState.seed = Random().nextInt(1000000);
+        gameState.seed = gameState.makeRandomSeed();
       }
       if (kIsWeb && !widget.isDialog) sound!.toggleMusic(play: true, fade: true);
       Navigator.pop(context);
@@ -110,7 +110,9 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
           .tween('x', Tween(begin: 0.0, end: x / 2), curve: Curves.easeOut)
           .tween('y', Tween(begin: y / 2 + yOffset, end: -y / 2 + yOffset), curve: Curves.easeInOut);
 
+    final double borderRadius = widget.isDialog ? 12 : 0;
     return Material(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
       color: Theme.of(context).primaryColor,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -176,7 +178,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                                   focusNode: raceFocusNode,
                                   controller: controller,
                                   keyboardType: TextInputType.number,
-                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-3]"))],
                                   textAlign: TextAlign.center,
                                   textAlignVertical: TextAlignVertical.center,
                                   decoration: const InputDecoration(contentPadding: EdgeInsets.only(bottom: 14)),

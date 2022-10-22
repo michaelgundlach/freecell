@@ -59,6 +59,7 @@ class GameState extends ChangeNotifier {
   }
 
   GameState() {
+    _seed = makeRandomSeed();
     _init();
   }
 
@@ -95,7 +96,7 @@ class GameState extends ChangeNotifier {
         for (Suit suit in [Suit.hearts, Suit.spades, Suit.diamonds, Suit.clubs])
           PlayingCard(suit, CardValue.values[index])
     ];
-    if (seed == 999999) return orderedDeck.reversed.toList(); // for testing
+    if (seed == 3333333) return orderedDeck.reversed.toList(); // for testing
     return _shuffle(orderedDeck);
   }
 
@@ -108,12 +109,19 @@ class GameState extends ChangeNotifier {
     return shuffledDeck;
   }
 
-  int _seed = Random().nextInt(1000000); // to generate cards on intro screen
+  late int _seed;
   int get seed => _seed;
   set seed(value) {
     if (_seed == value) return;
     _seed = value;
     _init();
+  }
+
+  int makeRandomSeed() {
+    List<int> digits = List.generate(6, (i) => Random().nextInt(4));
+    String seedAsString = digits.map((i) => i.toString()).join('');
+    print("SEED ${seedAsString}");
+    return int.parse(seedAsString);
   }
 
   void moveHighlightedOnto(PileEntry target) {

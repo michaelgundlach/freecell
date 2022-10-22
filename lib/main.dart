@@ -87,9 +87,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
       // Once every card is well placed, start win music and start the win animation, flying cards to the foundations.
       if (gameState.stage == "playing" && gameState.badlyPlacedCards == 0) {
-        // Special case: 999999 starts in victory condition, but for testing we don't want to win yet.
+        // Special case: 3333333 starts in victory condition, but for testing we don't want to win yet.
         // We rely on clicking the tiger to start winning (but there won't be music, oops).
-        if (gameState.seed != 999999) {
+        if (gameState.seed != 3333333) {
           sound.toggleWinMusic(play: true);
           Timer.run(() {
             gameState.stage = "winning";
@@ -146,7 +146,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         ? (2000 * (gameState.settledCards + 1) - sync.elapsed.inMilliseconds)
         : (8000 + (gameState.settledCards - 4 + 1) * 500 - sync.elapsed.inMilliseconds);
     transitionSpeed = max(transitionSpeed, 1);
-    if (gameState.seed == 999999) transitionSpeed = 500; // for testing
+    if (gameState.seed == 3333333) transitionSpeed = 500; // for testing
     Navigator.push(
       context,
       PageRouteBuilder(

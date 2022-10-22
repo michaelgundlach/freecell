@@ -9,8 +9,7 @@ Finally:
 v1.1:
 - honor user's music request after redeal
 - trim blank space around tiger image, icon image
-- better sound management around redealing - honor user's sound requests, don't
-  let them toggle win music off and accordion on during "game over" stage
+- better sound management around redealing - honor user's sound requests
 - tiger turns on sound upon win? something's wrong there.
 - upon click tiger after victory, he should fly (disabled Hero causes this)
 

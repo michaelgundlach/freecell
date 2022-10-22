@@ -91,7 +91,7 @@ class SettingsPanel extends ConsumerWidget {
 
   _tigerClicked(context, ref, gameState) {
     if (gameState.stage == "winning") return;
-    if (gameState.seed == 999999 && gameState.stage == "playing") {
+    if (gameState.seed == 3333333 && gameState.stage == "playing") {
       // for testing
       ref.watch(soundProvider).toggleWinMusic(play: true);
       for (int i = 0; i < 50; i++) gameState.autoplayOne();
