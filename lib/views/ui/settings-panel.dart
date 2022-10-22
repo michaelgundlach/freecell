@@ -69,7 +69,7 @@ class SettingsPanel extends ConsumerWidget {
                 ),
                 FittedBox(
                   fit: BoxFit.fill,
-                  child: Text(gameState.seed.toString(), style: Theme.of(context).textTheme.bodyLarge),
+                  child: Text(gameState.seed.toString().padLeft(6, '0'), style: Theme.of(context).textTheme.bodyLarge),
                 ),
                 Opacity(
                   opacity: gameState.stage == "winning" ? 0.5 : 1.0,

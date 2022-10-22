@@ -170,7 +170,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                               Text("Enter a code to race your friends!", style: Theme.of(context).textTheme.bodyLarge),
                               const SizedBox(width: 10),
                               SizedBox(
-                                width: 60,
+                                width: 80,
                                 child: TextField(
                                   autofocus: false, // kIsWeb, // kbd blocks view on mobile
                                   textInputAction: TextInputAction.done,
@@ -181,7 +181,8 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-3]"))],
                                   textAlign: TextAlign.center,
                                   textAlignVertical: TextAlignVertical.center,
-                                  decoration: const InputDecoration(contentPadding: EdgeInsets.only(bottom: 14)),
+                                  decoration: const InputDecoration(
+                                      contentPadding: EdgeInsets.only(bottom: 14), hintText: "0s-3s only"),
                                 ),
                               ),
                             ],
