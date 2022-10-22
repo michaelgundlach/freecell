@@ -35,7 +35,7 @@ class SettingsPanel extends ConsumerWidget {
         children: [
           GestureDetector(
             onTap: () {
-              if (gameState.stage != "winning") sound.toggleMusic();
+              if (gameState.stage == "playing") sound.toggleMusic();
             },
             child: Column(
               children: [
@@ -49,7 +49,7 @@ class SettingsPanel extends ConsumerWidget {
                     fit: BoxFit.fill,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (gameState.stage != "winning") sound.toggleMusic();
+                        if (gameState.stage == "playing") sound.toggleMusic();
                       },
                       child: Text(sound.musicPlaying ? sound.polkaNo() : "ACCORDI-ON", textAlign: TextAlign.center),
                     ),

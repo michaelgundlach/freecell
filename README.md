@@ -7,8 +7,8 @@ Finally:
 - ship to store
 
 v1.1:
+- honor user's music request after redeal
 - trim blank space around tiger image, icon image
-- restart music after win if user had music on
 - better sound management around redealing - honor user's sound requests, don't
   let them toggle win music off and accordion on during "game over" stage
 - tiger turns on sound upon win? something's wrong there.

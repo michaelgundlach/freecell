@@ -80,9 +80,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       // TODO do this from gamestate
       sound.setNumFreeCells(gameState.numFreeCells);
 
-      // If we just redealt after a victory, stop the win music.
+      // If we just redealt after a victory, stop the win music, play regular music.
       if (gameState.stage == "playing" && sound.winMusicPlaying) {
-        sound.toggleWinMusic(play: false);
+        sound.toggleMusic(play: true);
       }
 
       // Once every card is well placed, start win music and start the win animation, flying cards to the foundations.

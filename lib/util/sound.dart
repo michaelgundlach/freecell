@@ -46,8 +46,11 @@ class Sound extends ChangeNotifier {
       await _musicPlayer.seek(Duration.zero);
       print("MUSIC OFF");
     } else {
-      await _winMusicPlayer.pause();
-      await _winMusicPlayer.seek(Duration.zero);
+      if (_winMusicPlayer.playing) {
+        await _winMusicPlayer.pause();
+        await _winMusicPlayer.seek(Duration.zero);
+        print("WIN MUSIC OFF");
+      }
       if (fade) {
         _musicPlayer.setVolume(0);
         final stopwatch = Stopwatch()..start();
@@ -86,15 +89,20 @@ class Sound extends ChangeNotifier {
   }
 
   toggleWinMusic({bool? play}) async {
-    if (play ?? !_musicPlayer.playing) {
-      await _musicPlayer.pause();
-      await _musicPlayer.seek(Duration.zero);
+    if (play ?? !_winMusicPlayer.playing) {
+      if (_musicPlayer.playing) {
+        await _musicPlayer.pause();
+        await _musicPlayer.seek(Duration.zero);
+        print("MUSIC PLAYER TURNED OFF BY WIN MUSIC");
+      }
       if (!_winMusicPlayer.playing) {
+        print("WIN MUSIC ON");
         _winMusicPlayer.play();
       }
     } else {
       await _winMusicPlayer.pause();
       await _winMusicPlayer.seek(Duration.zero);
+      print("WIN MUSIC OFF");
     }
   }
 
