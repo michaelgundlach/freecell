@@ -2,11 +2,18 @@
 
 ## TODOs
 
+- togglewinmusic like other, include notifylisteners
+- ensure win/music started or stopped based on state at the beginning of game screen, not when it commands a change in game state
+- tiger doesn't complete win so it's a better test
+- win music reliable, why are transitions so fast when it's wrong?
+- card z index when cancel redeal, maybe v1.1
+
 Finally:
 - PR playing_cards changes
 - ship to store
 
 v1.1:
+- randomly selected bg
 - honor user's music request after redeal
 - trim blank space around tiger image, icon image
 - better sound management around redealing - honor user's sound requests
