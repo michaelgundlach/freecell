@@ -14,13 +14,6 @@ MVC:
 
 ## TODOs
 
-state:
- - intro: we are showing introscreen
- - click deal: set seed, change state to playing, push gamescreen with fade
-   - hero transition checks gamestate, knows what opacity to and from to use
-     - Navigator.canPop() knows if we're on introscreen or redeal modal
- 
-
 - gamestate becomes winning when 0 badlyplacedcards unless 3333333
 - gamestate becomes game over when winning & foundationsfull
 - push IntroScreen in a postframecallback in main() instead of from a widget

@@ -59,18 +59,20 @@ class IntroScreen extends ConsumerStatefulWidget {
 
 class _IntroScreenState extends ConsumerState<IntroScreen> {
   // Way too much work in order to start playing music and tiger dancing on web
-  // when race textfield clicked (since Chrome disables autoplay.)
-  bool tigerMayDance = !kIsWeb;
-  FocusNode raceFocusNode = FocusNode();
+  // when race textfield typed in (since Chrome disables autoplay.)
+  bool _tigerMayDance = !kIsWeb;
+  final FocusNode _raceFocusNode = FocusNode();
+  final TextEditingController _textController = TextEditingController();
   Sound? sound;
 
   @override
   void initState() {
     super.initState();
     if (kIsWeb) {
-      raceFocusNode.addListener(() {
-        if (raceFocusNode.hasFocus) {
-          setState(() => tigerMayDance = true);
+      _textController.addListener(() {
+        if (_textController.text == "") return;
+        if (!_tigerMayDance) {
+          setState(() => _tigerMayDance = true);
           sound!.toggleMusic(play: true, fade: true);
         }
       });
@@ -80,22 +82,13 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     final gameState = ref.watch(GameState.provider);
-    final controller = TextEditingController();
     sound ??= ref.watch(soundProvider);
 
     sound!.wakeUp();
 
     void deal([value]) {
-      gameState.stage = "playing";
-      if (widget.isDialog) {
-        // If they enter the same number, actually redeal, by triggering a seed change.
-        gameState.seed = 0;
-      }
-      if (controller.value.text != "" && controller.value.text != "0") {
-        gameState.seed = int.parse(controller.value.text);
-      } else {
-        gameState.seed = gameState.makeRandomSeed();
-      }
+      String input = _textController.text;
+      gameState.deal(["", "0"].contains(input) ? null : int.parse(input));
       if (kIsWeb && !widget.isDialog) sound!.toggleMusic(play: true, fade: true);
 
       Navigator.push(
@@ -160,7 +153,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                           tween: tigerTween,
                           startPosition: .5,
                           duration: tigerTween.duration,
-                          control: widget.isDialog || !tigerMayDance ? Control.stop : Control.mirror,
+                          control: widget.isDialog || !_tigerMayDance ? Control.stop : Control.mirror,
                           child: const Hero(tag: "tiger", child: Tiger()),
                         ),
                       ),
@@ -179,11 +172,11 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                               SizedBox(
                                 width: 80,
                                 child: TextField(
-                                  autofocus: false, // kIsWeb, // kbd blocks view on mobile
+                                  autofocus: kIsWeb, // kbd blocks view on mobile
                                   textInputAction: TextInputAction.done,
                                   onSubmitted: deal,
-                                  focusNode: raceFocusNode,
-                                  controller: controller,
+                                  focusNode: _raceFocusNode,
+                                  controller: _textController,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-3]"))],
                                   textAlign: TextAlign.center,

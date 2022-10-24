@@ -37,16 +37,17 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 class GameState extends ChangeNotifier {
   String _stage = "init"; // "init", "intro", "playing", "redeal modal", "winning", "game over"
   get stage => _stage;
-  set stage(val) {
-    if (_stage == val) return;
-    _stage = val;
-    notifyListeners();
-  }
+
+  late int _seed;
+  int get seed => _seed;
+
+  late int _numFreeCells;
+  int get numFreeCells => _numFreeCells;
+
+  late int _badlyPlacedCards;
 
   late List<PlayingCard> deck;
-  late int badlyPlacedCards;
 
-  late int numFreeCells;
   late List<LinkedList<PileEntry>> freeCells;
   late List<LinkedList<PileEntry>> foundations;
   late List<LinkedList<PileEntry>> cascades;
@@ -64,7 +65,7 @@ class GameState extends ChangeNotifier {
   }
 
   _init() {
-    badlyPlacedCards = 0;
+    _badlyPlacedCards = 0;
     deck = _deckFromSeed();
     final cascadeDeck = deck.toList(); // copy to consume in someCards()
     lastCardBadlyPlaced(pile) => !pile.last.previous!.isTheBase && pile.last.previous!.value < pile.last.value;
@@ -74,17 +75,16 @@ class GameState extends ChangeNotifier {
         result.add(PileEntry(cascadeDeck.removeAt(0)));
         if (lastCardBadlyPlaced(result)) {
           result.last.badlyPlaced = true;
-          badlyPlacedCards++;
+          _badlyPlacedCards++;
         }
       }
       return result;
     }
 
-    numFreeCells = 2;
-    freeCells = List.generate(numFreeCells, (_) => _emptyPile());
+    _numFreeCells = 3;
+    freeCells = List.generate(_numFreeCells, (_) => _emptyPile());
     foundations = List.generate(4, (_) => _emptyPile());
     cascades = [for (int i = 0; i < 8; i++) someCards(i < 4 ? 7 : 6)];
-    notifyListeners();
   }
 
   LinkedList<PileEntry> _emptyPile() => LinkedList<PileEntry>()..add(PileEntry(null));
@@ -96,12 +96,12 @@ class GameState extends ChangeNotifier {
         for (Suit suit in [Suit.hearts, Suit.spades, Suit.diamonds, Suit.clubs])
           PlayingCard(suit, CardValue.values[index])
     ];
-    if (seed == 3333333) return orderedDeck.reversed.toList(); // for testing
+    if (_seed == 3333333) return orderedDeck.reversed.toList(); // for testing
     return _shuffle(orderedDeck);
   }
 
   _shuffle(List<PlayingCard> deck) {
-    final rng = RNG(seed);
+    final rng = RNG(_seed);
     final shuffledDeck = <PlayingCard>[];
     while (deck.isNotEmpty) {
       shuffledDeck.add(deck.removeAt(rng.pickRandomBetweenOneAnd(deck.length) - 1));
@@ -109,39 +109,41 @@ class GameState extends ChangeNotifier {
     return shuffledDeck;
   }
 
-  late int _seed;
-  int get seed => _seed;
-  set seed(value) {
-    if (_seed == value) return;
-    _seed = value;
+  deal([int? seed]) {
+    _seed = seed ?? makeRandomSeed();
     _init();
+    _stage = "playing";
+    print("Starting stage 'playing' with seed $_seed");
+    notifyListeners();
   }
 
   int makeRandomSeed() {
     List<int> digits = List.generate(6, (i) => Random().nextInt(4));
     String seedAsString = digits.map((i) => i.toString()).join('');
-    print("SEED ${seedAsString}");
     return int.parse(seedAsString);
   }
 
   void moveHighlightedOnto(PileEntry target) {
-    assert(highlighted != null);
-    highlighted!.unlink();
-    if (highlighted!.badlyPlaced) {
-      highlighted!.badlyPlaced = false;
-      badlyPlacedCards -= 1;
+    assert(_highlighted != null);
+    _highlighted!.unlink();
+    if (_highlighted!.badlyPlaced) {
+      _highlighted!.badlyPlaced = false;
+      _badlyPlacedCards -= 1;
     }
 
-    target.insertAfter(highlighted!);
-    highlighted = null;
+    target.insertAfter(_highlighted!);
+    _highlighted = null;
 
-    if (badlyPlacedCards == 0) {
-      stage = "winning";
+    if (_badlyPlacedCards == 0) {
+      _stage = foundationsFull ? "game over" : "winning";
+      print("Changed to stage $_stage");
     }
+
+    notifyListeners();
   }
 
   void addFreeCell() {
-    numFreeCells++;
+    _numFreeCells++;
     freeCells.insert(0, _emptyPile());
     notifyListeners();
   }
@@ -169,8 +171,8 @@ class GameState extends ChangeNotifier {
     _stage = original._stage;
     _highlighted = original._highlighted;
 
-    numFreeCells = original.numFreeCells;
-    badlyPlacedCards = original.badlyPlacedCards;
+    _numFreeCells = original.numFreeCells;
+    _badlyPlacedCards = original._badlyPlacedCards;
     deck = original.deck.toList();
   }
 
@@ -188,12 +190,12 @@ class GameState extends ChangeNotifier {
       optionsToPlay = optionsToPlay.where((p) => p != null).toList();
       assert(optionsToPlay.isNotEmpty);
       var lowCard = optionsToPlay.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2);
-      lowCard!.unlink();
       var targetFoundation = foundations.firstWhere(
-        (f) => (lowCard.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == lowCard.suit,
+        (f) => (lowCard!.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == lowCard.suit,
       );
-      targetFoundation.last.insertAfter(lowCard);
-      settledCards = settledCards + 1;
+      _highlighted = lowCard!;
+      moveHighlightedOnto(targetFoundation.last);
+      _settledCards += 1;
 
       settlingCard = lowCard.card;
     }
@@ -204,7 +206,9 @@ class GameState extends ChangeNotifier {
   bool get foundationsFull => foundations.every((f) => f.length == 14); // the base plus A-K
 
   PlayingCard? settlingCard;
-  int settledCards = 0;
+  int _settledCards = 0;
+  int get settledCards => _settledCards;
+
   // true if it's in the foundation and not the autoplayed card.
   bool isAlreadySettledCard(PlayingCard card) {
     match(c) => (c != null) && (c.suit == card.suit && c.value == card.value);

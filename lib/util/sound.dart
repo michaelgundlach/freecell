@@ -54,7 +54,7 @@ class Sound extends ChangeNotifier {
       if (fade) {
         _musicPlayer.setVolume(0);
         final stopwatch = Stopwatch()..start();
-        const duration = 3.0;
+        const duration = 1.5;
         // TODO what's the right way to do this with a PlayAnimation?
         Timer.periodic(const Duration(milliseconds: 100), (timer) {
           double animation = (stopwatch.elapsed.inMilliseconds / 1000) / duration;
