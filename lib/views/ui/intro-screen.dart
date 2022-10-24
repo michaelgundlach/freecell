@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
@@ -12,6 +10,7 @@ import 'package:simple_animations/simple_animations.dart';
 import '../../model/game-state.dart';
 import '../../util/sound.dart';
 import '../util/text-stamp.dart';
+import 'game-screen.dart';
 import 'tiger.dart';
 
 class CardSmear extends ConsumerStatefulWidget {
@@ -42,7 +41,7 @@ class _CardSmearState extends ConsumerState<CardSmear> {
                 alignment: cardAlignments[c.suit]![c.value]!,
                 child: FractionallySizedBox(
                   widthFactor: 1 / 15,
-                  child: FreecellCardView(card: c),
+                  child: FreecellCardView(card: c, opacity: 0.3),
                 ),
               ))
           .toList(),
@@ -98,7 +97,15 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
         gameState.seed = gameState.makeRandomSeed();
       }
       if (kIsWeb && !widget.isDialog) sound!.toggleMusic(play: true, fade: true);
-      Navigator.pop(context);
+
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => const GameScreen(),
+          transitionDuration: const Duration(milliseconds: 4500),
+          transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
+        ),
+      );
     }
 
     var x = 50.0, y = 10.0, yOffset = 0;
@@ -118,7 +125,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Stack(
           children: [
-            const Opacity(opacity: 0.3, child: CardSmear()),
+            const CardSmear(),
             Row(
               children: [
                 const Spacer(flex: 10),

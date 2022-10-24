@@ -6,8 +6,9 @@ import '../../main.dart';
 import '../../model/game-state.dart';
 
 class FreecellCardView extends ConsumerWidget {
-  const FreecellCardView({required this.card, super.key});
+  const FreecellCardView({required this.card, super.key, this.opacity = 1.0});
   final PlayingCard card;
+  final double opacity;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,16 +29,18 @@ class FreecellCardView extends ConsumerWidget {
       // but do make them heroes during play, so that the redeal modal can capture them.
       return cardView;
     }
-    var opacityTween = Tween(
-      begin: 1.0,
-      // During win dance, we want full opacity the whole time.
-      end: gameState.stage == "winning" ? 1.0 : 0.3,
-    );
+
     return Hero(
       tag: "${card.value}${card.suit}",
-      child: cardView,
-      flightShuttleBuilder: (_, Animation<double> animation, __, ___, ____) =>
-          FadeTransition(opacity: opacityTween.animate(animation), child: cardView),
+      child: Opacity(opacity: opacity, child: cardView),
+      flightShuttleBuilder: (_, animation, flightDirection, fromHeroContext, toHeroContext) {
+        double fromOpacity = ((fromHeroContext.widget as Hero).child as Opacity).opacity;
+        double toOpacity = ((toHeroContext.widget as Hero).child as Opacity).opacity;
+        Tween<double> tween = flightDirection == HeroFlightDirection.push
+            ? Tween(begin: fromOpacity, end: toOpacity)
+            : Tween(begin: toOpacity, end: fromOpacity);
+        return FadeTransition(opacity: tween.animate(animation), child: cardView);
+      },
     );
   }
 
