@@ -14,7 +14,7 @@ MVC:
 
 ## TODOs
 
-- tiger doesn't complete win so it's a better test
+- why are hero flights so awful?
 - win music reliable, why are transitions so fast when it's wrong?
 - card z index when cancel redeal, maybe v1.1
 

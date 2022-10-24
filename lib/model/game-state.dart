@@ -35,7 +35,7 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 }
 
 class GameState extends ChangeNotifier {
-  String _stage = "init"; // "init", "intro", "playing", "redeal modal", "winning", "game over"
+  String _stage = "intro"; // "intro", "playing", "winning", "game over"
   get stage => _stage;
 
   late int _seed;
@@ -203,6 +203,7 @@ class GameState extends ChangeNotifier {
 
       settlingCard = lowCard.card;
     }
+    if (_seed == 3333333 && count > 1) _settledCards = 0;
     notifyListeners();
   }
 

@@ -65,7 +65,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         ? (2000 * (gameState.settledCards + 1) - sync.elapsed.inMilliseconds)
         : (8000 + (gameState.settledCards - 4 + 1) * 500 - sync.elapsed.inMilliseconds);
     transitionSpeed = max(transitionSpeed, 1);
-    if (gameState.seed == 3333333) transitionSpeed = 500; // for testing
+    print("Planned transition speed: $transitionSpeed");
+    // if (gameState.seed == 3333333) transitionSpeed = 500; // for testing
     Navigator.push(
       context,
       PageRouteBuilder(
