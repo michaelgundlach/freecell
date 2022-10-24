@@ -6,12 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../model/game-state.dart';
+
 final soundProvider = ChangeNotifierProvider<Sound>((ref) {
-  return Sound._();
-});
+  return Sound._(ref);
+}, dependencies: [GameState.provider]);
 
 class Sound extends ChangeNotifier {
-  Sound._() {
+  final Ref ref;
+  Sound._(this.ref) {
     _init();
   }
 
@@ -19,8 +22,7 @@ class Sound extends ChangeNotifier {
   final AudioPlayer _musicPlayer = AudioPlayer();
   final AudioPlayer _winMusicPlayer = AudioPlayer();
   final _musicVolume = 0.12;
-  int _numFreeCells = 0; // TODO watch gameState instead of having to track this separately
-  String? winSong;
+  String? _winSong;
 
   // Needed to force lazy provider to create sound and start preloading
   wakeUp() {}
@@ -29,10 +31,26 @@ class Sound extends ChangeNotifier {
     await _musicPlayer.setLoopMode(LoopMode.one);
     await _musicPlayer.setVolume(_musicVolume);
     await _preloadSound(_musicPlayer, Sounds.polka);
-    if (!kIsWeb) toggleMusic(play: true);
     _winMusicPlayer.setLoopMode(LoopMode.one);
     _winMusicPlayer.setVolume(_musicVolume);
-    Timer.run(() => setNumFreeCells(2)); // just in case this could jank startup animation
+    ref.listen(fireImmediately: true, GameState.provider.select((gs) => gs.numFreeCells), (_, n) => _chooseWinSong(n));
+    ref.listen(fireImmediately: true, GameState.provider.select((gs) => gs.stage), (oldStage, newStage) {
+      // TODO have one music player.  always play victory music. On deal, honor the user's on/off request.
+      if (newStage == "init" && !kIsWeb) {
+        print("Game startup, not on web: sound playing music");
+        _toggleWinMusic(play: false);
+        toggleMusic(play: true);
+      }
+      if (oldStage != "winning" && newStage == "winning") {
+        print("Entered 'winning' stage, sound playing victory music $_winSong");
+        toggleMusic(play: false);
+        _toggleWinMusic(play: true);
+      } else if (oldStage != "playing" && newStage == "playing") {
+        print("Entered 'playing' stage, sound playing music");
+        _toggleWinMusic(play: false);
+        toggleMusic(play: true);
+      }
+    });
   }
 
   get musicPlaying => _musicPlayer.playing;
@@ -79,16 +97,22 @@ class Sound extends ChangeNotifier {
   }
 
   /// TODO watch gamestate instead
-  setNumFreeCells(n) {
-    if (_numFreeCells == n) return;
-    _numFreeCells = n;
-    if (winSong == _fileForType(Sounds.winMusic)) return;
-    winSong = _fileForType(Sounds.winMusic);
-    print("Num free cells increased to $n, adjusting win music");
+  _chooseWinSong(numFreeCells) {
+    String choice;
+    if (numFreeCells <= 3) {
+      choice = "win-a.mp3";
+    } else if (numFreeCells <= 6) {
+      choice = "win-b.mp3";
+    } else {
+      choice = "win-f.mp3";
+    }
+    if (choice == _winSong) return;
+    _winSong = choice;
+    print("Num free cells increased to $numFreeCells, adjusting win music to $_winSong");
     _preloadSound(_winMusicPlayer, Sounds.winMusic);
   }
 
-  toggleWinMusic({bool? play}) async {
+  _toggleWinMusic({bool? play}) async {
     if (play ?? !_winMusicPlayer.playing) {
       if (_musicPlayer.playing) {
         await _musicPlayer.pause();
@@ -153,13 +177,7 @@ class Sound extends ChangeNotifier {
       case Sounds.polka:
         return "waltz-polka.mp3";
       case Sounds.winMusic:
-        if (_numFreeCells < 4) {
-          return "win-a.mp3";
-        } else if (_numFreeCells <= 6) {
-          return "win-b.mp3";
-        } else {
-          return "win-f.mp3";
-        }
+        return _winSong;
     }
   }
 }

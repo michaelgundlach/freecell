@@ -14,14 +14,6 @@ MVC:
 
 ## TODOs
 
-- gamestate becomes winning when 0 badlyplacedcards unless 3333333
-- gamestate becomes game over when winning & foundationsfull
-- push IntroScreen in a postframecallback in main() instead of from a widget
-
-- sound listen() to gamestate to control music
-- sound listen() to gamestate for numfreecells
-
-
 - togglewinmusic like other, include notifylisteners
 - ensure win/music started or stopped based on state at the beginning of game screen, not when it commands a change in game state
 - tiger doesn't complete win so it's a better test

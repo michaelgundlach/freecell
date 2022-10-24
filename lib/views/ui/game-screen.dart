@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/views/ui/settings-panel.dart';
 
 import '../../model/game-state.dart';
+import '../../util/sound.dart';
 import 'game-mat.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
@@ -79,7 +80,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           });
 
           return ProviderScope(
-            overrides: [GameState.provider.overrideWithValue(gameState.oneAutoplayed())],
+            overrides: [
+              GameState.provider.overrideWithValue(gameState.oneAutoplayed()),
+              // Pass through existing Sound lest it create a new one when someone ref.watch()s it,
+              // since it depends on GameState which we have explicitly changed via override
+              soundProvider.overrideWithValue(ref.read(soundProvider)),
+            ],
             child: const GameScreen(isPreview: true),
           );
         },

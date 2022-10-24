@@ -134,7 +134,7 @@ class GameState extends ChangeNotifier {
     target.insertAfter(_highlighted!);
     _highlighted = null;
 
-    if (_badlyPlacedCards == 0) {
+    if (_stage == "playing" && _badlyPlacedCards == 0 || _stage == "winning" && foundationsFull) {
       _stage = foundationsFull ? "game over" : "winning";
       print("Changed to stage $_stage");
     }

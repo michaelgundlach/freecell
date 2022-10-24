@@ -89,7 +89,6 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
     void deal([value]) {
       String input = _textController.text;
       gameState.deal(["", "0"].contains(input) ? null : int.parse(input));
-      if (kIsWeb && !widget.isDialog) sound!.toggleMusic(play: true, fade: true);
 
       Navigator.push(
         context,

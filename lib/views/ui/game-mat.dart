@@ -27,6 +27,12 @@ class _GameMatState extends ConsumerState<GameMat> {
   Color? logoColor;
 
   @override
+  void dispose() {
+    colorTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var gameState = ref.watch(GameState.provider);
 
@@ -59,13 +65,9 @@ class _GameMatState extends ConsumerState<GameMat> {
         growControl = slideControl = Control.play;
       });
       Timer.periodic(const Duration(milliseconds: 500), (timer) {
+        colorTimer = timer;
         r(int a, int b) => Random().nextInt(b - a) + a;
         setState(() => logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255)));
-        if (gameState.stage != "game over") {
-          logoColor = null;
-          // game restarted
-          timer.cancel();
-        }
       });
     } else if (gameState.stage == "winning" && gameState.settledCards > 0) {
       r(int a, int b) => Random().nextInt(b - a) + a;
