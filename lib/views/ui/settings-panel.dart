@@ -92,7 +92,7 @@ class SettingsPanel extends ConsumerWidget {
   _tigerClicked(context, ref, GameState gameState) {
     if (gameState.stage == "winning") return;
     if (gameState.seed == 3333333 && gameState.stage == "playing") {
-      gameState.autoplay(50 - gameState.settledCards);
+      gameState.autoplay(40 - gameState.settledCards);
     } else if (gameState.stage != "intro") {
       Navigator.push(
         context,

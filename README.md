@@ -14,8 +14,6 @@ MVC:
 
 ## TODOs
 
-- togglewinmusic like other, include notifylisteners
-- ensure win/music started or stopped based on state at the beginning of game screen, not when it commands a change in game state
 - tiger doesn't complete win so it's a better test
 - win music reliable, why are transitions so fast when it's wrong?
 - card z index when cancel redeal, maybe v1.1

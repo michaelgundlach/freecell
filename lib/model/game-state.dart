@@ -96,7 +96,11 @@ class GameState extends ChangeNotifier {
         for (Suit suit in [Suit.hearts, Suit.spades, Suit.diamonds, Suit.clubs])
           PlayingCard(suit, CardValue.values[index])
     ];
-    if (_seed == 3333333) return orderedDeck.reversed.toList(); // for testing
+    if (_seed == 3333333) {
+      var result = orderedDeck.reversed.toList();
+      result.insert(5, result.removeAt(0));
+      return result;
+    } // for testing
     return _shuffle(orderedDeck);
   }
 

@@ -9,21 +9,14 @@ import '../util/pile-view.dart';
 import '../../model/game-state.dart';
 import '../util/text-stamp.dart';
 
-class FreeSpaces extends ConsumerStatefulWidget {
+class FreeSpaces extends ConsumerWidget {
   const FreeSpaces({super.key});
-
-  @override
-  ConsumerState<FreeSpaces> createState() => _FreeSpacesState();
 
   /// At least 4 columns (we have 8 cascades and 4 foundations) and leave room for the More button.
   static int numberOfColumns(GameState gs) => max(4, gs.numFreeCells + 1);
-}
-
-class _FreeSpacesState extends ConsumerState<FreeSpaces> {
-  var showButton = false;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     var gameState = ref.watch(GameState.provider);
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       final cardWidth = constraints.maxWidth / FreeSpaces.numberOfColumns(gameState);
@@ -39,9 +32,6 @@ class _FreeSpacesState extends ConsumerState<FreeSpaces> {
                 entries: pile,
                 canHighlight: (PileEntry entry) => !entry.isTheBase,
                 canReceive: (PileEntry highlighted, PileEntry entry) => entry.isTheBase,
-                received: (entry) {
-                  if (ref.read(GameState.provider).freeCellsAreFull) setState(() => showButton = true);
-                },
                 baseBuilder: () => _buildBase(context, ref, cardWidth),
                 positioner: (_, Widget child) => child,
               ),
@@ -54,12 +44,9 @@ class _FreeSpacesState extends ConsumerState<FreeSpaces> {
 
   Widget _moreButton(context, GameState gameState, cardWidth) {
     Widget button = const SizedBox.shrink();
-    if (showButton) {
+    if (gameState.freeCellsAreFull) {
       button = GestureDetector(
-        onTap: () {
-          setState(() => showButton = false);
-          gameState.addFreeCell();
-        },
+        onTap: () => gameState.addFreeCell(),
         child: Container(
           width: cardWidth / 1.9,
           height: cardWidth / 1.9,
