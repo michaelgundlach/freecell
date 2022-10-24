@@ -35,7 +35,7 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 }
 
 class GameState extends ChangeNotifier {
-  String _stage = ""; // "intro", "playing", "winning", "game over"
+  String _stage = "init"; // "init", "intro", "playing", "redeal modal", "winning", "game over"
   get stage => _stage;
   set stage(val) {
     if (_stage == val) return;
@@ -130,13 +130,14 @@ class GameState extends ChangeNotifier {
     if (highlighted!.badlyPlaced) {
       highlighted!.badlyPlaced = false;
       badlyPlacedCards -= 1;
-      if (badlyPlacedCards == 0) {
-        stage = "winning";
-      }
     }
 
     target.insertAfter(highlighted!);
     highlighted = null;
+
+    if (badlyPlacedCards == 0) {
+      stage = "winning";
+    }
   }
 
   void addFreeCell() {
@@ -175,25 +176,27 @@ class GameState extends ChangeNotifier {
 
   /// Returns a copy of this, autoplayed by one.  Assumes there is something to autoplay.
   GameState oneAutoplayed() {
-    return GameState._(this)..autoplayOne();
+    return GameState._(this)..autoplay();
   }
 
   // Autoplays one card onto a foundation (the lowest card available to play).  Assumes there is at least one to play.
-  void autoplayOne() {
+  void autoplay([int count = 1]) {
     // Move the lowest-ranked card on the end of a cascade/free cell to its foundation.
-    var stacksToPlayFrom = (cascades + freeCells);
-    var optionsToPlay = stacksToPlayFrom.map((stack) => stack.last.isTheBase ? null : stack.last).toList();
-    optionsToPlay = optionsToPlay.where((p) => p != null).toList();
-    assert(optionsToPlay.isNotEmpty);
-    var lowCard = optionsToPlay.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2);
-    lowCard!.unlink();
-    var targetFoundation = foundations.firstWhere(
-      (f) => (lowCard.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == lowCard.suit,
-    );
-    targetFoundation.last.insertAfter(lowCard);
-    settledCards = settledCards + 1;
+    for (int i = 0; i < count; i++) {
+      var stacksToPlayFrom = (cascades + freeCells);
+      var optionsToPlay = stacksToPlayFrom.map((stack) => stack.last.isTheBase ? null : stack.last).toList();
+      optionsToPlay = optionsToPlay.where((p) => p != null).toList();
+      assert(optionsToPlay.isNotEmpty);
+      var lowCard = optionsToPlay.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2);
+      lowCard!.unlink();
+      var targetFoundation = foundations.firstWhere(
+        (f) => (lowCard.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == lowCard.suit,
+      );
+      targetFoundation.last.insertAfter(lowCard);
+      settledCards = settledCards + 1;
 
-    settlingCard = lowCard.card;
+      settlingCard = lowCard.card;
+    }
     notifyListeners();
   }
 

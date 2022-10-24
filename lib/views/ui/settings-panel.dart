@@ -44,7 +44,7 @@ class SettingsPanel extends ConsumerWidget {
                   child: Image.asset("assets/images/accordion.png"),
                 ),
                 Opacity(
-                  opacity: gameState.stage == "winning" ? 0.5 : 1.0,
+                  opacity: gameState.stage == "winning" ? 0.3 : 1.0,
                   child: FittedBox(
                     fit: BoxFit.fill,
                     child: ElevatedButton(
@@ -72,7 +72,7 @@ class SettingsPanel extends ConsumerWidget {
                   child: Text(gameState.seed.toString().padLeft(6, '0'), style: Theme.of(context).textTheme.bodyLarge),
                 ),
                 Opacity(
-                  opacity: gameState.stage == "winning" ? 0.5 : 1.0,
+                  opacity: gameState.stage == "winning" ? 0.3 : 1.0,
                   child: FittedBox(
                     fit: BoxFit.fill,
                     child: ElevatedButton(
@@ -89,13 +89,12 @@ class SettingsPanel extends ConsumerWidget {
     );
   }
 
-  _tigerClicked(context, ref, gameState) {
+  _tigerClicked(context, ref, GameState gameState) {
     if (gameState.stage == "winning") return;
     if (gameState.seed == 3333333 && gameState.stage == "playing") {
       // for testing
       ref.watch(soundProvider).toggleWinMusic(play: true);
-      for (int i = 0; i < 50; i++) gameState.autoplayOne();
-      gameState.stage = "winning";
+      gameState.autoplay(50 - gameState.settledCards);
     } else if (gameState.stage != "intro") {
       Navigator.push(
         context,

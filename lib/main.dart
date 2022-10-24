@@ -67,46 +67,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   Widget build(BuildContext context) {
     var gameState = ref.watch(GameState.provider);
-    var sound = ref.watch(soundProvider);
 
-    // On very first load, push an intro screen on top of ourselves, to pop itself when it's time to deal.
     if (!widget.isPreview) {
-      if (gameState.stage == "") {
-        Timer.run(() => gameState.stage = "intro");
-        _showInitialIntroScreen(context);
-        return const SizedBox.shrink();
-      }
-
-      // TODO do this from gamestate
-      sound.setNumFreeCells(gameState.numFreeCells);
-
-      // If we just redealt after a victory, stop the win music, play regular music.
-      if (gameState.stage == "playing" && sound.winMusicPlaying) {
-        sound.toggleMusic(play: true);
-      }
-
-      // Once every card is well placed, start win music and start the win animation, flying cards to the foundations.
-      if (gameState.stage == "playing" && gameState.badlyPlacedCards == 0) {
-        // Special case: 3333333 starts in victory condition, but for testing we don't want to win yet.
-        // We rely on clicking the tiger to start winning (but there won't be music, oops).
-        if (gameState.seed != 3333333) {
-          sound.toggleWinMusic(play: true);
-          Timer.run(() {
-            gameState.stage = "winning";
-          });
-          return const SizedBox.shrink();
-        }
-      }
-
-      // The win animation continues as long as at least one foundation is not filled to King.  At that point
-      // the cards-to-foundations animation stops and the "game over" dancing animations start.
-      if (gameState.stage == "winning" && gameState.foundationsFull) {
-        Timer.run(() {
-          gameState.stage = "game over";
-        });
-        return const SizedBox.shrink();
-      }
-
       // During the win animation, when we display ourselves, we should immediately display the next step on top of
       // ourselves, so that one card flies to its foundation.  We remember that we are showing the preview so that we
       // don't show it more than once.
@@ -156,7 +118,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             if (status == AnimationStatus.completed) {
               waitingOnPreview = false; // allows the next build() to push the next preview
               Navigator.pop(context);
-              gameState.autoplayOne(); // modify gameState, triggering a rebuild.
+              gameState.autoplay(1); // modify gameState, triggering a rebuild.
             }
           });
 
@@ -166,6 +128,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           );
         },
         transitionDuration: Duration(milliseconds: transitionSpeed),
+        reverseTransitionDuration: const Duration(milliseconds: 1),
       ),
     );
   }
