@@ -45,3 +45,57 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+void _main() async {
+  runApp(ProviderScope(child: MaterialApp(home: TestScreen())));
+}
+
+class TestNotifier extends StateNotifier<int> {
+  TestNotifier() : super(0);
+  ping() {
+    print("Ping ${++state}");
+  }
+}
+
+final testProvider = StateNotifierProvider<TestNotifier, int>((ref) => TestNotifier());
+
+class TestScreen extends ConsumerWidget {
+  static int _instances = 0;
+  late final int id;
+  TestScreen({super.key}) {
+    id = ++_instances;
+    print("Construct TestScreen $id");
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    print("    Build TestScreen $id");
+    ref.watch(testProvider);
+    return LayoutBuilder(builder: (p0, p1) {
+      print("Layoutbuild TestScreen $id");
+      return Column(children: [
+        TestItem(),
+        ElevatedButton(
+          child: Text("Ping", style: TextStyle()),
+          onPressed: () => ref.read(testProvider.notifier).ping(),
+        ),
+      ]);
+    });
+  }
+}
+
+class TestItem extends ConsumerWidget {
+  static int _instances = 0;
+  late final int id;
+  TestItem({super.key}) {
+    id = ++_instances;
+    print("                              Construct TestItem $id");
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(testProvider);
+    print("                                  Build TestItem $id");
+    return UnconstrainedBox(child: Container(width: 10, height: 10, color: Colors.yellow));
+  }
+}

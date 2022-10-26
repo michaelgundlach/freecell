@@ -13,20 +13,21 @@ class FreeSpaces extends ConsumerWidget {
   const FreeSpaces({super.key});
 
   /// At least 4 columns (we have 8 cascades and 4 foundations) and leave room for the More button.
-  static int numberOfColumns(GameState gs) => max(4, gs.numFreeCells + 1);
+  static int numberOfColumns(int numFreeCells) => max(4, numFreeCells + 1);
 
   @override
   Widget build(BuildContext context, ref) {
     var gameState = ref.watch(GameState.provider);
+    int numFreeCells = ref.watch(GameState.provider.select((gs) => gs.numFreeCells));
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      final cardWidth = constraints.maxWidth / FreeSpaces.numberOfColumns(gameState);
+      final cardWidth = constraints.maxWidth / FreeSpaces.numberOfColumns(numFreeCells);
       final cardHeight = cardWidth / playingCardAspectRatio;
       return SizedBox(
         height: cardHeight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            _moreButton(context, gameState, cardWidth),
+            _moreButton(context, ref, cardWidth),
             ...gameState.freeCells.map(
               (pile) => PileView(
                 entries: pile,
@@ -42,11 +43,11 @@ class FreeSpaces extends ConsumerWidget {
     });
   }
 
-  Widget _moreButton(context, GameState gameState, cardWidth) {
+  Widget _moreButton(context, ref, cardWidth) {
     Widget button = const SizedBox.shrink();
-    if (gameState.freeCellsAreFull) {
+    if (ref.watch(GameState.provider.select((gs) => gs.freeCellsAreFull))) {
       button = GestureDetector(
-        onTap: () => gameState.addFreeCell(),
+        onTap: () => ref.read(GameState.provider).addFreeCell(),
         child: Container(
           width: cardWidth / 1.9,
           height: cardWidth / 1.9,

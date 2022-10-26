@@ -21,7 +21,7 @@ class FreecellInteractTarget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var highlighted = ref.watch(GameState.provider.select((gs) => gs.highlighted));
+    var amHighlighted = ref.watch(GameState.provider.select((gs) => gs.highlighted == entry));
     var sound = ref.watch(soundProvider);
     return GestureDetector(
       onTapDown: (_) {
@@ -52,7 +52,7 @@ class FreecellInteractTarget extends ConsumerWidget {
           sound.sfx(Sounds.failed);
         }
       },
-      child: highlighted == entry ? Glow(child: child) : child,
+      child: amHighlighted ? Glow(child: child) : child,
     );
   }
 }

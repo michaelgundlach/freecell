@@ -34,17 +34,20 @@ class _GameMatState extends ConsumerState<GameMat> {
 
   @override
   Widget build(BuildContext context) {
-    var gameState = ref.watch(GameState.provider);
+    var cascades = ref.watch(GameState.provider.select((gs) => gs.cascades));
+    var stage = ref.watch(GameState.provider.select((gs) => gs.stage));
+    var numFreeCells = ref.watch(GameState.provider.select((gs) => gs.numFreeCells));
+    var settledCards = ref.watch(GameState.provider.select((gs) => gs.settledCards));
 
-    final longestCascade = gameState.cascades.reduce((a, b) => a.length > b.length ? a : b).length;
+    final longestCascade = cascades.reduce((a, b) => a.length > b.length ? a : b).length;
     final mostCards = longestCascade - 1; // ignore base at cascade[0]
     final fitThisManyCards = max(14, mostCards);
     final reservedCascadeHeight = 1 + (fitThisManyCards - 1) * Cascades.cardExposure; // 1st card, then overlaps
     const foundationHeight = 1;
     final totalCardsHeight = foundationHeight + reservedCascadeHeight;
-    final cardsWidth = 4 + FreeSpaces.numberOfColumns(gameState);
+    final cardsWidth = 4 + FreeSpaces.numberOfColumns(numFreeCells);
     final boardAspectRatio = cardsWidth / totalCardsHeight * playingCardAspectRatio;
-    final logo = gameState.numFreeCells < 6
+    final logo = numFreeCells < 6
         ? "Freecell"
         : {
               6: "Hi  Mom",
@@ -56,10 +59,10 @@ class _GameMatState extends ConsumerState<GameMat> {
               12: "Are-you-kidding-me-cell",
               13: "Now you're just curious, right?",
               14: "Can you even read the cards?"
-            }[gameState.numFreeCells] ??
+            }[numFreeCells] ??
             "Fifty two free cells should do it...";
 
-    if (gameState.stage == "game over" && wiggleControl == Control.stop) {
+    if (stage == "game over" && wiggleControl == Control.stop) {
       setState(() {
         wiggleControl = Control.mirror;
         growControl = slideControl = Control.play;
@@ -69,10 +72,10 @@ class _GameMatState extends ConsumerState<GameMat> {
       //   r(int a, int b) => Random().nextInt(b - a) + a;
       //   setState(() => logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255)));
       // });
-    } else if (gameState.stage == "winning" && gameState.settledCards > 0) {
+    } else if (stage == "winning" && settledCards > 0) {
       r(int a, int b) => Random().nextInt(b - a) + a;
       logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255));
-    } else if (gameState.stage == "playing" && wiggleControl != Control.stop) {
+    } else if (stage == "playing" && wiggleControl != Control.stop) {
       wiggleControl = growControl = slideControl = Control.stop;
     }
     List<Widget> stackChildren = [
@@ -92,7 +95,7 @@ class _GameMatState extends ConsumerState<GameMat> {
           );
           // Make sure that when the logo starts to dance, it doesn't have to Hero transition in from the
           // previous screen, screwing up its rotation for a moment.
-          if (gameState.stage != "game over") {
+          if (stage != "game over") {
             logoStamp = Hero(tag: "freecell", child: logoStamp);
           }
           return Align(
@@ -128,14 +131,14 @@ class _GameMatState extends ConsumerState<GameMat> {
             child: Row(children: [
               const Expanded(flex: 40, child: Foundations()),
               const Spacer(flex: 1),
-              Expanded(flex: 10 * FreeSpaces.numberOfColumns(gameState), child: const FreeSpaces()),
+              Expanded(flex: 10 * FreeSpaces.numberOfColumns(numFreeCells), child: const FreeSpaces()),
             ]),
           ),
           const Expanded(child: Cascades()),
         ],
       ),
     ];
-    if (gameState.stage == "game over") {
+    if (stage == "game over") {
       stackChildren = stackChildren.reversed.toList(); // put logo above cards for win animation
     }
     return Container(

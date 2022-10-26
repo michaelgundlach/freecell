@@ -21,7 +21,7 @@ class SlopTracker {
   final int maxTranslatePixels = 10; // in any direction
   final rnd = Random();
 
-  slop(Widget child, GameState gameState) {
+  slop(Widget child, String stage) {
     if (child.runtimeType == FreecellInteractTarget) {
       child = (child as FreecellInteractTarget).child;
     }
@@ -29,7 +29,7 @@ class SlopTracker {
     _slops.putIfAbsent(card.suit, () => {}).putIfAbsent(card.value, () {
       Matrix4 slop = Matrix4.identity();
       if (card.value == CardValue.ace) return slop;
-      double tilt = (gameState.stage != "playing") ? 0 : maxTiltDegrees * (rnd.nextDouble() - .5);
+      double tilt = (stage != "playing") ? 0 : maxTiltDegrees * (rnd.nextDouble() - .5);
       slop.rotateZ(radians(tilt));
       List<double> slide = List.generate(2, (_) => maxTranslatePixels * (rnd.nextDouble() - .5));
       slop.translate(slide[0], slide[1]);
@@ -49,7 +49,7 @@ class Foundations extends ConsumerStatefulWidget {
 class _FoundationsState extends ConsumerState<Foundations> {
   @override
   Widget build(BuildContext context) {
-    var gameState = ref.watch(GameState.provider);
+    var foundations = ref.watch(GameState.provider.select((gs) => gs.foundations));
     var slopTracker = ref.watch(slopProvider);
 
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
@@ -58,11 +58,12 @@ class _FoundationsState extends ConsumerState<Foundations> {
       return SizedBox(
         height: cardHeight,
         child: Row(
-          children: gameState.foundations
+          children: foundations
               .mapIndexed((i, pile) => PileView(
                     entries: pile,
                     canHighlight: (PileEntry entry) => false,
                     canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
+                    received: (_) => setState(() {}), // rebuild
                     baseBuilder: () => Container(
                       width: cardWidth,
                       margin: const EdgeInsets.only(top: 1),
@@ -93,7 +94,7 @@ class _FoundationsState extends ConsumerState<Foundations> {
                       return Align(
                         child: Transform(
                             alignment: FractionalOffset.center,
-                            transform: slopTracker.slop(child, gameState),
+                            transform: slopTracker.slop(child, ref.watch(GameState.provider.select((gs) => gs.stage))),
                             child: child),
                       );
                     },
