@@ -49,6 +49,7 @@ class Foundations extends ConsumerStatefulWidget {
 class _FoundationsState extends ConsumerState<Foundations> {
   @override
   Widget build(BuildContext context) {
+    var stage = ref.watch(GameState.provider.select((gs) => gs.stage));
     var foundations = ref.watch(GameState.provider.select((gs) => gs.foundations));
     var slopTracker = ref.watch(slopProvider);
 
@@ -95,9 +96,7 @@ class _FoundationsState extends ConsumerState<Foundations> {
               positioner: (int j, Widget child) {
                 return Align(
                   child: Transform(
-                      alignment: FractionalOffset.center,
-                      transform: slopTracker.slop(child, ref.watch(GameState.provider.select((gs) => gs.stage))),
-                      child: child),
+                      alignment: FractionalOffset.center, transform: slopTracker.slop(child, stage), child: child),
                 );
               },
             );

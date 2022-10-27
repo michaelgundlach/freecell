@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 import '../../main.dart';
+import '../../model/game-state.dart';
 
 class FreecellCardView extends ConsumerWidget {
   const FreecellCardView({required this.card, super.key, this.opacity = 1.0});
@@ -21,6 +23,16 @@ class FreecellCardView extends ConsumerWidget {
         suitBesideLabel: true,
       ),
     );
+
+    bool shrinking = ref.watch(GameState.provider.select((gs) => gs.stage == "winning" && gs.settlesNext(card)));
+    if (shrinking) {
+      return PlayAnimationBuilder(
+        builder: (BuildContext context, value, Widget? child) => Transform.scale(scale: value, child: child),
+        tween: Tween(begin: 1.0, end: 0.0),
+        duration: const Duration(milliseconds: 500),
+        child: cardView,
+      );
+    }
 
     return Hero(
       tag: "${card.value}${card.suit}",

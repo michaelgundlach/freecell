@@ -167,41 +167,43 @@ class GameState extends ChangeNotifier {
       var targetFoundation = foundations.firstWhere(
         (f) => (entryToSettle.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == entryToSettle.suit,
       );
-      lastSettledCard = entryToSettle.card;
-      __pileEntryToSettleNext = null;
+      _lastSettledCard = entryToSettle.card;
       _settledCards += 1;
       _highlighted = entryToSettle;
+      __pileEntryToSettleNext = null;
+
       moveHighlightedOnto(targetFoundation.last);
     }
     if (_seed == 3333333 && count > 1) _settledCards = 0;
   }
 
-  /// The correct, available pile entry to put on the foundation next.  Assumes one exists.
   PileEntry? __pileEntryToSettleNext;
+
+  /// The correct, available pile entry to put on the foundation next.  Assumes one exists.
   PileEntry _pileEntryToSettleNext() {
     if (__pileEntryToSettleNext == null) {
       var stacksToPlayFrom = (cascades + freeCells);
       var optionsToPlay = stacksToPlayFrom.map((stack) => stack.last.isTheBase ? null : stack.last).toList();
       optionsToPlay = optionsToPlay.where((p) => p != null).toList();
       assert(optionsToPlay.isNotEmpty);
-      __pileEntryToSettleNext = optionsToPlay.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2)!;
+      __pileEntryToSettleNext = optionsToPlay.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2);
     }
     return __pileEntryToSettleNext!;
   }
 
-  /// The correct, available card to put on the foundation next.  Assumes one exists.
-  PlayingCard get nextSettledCard {
-    return _pileEntryToSettleNext().card!;
+  /// True if the given card is the next card to be autoplayed.
+  bool settlesNext(PlayingCard card) {
+    return _pileEntryToSettleNext().suit == card.suit && _pileEntryToSettleNext().card!.value == card.value;
   }
 
-  PlayingCard? lastSettledCard;
+  PlayingCard? _lastSettledCard;
   int _settledCards = 0;
   int get settledCards => _settledCards;
 
   // true if it's in the foundation and not the autoplayed card.
   bool isAlreadySettledCard(PlayingCard card) {
     match(c) => (c != null) && (c.suit == card.suit && c.value == card.value);
-    if (match(lastSettledCard)) return false;
+    if (match(_lastSettledCard)) return false;
     return foundations.any((foundation) => foundation.any((pileEntry) => match(pileEntry.card)));
   }
 
