@@ -90,7 +90,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
       String input = _textController.text;
       gameState.deal(["", "0"].contains(input) ? null : int.parse(input));
 
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         PageRouteBuilder(
           pageBuilder: (_, __, ___) => const GameScreen(),

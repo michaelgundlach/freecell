@@ -98,7 +98,7 @@ class GameState extends ChangeNotifier {
     ];
     if (_seed == 3333333) {
       var result = orderedDeck.reversed.toList();
-      result.insert(5, result.removeAt(0));
+      result.insert(6, result.removeAt(0));
       return result;
     } // for testing
     return _shuffle(orderedDeck);
@@ -174,6 +174,8 @@ class GameState extends ChangeNotifier {
     _seed = original._seed;
     _stage = original._stage;
     _highlighted = original._highlighted;
+    _settledCards = original._settledCards;
+    settlingCard = original.settlingCard;
 
     _numFreeCells = original.numFreeCells;
     _badlyPlacedCards = original._badlyPlacedCards;
@@ -204,7 +206,6 @@ class GameState extends ChangeNotifier {
       settlingCard = lowCard.card;
     }
     if (_seed == 3333333 && count > 1) _settledCards = 0;
-    notifyListeners();
   }
 
   // False if any king is not on its foundation.

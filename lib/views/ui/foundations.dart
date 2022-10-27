@@ -58,48 +58,50 @@ class _FoundationsState extends ConsumerState<Foundations> {
       return SizedBox(
         height: cardHeight,
         child: Row(
-          children: foundations
-              .mapIndexed((i, pile) => PileView(
-                    entries: pile,
-                    canHighlight: (PileEntry entry) => false,
-                    canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
-                    received: (_) => setState(() {}), // rebuild
-                    baseBuilder: () => Container(
-                      width: cardWidth,
-                      margin: const EdgeInsets.only(top: 1),
-                      padding: const EdgeInsets.all(2), // vs playingcard having 4, so we get a little border
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).indicatorColor,
-                          borderRadius: BorderRadius.circular(ref.watch(deckStyleProvider).radius),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).primaryColorDark,
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                            )
-                          ],
-                        ),
-                        child: const AspectRatio(
-                          aspectRatio: playingCardAspectRatio,
-                          child: FractionallySizedBox(
-                              widthFactor: .8,
-                              heightFactor: .5,
-                              alignment: FractionalOffset(0.25, 0.45),
-                              child: TextStamp("A", fontFamily: "Gwendolyn", shadow: 2)),
-                        ),
-                      ),
-                    ),
-                    positioner: (int j, Widget child) {
-                      return Align(
-                        child: Transform(
-                            alignment: FractionalOffset.center,
-                            transform: slopTracker.slop(child, ref.watch(GameState.provider.select((gs) => gs.stage))),
-                            child: child),
-                      );
-                    },
-                  ))
-              .toList(),
+          children: foundations.mapIndexed((i, pile) {
+            // Rebuild foundations when the length of this foundation changes.
+            ref.watch(GameState.provider.select((gs) => pile.length));
+            return PileView(
+              entries: pile,
+              canHighlight: (PileEntry entry) => false,
+              canReceive: (PileEntry highlighted, PileEntry entry) => entry.isNextInFoundation(highlighted),
+              received: (_) => setState(() {}), // rebuild
+              baseBuilder: () => Container(
+                width: cardWidth,
+                margin: const EdgeInsets.only(top: 1),
+                padding: const EdgeInsets.all(2), // vs playingcard having 4, so we get a little border
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).indicatorColor,
+                    borderRadius: BorderRadius.circular(ref.watch(deckStyleProvider).radius),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).primaryColorDark,
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                      )
+                    ],
+                  ),
+                  child: const AspectRatio(
+                    aspectRatio: playingCardAspectRatio,
+                    child: FractionallySizedBox(
+                        widthFactor: .8,
+                        heightFactor: .5,
+                        alignment: FractionalOffset(0.25, 0.45),
+                        child: TextStamp("A", fontFamily: "Gwendolyn", shadow: 2)),
+                  ),
+                ),
+              ),
+              positioner: (int j, Widget child) {
+                return Align(
+                  child: Transform(
+                      alignment: FractionalOffset.center,
+                      transform: slopTracker.slop(child, ref.watch(GameState.provider.select((gs) => gs.stage))),
+                      child: child),
+                );
+              },
+            );
+          }).toList(),
         ),
       );
     });
