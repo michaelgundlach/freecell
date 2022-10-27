@@ -21,7 +21,6 @@ class GameScreen extends ConsumerStatefulWidget {
 }
 
 class _GameScreenState extends ConsumerState<GameScreen> {
-  Stopwatch sync = Stopwatch();
   bool autoPlaying = false;
 
   @override
@@ -29,8 +28,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     if (!autoPlaying && ref.watch(GameState.provider.select((gs) => gs.stage)) == "winning") {
       Timer.run(() => setState(() {
             autoPlaying = true;
-            ref.read(GameState.provider).autoplay();
-            Future.delayed(const Duration(milliseconds: 300), () => setState(() => autoPlaying = false));
+            GameState gs = ref.read(GameState.provider);
+            gs.autoplay();
+            int when;
+            if (gs.settledCards <= 4) {
+              when = gs.settledCards * 2000;
+            } else {
+              when = (2000 * 4) + (gs.settledCards - 4) * 500;
+            }
+            int delayMs = max(1, when - gs.winTimer.elapsedMilliseconds);
+            Future.delayed(Duration(milliseconds: delayMs), () => setState(() => autoPlaying = false));
           }));
     }
 

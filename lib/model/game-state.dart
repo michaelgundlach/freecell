@@ -37,6 +37,7 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 class GameState extends ChangeNotifier {
   String _stage = "intro"; // "intro", "playing", "winning", "game over"
   get stage => _stage;
+  Stopwatch winTimer = Stopwatch();
 
   late int _seed;
   int get seed => _seed;
@@ -140,6 +141,7 @@ class GameState extends ChangeNotifier {
 
     if (_stage == "playing" && _badlyPlacedCards == 0 || _stage == "winning" && foundationsFull) {
       _stage = foundationsFull ? "game over" : "winning";
+      if (_stage == "winning") winTimer.start();
       print("Changed to stage $_stage");
     }
 

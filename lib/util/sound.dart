@@ -41,11 +41,11 @@ class Sound extends ChangeNotifier {
         _toggleWinMusic(play: false);
         toggleMusic(play: true);
       }
-      if (oldStage != "winning" && newStage == "winning") {
+      if (newStage == "winning") {
         print("Entered 'winning' stage, sound playing victory music $_winSong");
         toggleMusic(play: false);
         _toggleWinMusic(play: true);
-      } else if (oldStage != "playing" && newStage == "playing") {
+      } else if (newStage == "playing") {
         print("Entered 'playing' stage, sound playing music");
         _toggleWinMusic(play: false);
         toggleMusic(play: true);

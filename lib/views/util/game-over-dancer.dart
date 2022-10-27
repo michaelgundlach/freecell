@@ -20,14 +20,20 @@ class GameOverDancer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gameState = ref.watch(GameState.provider);
-    final running = this.running ?? gameState.stage == "game over";
+    final stage = ref.watch(GameState.provider.select((gs) => gs.stage));
+    final running = this.running ?? (stage == "game over" || stage == "winning");
     if (!running) return stoppedChild ?? child;
 
-    return MirrorAnimationBuilder<double>(
+    // If there is a hiccup in starting, this seems to smooth it out.  Not sure it's needed in production.
+    final Stopwatch winTimer = ref.watch(GameState.provider.select((gs) => gs.winTimer));
+    final musicOffset = (winTimer.elapsedMilliseconds % 500) / 500;
+
+    return CustomAnimationBuilder<double>(
       builder: (_, value, child) =>
           Transform(transform: Matrix4.rotationZ(value), alignment: Alignment.center, child: child),
       tween: tween ?? Tween(begin: -pi / 6, end: pi / 6),
+      startPosition: (.493 + (stage == "winning" ? 0 : musicOffset)) % 1,
+      control: stage == "winning" ? Control.stop : Control.mirror,
       curve: curve ?? _Toggle(),
       duration: const Duration(milliseconds: 500),
       child: child,
