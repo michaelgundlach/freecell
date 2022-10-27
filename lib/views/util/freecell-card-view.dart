@@ -24,7 +24,7 @@ class FreecellCardView extends ConsumerWidget {
       ),
     );
 
-    bool shrinking = ref.watch(GameState.provider.select((gs) => gs.stage == "winning" && gs.settlesNext(card)));
+    bool shrinking = ref.watch(GameState.provider.select((gs) => gs.stage == "winning" && gs.isNextSettlingCard(card)));
     if (shrinking) {
       return PlayAnimationBuilder(
         builder: (BuildContext context, value, Widget? child) => Transform.scale(scale: value, child: child),

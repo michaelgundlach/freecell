@@ -191,9 +191,16 @@ class GameState extends ChangeNotifier {
     return __pileEntryToSettleNext!;
   }
 
-  /// True if the given card is the next card to be autoplayed.
-  bool settlesNext(PlayingCard card) {
-    return _pileEntryToSettleNext().suit == card.suit && _pileEntryToSettleNext().card!.value == card.value;
+  /// True if the given card is the next card to be autoplayed.  Assumes stage == "winning".
+  bool isNextSettlingCard(PlayingCard card) {
+    PlayingCard next = nextSettlingCard;
+    return next.suit == card.suit && next.value == card.value;
+  }
+
+  /// Next card settling.  Assumes stage == "winning".
+  PlayingCard get nextSettlingCard {
+    assert(_stage == "winning");
+    return _pileEntryToSettleNext().card!;
   }
 
   PlayingCard? _lastSettledCard;

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -52,6 +53,9 @@ class _FoundationsState extends ConsumerState<Foundations> {
     var stage = ref.watch(GameState.provider.select((gs) => gs.stage));
     var foundations = ref.watch(GameState.provider.select((gs) => gs.foundations));
     var slopTracker = ref.watch(slopProvider);
+    if (stage == "winning") {
+      foundations = _fauxFoundations(foundations); // extra copy of settling card in a foundation
+    }
 
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       final cardWidth = constraints.maxWidth / 4;
@@ -104,5 +108,33 @@ class _FoundationsState extends ConsumerState<Foundations> {
         ),
       );
     });
+  }
+
+  /// Returns foundations with a fake one thrown in containing the next settling card.  Only valid when "winning".
+  List<LinkedList<PileEntry>> _fauxFoundations(List<LinkedList<PileEntry>> foundations) {
+    LinkedList<PileEntry> lcopy(LinkedList<PileEntry> f) {
+      LinkedList<PileEntry> l = LinkedList<PileEntry>();
+      for (PileEntry pe in f) {
+        l.add(PileEntry(pe.card));
+      }
+      return l;
+    }
+
+    List<LinkedList<PileEntry>> result = [];
+    var bonusCard = ref.watch(GameState.provider.select((gs) => gs.nextSettlingCard));
+    bool isAce = bonusCard.value == CardValue.ace;
+    var targetFoundation = foundations.firstWhere(
+      (foundation) => isAce ? foundation.last.isTheBase : foundation.last.suit == bonusCard.suit,
+    );
+    for (final LinkedList<PileEntry> foundation in foundations) {
+      if (foundation != targetFoundation) {
+        result.add(foundation);
+      } else {
+        targetFoundation = lcopy(foundation);
+        targetFoundation.add(PileEntry(bonusCard));
+        result.add(targetFoundation);
+      }
+    }
+    return result;
   }
 }
