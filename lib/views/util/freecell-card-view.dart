@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:playing_cards/playing_cards.dart';
 
 import '../../main.dart';
-import '../../model/game-state.dart';
 
 class FreecellCardView extends ConsumerWidget {
   const FreecellCardView({required this.card, super.key, this.opacity = 1.0});
@@ -22,13 +21,6 @@ class FreecellCardView extends ConsumerWidget {
         suitBesideLabel: true,
       ),
     );
-
-    final gameState = ref.watch(GameState.provider);
-    if (gameState.stage == "winning" && gameState.isAlreadySettledCard(cardView.card)) {
-      // don't wrap as hero lest its flight cause a wiggle during win animation (due to rotation).
-      // but do make them heroes during play, so that the redeal modal can capture them.
-      return cardView;
-    }
 
     return Hero(
       tag: "${card.value}${card.suit}",

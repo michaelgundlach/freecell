@@ -175,7 +175,7 @@ class GameState extends ChangeNotifier {
     _stage = original._stage;
     _highlighted = original._highlighted;
     _settledCards = original._settledCards;
-    settlingCard = original.settlingCard;
+    lastSettledCard = original.lastSettledCard;
 
     _numFreeCells = original.numFreeCells;
     _badlyPlacedCards = original._badlyPlacedCards;
@@ -203,7 +203,7 @@ class GameState extends ChangeNotifier {
       moveHighlightedOnto(targetFoundation.last);
       _settledCards += 1;
 
-      settlingCard = lowCard.card;
+      lastSettledCard = lowCard.card;
     }
     if (_seed == 3333333 && count > 1) _settledCards = 0;
   }
@@ -211,14 +211,14 @@ class GameState extends ChangeNotifier {
   // False if any king is not on its foundation.
   bool get foundationsFull => foundations.every((f) => f.length == 14); // the base plus A-K
 
-  PlayingCard? settlingCard;
+  PlayingCard? lastSettledCard;
   int _settledCards = 0;
   int get settledCards => _settledCards;
 
   // true if it's in the foundation and not the autoplayed card.
   bool isAlreadySettledCard(PlayingCard card) {
     match(c) => (c != null) && (c.suit == card.suit && c.value == card.value);
-    if (match(settlingCard)) return false;
+    if (match(lastSettledCard)) return false;
     return foundations.any((foundation) => foundation.any((pileEntry) => match(pileEntry.card)));
   }
 
