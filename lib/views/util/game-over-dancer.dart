@@ -24,7 +24,7 @@ class GameOverDancer extends ConsumerWidget {
     final running = this.running ?? (stage == "game over" || stage == "winning");
     if (!running) return stoppedChild ?? child;
 
-    // If there is a hiccup in starting, this seems to smooth it out.  Not sure it's needed in production.
+    // If there is a hiccup in starting, this smooths it out.  Not sure it's needed in production.
     final Stopwatch winTimer = ref.watch(GameState.provider.select((gs) => gs.winTimer));
     final musicOffset = (winTimer.elapsedMilliseconds % 500) / 500;
 

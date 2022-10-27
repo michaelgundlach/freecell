@@ -156,62 +156,43 @@ class GameState extends ChangeNotifier {
 
   bool get freeCellsAreFull => freeCells.every((cell) => !cell.last.isTheBase);
 
-  /// Copy, autoplayed by one.
-  GameState._(GameState original) {
-    // Returns a deep copy of a list of linked lists of pileentries
-    llcopy(List<LinkedList<PileEntry>> ll) {
-      return ll.map((linkedlist) {
-        LinkedList<PileEntry> t = LinkedList();
-        for (PileEntry pe in linkedlist) {
-          t.add(PileEntry(pe.card, badlyPlaced: pe.badlyPlaced));
-        }
-        return t;
-      }).toList();
-    }
-
-    freeCells = llcopy(original.freeCells);
-    foundations = llcopy(original.foundations);
-    cascades = llcopy(original.cascades);
-
-    _seed = original._seed;
-    _stage = original._stage;
-    _highlighted = original._highlighted;
-    _settledCards = original._settledCards;
-    lastSettledCard = original.lastSettledCard;
-
-    _numFreeCells = original.numFreeCells;
-    _badlyPlacedCards = original._badlyPlacedCards;
-    deck = original.deck.toList();
-  }
-
-  /// Returns a copy of this, autoplayed by one.  Assumes there is something to autoplay.
-  GameState oneAutoplayed() {
-    return GameState._(this)..autoplay();
-  }
+  // False if any king is not on its foundation.
+  bool get foundationsFull => foundations.every((f) => f.length == 14); // the base plus A-K
 
   // Autoplays one card onto a foundation (the lowest card available to play).  Assumes there is at least one to play.
   void autoplay([int count = 1]) {
     // Move the lowest-ranked card on the end of a cascade/free cell to its foundation.
     for (int i = 0; i < count; i++) {
-      var stacksToPlayFrom = (cascades + freeCells);
-      var optionsToPlay = stacksToPlayFrom.map((stack) => stack.last.isTheBase ? null : stack.last).toList();
-      optionsToPlay = optionsToPlay.where((p) => p != null).toList();
-      assert(optionsToPlay.isNotEmpty);
-      var lowCard = optionsToPlay.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2);
+      PileEntry entryToSettle = _pileEntryToSettleNext();
       var targetFoundation = foundations.firstWhere(
-        (f) => (lowCard!.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == lowCard.suit,
+        (f) => (entryToSettle.value == 1) ? f.last.isTheBase : !f.last.isTheBase && f.last.suit == entryToSettle.suit,
       );
-      _highlighted = lowCard!;
-      moveHighlightedOnto(targetFoundation.last);
+      lastSettledCard = entryToSettle.card;
+      __pileEntryToSettleNext = null;
       _settledCards += 1;
-
-      lastSettledCard = lowCard.card;
+      _highlighted = entryToSettle;
+      moveHighlightedOnto(targetFoundation.last);
     }
     if (_seed == 3333333 && count > 1) _settledCards = 0;
   }
 
-  // False if any king is not on its foundation.
-  bool get foundationsFull => foundations.every((f) => f.length == 14); // the base plus A-K
+  /// The correct, available pile entry to put on the foundation next.  Assumes one exists.
+  PileEntry? __pileEntryToSettleNext;
+  PileEntry _pileEntryToSettleNext() {
+    if (__pileEntryToSettleNext == null) {
+      var stacksToPlayFrom = (cascades + freeCells);
+      var optionsToPlay = stacksToPlayFrom.map((stack) => stack.last.isTheBase ? null : stack.last).toList();
+      optionsToPlay = optionsToPlay.where((p) => p != null).toList();
+      assert(optionsToPlay.isNotEmpty);
+      __pileEntryToSettleNext = optionsToPlay.reduce((p1, p2) => p1!.value < p2!.value ? p1 : p2)!;
+    }
+    return __pileEntryToSettleNext!;
+  }
+
+  /// The correct, available card to put on the foundation next.  Assumes one exists.
+  PlayingCard get nextSettledCard {
+    return _pileEntryToSettleNext().card!;
+  }
 
   PlayingCard? lastSettledCard;
   int _settledCards = 0;

@@ -21,25 +21,13 @@ class GameScreen extends ConsumerStatefulWidget {
 }
 
 class _GameScreenState extends ConsumerState<GameScreen> {
-  bool autoPlaying = false;
-
   @override
   Widget build(BuildContext context) {
-    if (!autoPlaying && ref.watch(GameState.provider.select((gs) => gs.stage)) == "winning") {
-      Timer.run(() => setState(() {
-            autoPlaying = true;
-            GameState gs = ref.read(GameState.provider);
-            gs.autoplay();
-            int when;
-            if (gs.settledCards <= 4) {
-              when = gs.settledCards * 2000;
-            } else {
-              when = (2000 * 4) + (gs.settledCards - 4) * 500;
-            }
-            int delayMs = max(1, when - gs.winTimer.elapsedMilliseconds);
-            Future.delayed(Duration(milliseconds: delayMs), () => setState(() => autoPlaying = false));
-          }));
-    }
+    ref.listen(GameState.provider.select((gs) => gs.stage), (oldStage, newStage) {
+      if (newStage != "winning") return;
+      Timer.run(() => _autoplayRemainingCards());
+    });
+    ref.watch(GameState.provider.select((gs) => gs.settledCards)); // rebuild upon each autoplay
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -56,5 +44,21 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         ],
       ),
     );
+  }
+
+  _autoplayRemainingCards() {
+    GameState gs = ref.read(GameState.provider);
+    if (gs.stage != "winning") return;
+    int when;
+    if ((gs.settledCards + 1) <= 4) {
+      when = (gs.settledCards + 1) * 2000;
+    } else {
+      when = (2000 * 4) + ((gs.settledCards + 1) - 4) * 500;
+    }
+    int delayMs = max(1, when - gs.winTimer.elapsedMilliseconds);
+    Future.delayed(Duration(milliseconds: delayMs), () {
+      gs.autoplay();
+      _autoplayRemainingCards(); // trigger rebuild and recurse
+    });
   }
 }
