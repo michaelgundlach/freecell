@@ -131,7 +131,10 @@ class _FoundationsState extends ConsumerState<Foundations> {
         result.add(foundation);
       } else {
         targetFoundation = lcopy(foundation);
-        targetFoundation.add(PileEntry(bonusCard));
+        var fauxEntry = PileEntry(bonusCard);
+        targetFoundation.add(fauxEntry);
+        ref.read(GameState.provider).fauxEntry = fauxEntry;
+
         result.add(targetFoundation);
       }
     }

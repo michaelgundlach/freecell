@@ -203,6 +203,8 @@ class GameState extends ChangeNotifier {
     return _pileEntryToSettleNext().card!;
   }
 
+  PileEntry? fauxEntry; // for foundation to store which entry is fake
+
   PlayingCard? _lastSettledCard;
   int _settledCards = 0;
   int get settledCards => _settledCards;
