@@ -202,6 +202,10 @@ class GameState extends ChangeNotifier {
     return next.suit == card.suit && next.value == card.value;
   }
 
+  bool isInFreeCells(PlayingCard card) {
+    return freeCells.any((pile) => pile.any((pe) => pe.card?.suit == card.suit && pe.card?.value == card.value));
+  }
+
   /// Next card settling.  Assumes stage == "winning".
   PlayingCard get nextSettlingCard {
     assert(_stage == "winning");

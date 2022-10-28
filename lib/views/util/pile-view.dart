@@ -32,8 +32,8 @@ class PileView extends ConsumerWidget {
 
   /// Return a Stack entry for this base or this freecell card, possibly highlighted and possibly interactable.
   Widget _makeStackEntry(WidgetRef ref, int i, PileEntry entry) {
-    bool growing = ref.watch(GameState.provider.select((gs) => gs.fauxEntry == entry));
-    var result = entry.isTheBase ? baseBuilder() : FreecellCardView(card: entry.card!, growing: growing);
+    bool isFaux = ref.watch(GameState.provider.select((gs) => gs.fauxEntry == entry));
+    var result = entry.isTheBase ? baseBuilder() : FreecellCardView(card: entry.card!, isFaux: isFaux);
     if (entry == entries.last) {
       result = FreecellInteractTarget(
         canHighlight: () => canHighlight(entry),

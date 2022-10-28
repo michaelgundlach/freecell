@@ -14,9 +14,7 @@ MVC:
 
 ## TODOs
 
-- why are hero flights so awful?
-- win music reliable, why are transitions so fast when it's wrong?
-- card z index when cancel redeal, maybe v1.1
+cards slide down from free cells on victory, not upward
 
 Finally:
 - PR playing_cards changes
@@ -27,7 +25,6 @@ v1.1:
 - honor user's music request after redeal
 - trim blank space around tiger image, icon image
 - better sound management around redealing - honor user's sound requests
-- tiger turns on sound upon win? something's wrong there.
 - upon click tiger after victory, he should fly (disabled Hero causes this)
 
 - less ugly seed input
