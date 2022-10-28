@@ -36,7 +36,7 @@ class Sound extends ChangeNotifier {
     ref.listen(fireImmediately: true, GameState.provider.select((gs) => gs.numFreeCells), (_, n) => _chooseWinSong(n));
     ref.listen(fireImmediately: true, GameState.provider.select((gs) => gs.stage), (oldStage, newStage) {
       // TODO have one music player.  always play victory music. On deal, honor the user's on/off request.
-      if (newStage == "init" && !kIsWeb) {
+      if (newStage == "intro" && !kIsWeb) {
         print("Game startup, not on web: sound playing music");
         _toggleWinMusic(play: false);
         toggleMusic(play: true);

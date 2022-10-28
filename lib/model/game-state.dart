@@ -37,7 +37,7 @@ class PileEntry extends LinkedListEntry<PileEntry> {
 class GameState extends ChangeNotifier {
   String _stage = "intro"; // "intro", "playing", "winning", "game over"
   get stage => _stage;
-  Stopwatch winTimer = Stopwatch();
+  late Stopwatch winTimer;
 
   late int _seed;
   int get seed => _seed;
@@ -66,6 +66,7 @@ class GameState extends ChangeNotifier {
   }
 
   _init() {
+    winTimer = Stopwatch();
     _badlyPlacedCards = 0;
     deck = _deckFromSeed();
     final cascadeDeck = deck.toList(); // copy to consume in someCards()
@@ -86,6 +87,10 @@ class GameState extends ChangeNotifier {
     freeCells = List.generate(_numFreeCells, (_) => _emptyPile());
     foundations = List.generate(4, (_) => _emptyPile());
     cascades = [for (int i = 0; i < 8; i++) someCards(i < 4 ? 7 : 6)];
+    _highlighted = null;
+    fauxEntry = null;
+    _settledCards = 0;
+    _lastSettledCard = null;
   }
 
   LinkedList<PileEntry> _emptyPile() => LinkedList<PileEntry>()..add(PileEntry(null));

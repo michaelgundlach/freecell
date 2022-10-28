@@ -2,16 +2,11 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/views/ui/settings-panel.dart';
 
 import '../../model/game-state.dart';
 import 'game-mat.dart';
-
-final isCardFlyingProvider = StateProvider<bool>((ref) {
-  return false;
-});
 
 class GameScreen extends ConsumerStatefulWidget {
   const GameScreen({super.key});

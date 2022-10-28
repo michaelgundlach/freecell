@@ -67,11 +67,11 @@ class _GameMatState extends ConsumerState<GameMat> {
         wiggleControl = Control.mirror;
         growControl = slideControl = Control.play;
       });
-      // Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      //   colorTimer = timer;
-      //   r(int a, int b) => Random().nextInt(b - a) + a;
-      //   setState(() => logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255)));
-      // });
+      Timer.periodic(const Duration(milliseconds: 500), (timer) {
+        colorTimer = timer;
+        r(int a, int b) => Random().nextInt(b - a) + a;
+        setState(() => logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255)));
+      });
     } else if (stage == "winning" && settledCards > 0) {
       r(int a, int b) => Random().nextInt(b - a) + a;
       logoColor = Color.fromARGB(255, r(0, 200), r(100, 255), r(150, 255));

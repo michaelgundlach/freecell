@@ -90,13 +90,14 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
       String input = _textController.text;
       gameState.deal(["", "0"].contains(input) ? null : int.parse(input));
 
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         PageRouteBuilder(
           pageBuilder: (_, __, ___) => const GameScreen(),
           transitionDuration: const Duration(milliseconds: 4500),
           transitionsBuilder: (context, animation, _, child) => FadeTransition(opacity: animation, child: child),
         ),
+        (_) => false,
       );
     }
 
