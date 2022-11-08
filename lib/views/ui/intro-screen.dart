@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freecell/views/util/freecell-card-view.dart';
 import 'package:playing_cards/playing_cards.dart';
 import 'package:simple_animations/simple_animations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../model/game-state.dart';
 import '../../util/sound.dart';
@@ -206,6 +207,14 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                         ],
                       ),
                       const Spacer(flex: 5),
+                      if (!widget.isDialog)
+                        InkWell(
+                          onTap: () => launchUrl(Uri.parse('https://darkblueshark.com/tiger_freecell_privacy.html')),
+                          child: const Text(
+                            'Privacy Policy',
+                            style: TextStyle(decoration: TextDecoration.underline, color: Colors.black, fontSize: 10),
+                          ),
+                        )
                     ],
                   ),
                 ),

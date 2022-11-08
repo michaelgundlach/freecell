@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../model/game-state.dart';
 import '../../util/sound.dart';
@@ -30,55 +31,63 @@ class SettingsPanel extends ConsumerWidget {
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          GestureDetector(
-            onTap: () {
-              if (gameState.stage == "playing") sound.toggleMusic();
-            },
+          Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                GameOverDancer(
-                  tween: Tween(begin: -pi / 36, end: pi / 36),
-                  child: Image.asset("assets/images/accordion.png"),
-                ),
-                Opacity(
-                  opacity: gameState.stage == "winning" ? 0.3 : 1.0,
-                  child: FittedBox(
-                    fit: BoxFit.fill,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (gameState.stage == "playing") sound.toggleMusic();
-                      },
-                      child: Text(sound.musicPlaying ? sound.polkaNo() : "ACCORDI-ON", textAlign: TextAlign.center),
-                    ),
+                GestureDetector(
+                  onTap: () {
+                    if (gameState.stage == "playing") sound.toggleMusic();
+                  },
+                  child: Column(
+                    children: [
+                      GameOverDancer(
+                        tween: Tween(begin: -pi / 36, end: pi / 36),
+                        child: Image.asset("assets/images/accordion.png"),
+                      ),
+                      Opacity(
+                        opacity: gameState.stage == "winning" ? 0.3 : 1.0,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (gameState.stage == "playing") sound.toggleMusic();
+                            },
+                            child:
+                                Text(sound.musicPlaying ? sound.polkaNo() : "ACCORDI-ON", textAlign: TextAlign.center),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () => _tigerClicked(context, ref, gameState),
-            child: Column(
-              children: [
-                const GameOverDancer(
-                  curve: Curves.easeInOutQuint,
-                  stoppedChild: Hero(tag: "tiger", child: Tiger()),
-                  child: Tiger(),
-                ),
-                FittedBox(
-                  fit: BoxFit.fill,
-                  child: Text(gameState.seed.toString().padLeft(6, '0'), style: Theme.of(context).textTheme.bodyLarge),
-                ),
-                Opacity(
-                  opacity: gameState.stage == "winning" ? 0.3 : 1.0,
-                  child: FittedBox(
-                    fit: BoxFit.fill,
-                    child: ElevatedButton(
-                      onPressed: () => _tigerClicked(context, ref, gameState),
-                      child: const Text("Redeal"),
-                    ),
+                GestureDetector(
+                  onTap: () => _tigerClicked(context, ref, gameState),
+                  child: Column(
+                    children: [
+                      const GameOverDancer(
+                        curve: Curves.easeInOutQuint,
+                        stoppedChild: Hero(tag: "tiger", child: Tiger()),
+                        child: Tiger(),
+                      ),
+                      FittedBox(
+                        fit: BoxFit.fill,
+                        child: Text(gameState.seed.toString().padLeft(6, '0'),
+                            style: Theme.of(context).textTheme.bodyLarge),
+                      ),
+                      Opacity(
+                        opacity: gameState.stage == "winning" ? 0.3 : 1.0,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: ElevatedButton(
+                            onPressed: () => _tigerClicked(context, ref, gameState),
+                            child: const Text("Redeal"),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

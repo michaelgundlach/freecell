@@ -14,11 +14,10 @@ MVC:
 
 ## TODOs
 
-cards slide down from free cells on victory, not upward
-
 Finally:
 - PR playing_cards changes
 - ship to store
+  - update local.proprties, build and run from inside VSCode, then Android numbers should have changed
 
 v1.1:
 - randomly selected bg
